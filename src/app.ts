@@ -11,7 +11,8 @@ app.use(SETTINGS.PATH.VIDEOS, videoRouter)
 
 app.delete('/testing/all-data', (req: Request, res: Response) => {
 
-    db.videos = []
+    db.blogs = []
+    db.posts = []
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send();
 })

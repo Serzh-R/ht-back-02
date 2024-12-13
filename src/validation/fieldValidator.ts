@@ -1,4 +1,3 @@
-import {ResolutionsEnam} from '../types/types'
 
 export const titleFieldValidator = (
     title: string | undefined | null,
@@ -44,70 +43,6 @@ export const authorFieldValidator = (
             field: 'author',
         })
         return;
-    }
-};
-
-export const availableResolutionsFieldValidator = (
-    availableResolutions: ResolutionsEnam[] | null | undefined,
-    errorsArray: Array<{ message: string; field: string }>
-) => {
-
-    if (availableResolutions === null) {
-        return
-    }
-
-    if (availableResolutions && availableResolutions.length) {
-        availableResolutions.forEach((resolution: string) => {
-            if (!Object.keys(ResolutionsEnam).includes(resolution)) {
-                errorsArray.push({
-                    message: 'exist not valid value',
-                    field: 'availableResolutions'
-                })
-                return
-            }
-        })
-    }
-}
-
-export const canBeDownloadedFieldValidator = (
-    canBeDownloaded: boolean | undefined | null,
-    errorsArray: Array<{ message: string; field: string }>
-) => {
-    if (canBeDownloaded === undefined || canBeDownloaded === null) {
-        errorsArray.push({
-            message: 'must be a boolean value',
-            field: 'canBeDownloaded',
-        });
-        return;
-    }
-
-    if (typeof canBeDownloaded !== 'boolean') {
-        errorsArray.push({
-            message: 'must be a boolean value',
-            field: 'canBeDownloaded',
-        })
-        return;
-    }
-};
-
-export const minAgeRestrictionFieldValidator = (
-    minAgeRestriction: number | null | undefined,
-    errorsArray: Array<{message: string, field: string}>
-) => {
-    if (minAgeRestriction !== null && typeof minAgeRestriction !== 'number') {
-        errorsArray.push({
-            message: 'must be a number or null',
-            field: 'minAgeRestriction'
-        });
-        return;
-    }
-
-    if (minAgeRestriction !== null && (minAgeRestriction < 1 || minAgeRestriction > 18)) {
-        errorsArray.push({
-            message: 'must be between 1 and 18 or null',
-            field: 'minAgeRestriction'
-        })
-        return
     }
 };
 
