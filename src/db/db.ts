@@ -1,27 +1,35 @@
-import {DBType, ResolutionsEnam, VideoTypes} from '../types/types';
-
-export const video: VideoTypes = {
-    id: Date.now() + Math.random(),
-    title: 'back',
-    author: 'serzh',
-    canBeDownloaded: false,
-    minAgeRestriction: null,
-    createdAt: new Date(Math.floor(Date.now() / 1000) * 1000).toISOString(),
-    publicationDate: new Date(Math.floor((Date.now() + 86400000) / 1000) * 1000).toISOString(),
-    availableResolutions: [ResolutionsEnam.P1440]
-}
+import {BlogViewModel, DBType, PostViewModel} from '../types/types';
 
 export const db: DBType = {
-    videos: []
+    blogs: [],
+    posts: []
+}
+
+export const blog: BlogViewModel = {
+    id: '1',
+    name: 'live',
+    description: 'beautiful',
+    websiteUrl: 'https://live.com',
+}
+
+export const post: PostViewModel = {
+    id: '2',
+    title: 'Back',
+    shortDescription: 'beautiful',
+    content: 'belissimo',
+    blogId: '1',
+    blogName: 'live'
 }
 
 // функция для быстрой очистки/заполнения базы данных для тестов
 export const setDB  = (dataset?: Partial<DBType>) => {
     if (!dataset) { // если в функцию ничего не передано - то очищаем базу данных
-        db.videos = []
+        db.blogs = []
+        db.posts = []
         return
     }
 
     // если что-то передано - то заменяем старые значения новыми
-    db.videos = dataset.videos || db.videos
+    db.blogs = dataset.blogs || db.blogs
+    db.posts = dataset.posts || db.posts
 }
