@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "ht_02",
+  "name": "ht-back-02",
   "builds": [
     {
       "src": "src/index.ts",
