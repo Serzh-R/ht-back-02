@@ -13,19 +13,29 @@ export const blogController = {
     },
 
     createBlog(req: Request, res: Response, next: NextFunction) {
-        const blogData: BlogInputModel = req.body;
+        const body: BlogInputModel = req.body;
 
         // Validate the blog data (basic validation example)
         /*if (!blogData.title || !blogData.content) {
             return res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ error: 'Title and content are required.' });
         }*/
 
-        try {
-            const newBlog = blogsRepository.createBlog(blogData);
-            res.status(HTTP_STATUSES.CREATED_201).json(newBlog);
-        } catch (error) {
-            next(error);
-        }
+        const newBlog = blogsRepository.createBlog(body)
+        res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
+    },
+
+    getBlogById(req: Request, res: Response, next: NextFunction) {
+        const blogId = req.params.id
+
+            const blogById = blogsRepository.getBlogById(blogId)
+            res.status(HTTP_STATUSES.OK_200).json(blogById)
+    },
+
+    updateBlog(req: Request, res: Response, next: NextFunction) {
+        const blogId = req.params.id
+        const body: BlogInputModel = req.body
+        blogsRepository.updateBlog(blogId, body)
+        res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     },
 
     deleteBlog(req: Request, res: Response, next: NextFunction) {
@@ -44,6 +54,8 @@ export const blogController = {
     },
 };
 
-blogRouter.get('/', blogController.getBlogs);
-blogRouter.post('/', blogController.createBlog);
-blogRouter.delete('/:id', blogController.deleteBlog);
+blogRouter.get('/', blogController.getBlogs)
+blogRouter.post('/', blogController.createBlog)
+blogRouter.get('/:id', blogController.getBlogById)
+blogRouter.put('/:id', blogController.updateBlog)
+blogRouter.delete('/:id', blogController.deleteBlog)

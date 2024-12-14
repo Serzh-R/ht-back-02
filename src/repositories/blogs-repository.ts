@@ -19,6 +19,28 @@ export const blogsRepository = {
         return newBlog
     },
 
+    getBlogById(blogId: string) {
+        return db.blogs.find(blog => blog.id === blogId) || null;
+    },
+
+
+    updateBlog(blogId: string, body: BlogInputModel) {
+        const blogIndex = db.blogs.findIndex(blog => blog.id === blogId);
+
+        if (blogIndex === -1) {
+            return false;
+        }
+
+        db.blogs[blogIndex] = {
+            ...db.blogs[blogIndex],
+            name: body.name,
+            description: body.description,
+            websiteUrl: body.websiteUrl
+        }
+        return
+    },
+
+
     deleteBlog(blogId: string) {
         const blogIndex = db.blogs.findIndex(blog => blog.id === blogId);
 
