@@ -1,151 +1,140 @@
-import {Router, Request, Response} from 'express';
-import {db, video} from '../db/db';
+import { Router, Request, Response } from "express"
+import { db, video } from "../db/db"
 import {
-    authorFieldValidator,
-    availableResolutionsFieldValidator,
-    canBeDownloadedFieldValidator,
-    minAgeRestrictionFieldValidator,
-    publicationDateFieldValidator,
-    titleFieldValidator
-} from '../validation/fieldValidator';
-import {errorResponse} from '../validation/errorResponse';
-import {HTTP_STATUSES} from '../settings';
-import {CreateVideoInputModel, UpdateVideoInputModel} from '../types/types';
-
+  authorFieldValidator,
+  availableResolutionsFieldValidator,
+  canBeDownloadedFieldValidator,
+  minAgeRestrictionFieldValidator,
+  publicationDateFieldValidator,
+  titleFieldValidator,
+} from "../validation/fieldValidator"
+import { errorResponse } from "../validation/errorResponse"
+import { HTTP_STATUSES } from "../settings"
+import { CreateVideoInputModel, UpdateVideoInputModel } from "../types/types"
 
 export const videoRouter = Router({})
 
 export const videoController = {
+  deleteAllVideos(req: Request, res: Response) {
+    db.videos = []
 
-    deleteAllVideos(req: Request, res: Response) {
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+  },
 
-        db.videos = []
+  getVideo(req: Request, res: Response) {
+    const videos = db.videos
+    res.status(HTTP_STATUSES.OK_200).json(videos)
+  },
 
-        res.status(HTTP_STATUSES.NO_CONTENT_204).send();
-    },
+  createVideo(req: Request, res: Response) {
+    const body: CreateVideoInputModel = req.body
+    const { title, author, availableResolutions } = body
 
-    getVideo (req: Request, res: Response) {
-        const videos = db.videos
-        res.status(HTTP_STATUSES.OK_200).json(videos)
-    },
+    const errorsArray: Array<{ message: string; field: string }> = []
+    titleFieldValidator(title, errorsArray)
+    authorFieldValidator(author, errorsArray)
+    availableResolutionsFieldValidator(availableResolutions, errorsArray)
 
-    createVideo (req: Request, res: Response) {
+    if (errorsArray.length > 0) {
+      const errors_ = errorResponse(errorsArray)
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errors_)
+      return
+    }
+    const newVideo = {
+      ...video,
+      title,
+      author,
+      availableResolutions,
+    }
 
-        const body: CreateVideoInputModel = req.body;
-        const { title, author, availableResolutions } = body
+    db.videos = [...db.videos, newVideo]
+    res.status(HTTP_STATUSES.CREATED_201).json(newVideo)
+  },
 
-        const errorsArray: Array<{message: string, field: string}> = []
-        titleFieldValidator(title, errorsArray)
-        authorFieldValidator(author, errorsArray)
-        availableResolutionsFieldValidator(availableResolutions, errorsArray)
+  getVideoById(req: Request, res: Response) {
+    const id = +req.params.id
 
-        if (errorsArray.length > 0) {
-            const errors_ = errorResponse(errorsArray)
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errors_)
-            return
-        }
-        const newVideo = {
-            ...video,
-            title,
-            author,
-            availableResolutions
-        }
+    if (isNaN(id)) {
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ message: "Invalid video ID" })
+      return
+    }
 
-        db.videos = [...db.videos, newVideo]
-        res.status(HTTP_STATUSES.CREATED_201).json(newVideo)
-    },
+    const videoById = db.videos.find((video) => video.id === id)
 
-    getVideoById(req: Request, res: Response) {
+    if (!videoById) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).send()
+      return
+    }
 
-        const id = +req.params.id
+    res.status(HTTP_STATUSES.OK_200).json(videoById)
+  },
 
-        if (isNaN(id)) {
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ message: 'Invalid video ID' });
-            return;
-        }
+  updateVideo(req: Request, res: Response) {
+    const id = +req.params.id
 
-        const videoById = db.videos.find((video) => video.id === id);
+    if (isNaN(id)) {
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ message: "Invalid video ID" })
+      return
+    }
 
-        if (!videoById) {
-            res.status(HTTP_STATUSES.NOT_FOUND_404).send()
-            return;
-        }
+    const videoIndex = db.videos.findIndex((video) => video.id === id)
 
-        res.status(HTTP_STATUSES.OK_200).json(videoById)
-    },
+    if (videoIndex === -1) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).send()
+      return
+    }
 
-    updateVideo(req: Request, res: Response) {
+    const body: UpdateVideoInputModel = req.body
+    const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = body
 
-        const id = +req.params.id
+    const errorsArray: Array<{ field: string; message: string }> = []
+    titleFieldValidator(title, errorsArray)
+    authorFieldValidator(author, errorsArray)
+    availableResolutionsFieldValidator(availableResolutions, errorsArray)
+    canBeDownloadedFieldValidator(canBeDownloaded, errorsArray)
+    minAgeRestrictionFieldValidator(minAgeRestriction, errorsArray)
+    publicationDateFieldValidator(publicationDate, errorsArray)
 
-        if (isNaN(id)) {
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ message: 'Invalid video ID' });
-            return;
-        }
+    if (errorsArray.length > 0) {
+      const errors_ = errorResponse(errorsArray)
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errors_)
+      return
+    }
 
-        const videoIndex = db.videos.findIndex((video) => video.id === id);
+    const updatedVideo = {
+      ...db.videos[videoIndex],
+      title,
+      author,
+      availableResolutions,
+      canBeDownloaded,
+      minAgeRestriction,
+      publicationDate,
+    }
 
-        if (videoIndex === -1) {
-            res.status(HTTP_STATUSES.NOT_FOUND_404).send()
-            return;
-        }
+    db.videos[videoIndex] = updatedVideo
 
-        const body: UpdateVideoInputModel = req.body;
-        const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = body
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+  },
 
-        const errorsArray: Array<{ field: string; message: string }> = [];
-        titleFieldValidator(title, errorsArray);
-        authorFieldValidator(author, errorsArray);
-        availableResolutionsFieldValidator(availableResolutions, errorsArray);
-        canBeDownloadedFieldValidator(canBeDownloaded, errorsArray);
-        minAgeRestrictionFieldValidator(minAgeRestriction, errorsArray);
-        publicationDateFieldValidator(publicationDate, errorsArray);
+  deleteVideo(req: Request, res: Response) {
+    const id = +req.params.id
 
-        if (errorsArray.length > 0) {
-            const errors_ = errorResponse(errorsArray);
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).json(errors_);
-            return;
-        }
+    const videoExists = db.videos.some((video) => video.id === id)
 
-        const updatedVideo = {
-            ...db.videos[videoIndex],
-            title,
-            author,
-            availableResolutions,
-            canBeDownloaded,
-            minAgeRestriction,
-            publicationDate,
-        };
+    if (!videoExists) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: "Video not found" })
+      return
+    }
 
-        db.videos[videoIndex] = updatedVideo
+    db.videos = db.videos.filter((video) => video.id !== id)
 
-        res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-    },
-
-    deleteVideo(req: Request, res: Response) {
-
-        const id = +req.params.id;
-
-        const videoExists = db.videos.some((video) => video.id === id);
-
-        if (!videoExists) {
-            res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Video not found' })
-            return
-        }
-
-        db.videos = db.videos.filter((video) => video.id !== id)
-
-        res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-    },
-
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+  },
 }
 
-videoRouter.delete('/', videoController.deleteAllVideos)
-videoRouter.get('/', videoController.getVideo)
-videoRouter.post('/', videoController.createVideo)
-videoRouter.get('/:id', videoController.getVideoById)
-videoRouter.put('/:id', videoController.updateVideo)
-videoRouter.delete('/:id', videoController.deleteVideo)
-
-
-
+videoRouter.delete("/", videoController.deleteAllVideos)
+videoRouter.get("/", videoController.getVideo)
+videoRouter.post("/", videoController.createVideo)
+videoRouter.get("/:id", videoController.getVideoById)
+videoRouter.put("/:id", videoController.updateVideo)
+videoRouter.delete("/:id", videoController.deleteVideo)

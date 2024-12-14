@@ -1,57 +1,56 @@
-import {db} from '../db/db'
-import {PostInputModel, PostViewModel} from '../types/types'
+import { db } from "../db/db"
+import { PostInputModel, PostViewModel } from "../types/types"
 
 export const postsRepository = {
+  getPosts() {
+    return db.posts
+  },
 
-    getPosts() {
-        return db.posts;
-    },
-
-    createPost(body: PostInputModel) {
-        const newPost: PostViewModel = {
-            id: (Date.now() + Math.random()).toString(),
-            title: body.title,
-            shortDescription: body.shortDescription,
-            content: body.content,
-            blogId: body.blogId,
-            blogName: db.blogs.find(blog => blog.id === body.blogId)?.name || 'Unknown Blog'
-        };
-
-        db.posts.push(newPost);
-        return newPost;
-    },
-
-    getPostById(postId: string) {
-        return db.posts.find(post => post.id === postId)
-    },
-
-    updatePost(postId: string, body: PostInputModel) {
-        const postIndex = db.posts.findIndex(post => post.id === postId);
-
-        if (postIndex === -1) {
-            return false;
-        }
-
-        db.posts[postIndex] = {
-            ...db.posts[postIndex],
-            title: body.title,
-            shortDescription: body.shortDescription,
-            content: body.content,
-            blogId: body.blogId,
-            blogName: db.blogs.find(blog => blog.id === body.blogId)?.name || db.posts[postIndex].blogName
-        }
-
-        return true;
-    },
-
-    deletePost(postId: string) {
-        const postIndex = db.posts.findIndex(post => post.id === postId);
-
-        if (postIndex === -1) {
-            return false;
-        }
-
-        db.posts.splice(postIndex, 1);
-        return true;
+  createPost(body: PostInputModel) {
+    const newPost: PostViewModel = {
+      id: (Date.now() + Math.random()).toString(),
+      title: body.title,
+      shortDescription: body.shortDescription,
+      content: body.content,
+      blogId: body.blogId,
+      blogName: db.blogs.find((blog) => blog.id === body.blogId)?.name || "Unknown Blog",
     }
-};
+
+    db.posts = [...db.posts, newPost]
+    return newPost
+  },
+
+  getPostById(postId: string) {
+    return db.posts.find((post) => post.id === postId)
+  },
+
+  updatePost(postId: string, body: PostInputModel) {
+    const postIndex = db.posts.findIndex((post) => post.id === postId)
+
+    if (postIndex === -1) {
+      return false
+    }
+
+    db.posts[postIndex] = {
+      ...db.posts[postIndex],
+      title: body.title,
+      shortDescription: body.shortDescription,
+      content: body.content,
+      blogId: body.blogId,
+      blogName: db.blogs.find((blog) => blog.id === body.blogId)?.name || db.posts[postIndex].blogName,
+    }
+
+    return true
+  },
+
+  deletePost(postId: string) {
+    const postIndex = db.posts.findIndex((post) => post.id === postId)
+
+    if (postIndex === -1) {
+      return false
+    }
+
+    db.posts.splice(postIndex, 1)
+    return true
+  },
+}
