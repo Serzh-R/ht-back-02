@@ -7,7 +7,8 @@ import {db} from './db/db';
 export const app = express()
 app.use(express.json())
 app.use(cors())
-app.use(SETTINGS.PATH.VIDEOS, videoRouter)
+app.use(SETTINGS.PATH.BLOGS, videoRouter)
+app.use(SETTINGS.PATH.POSTS, videoRouter)
 
 app.delete('/testing/all-data', (req: Request, res: Response) => {
 

@@ -1,8 +1,24 @@
 import {BlogViewModel, DBType, PostViewModel} from '../types/types';
 
 export const db: DBType = {
-    blogs: [],
-    posts: []
+    blogs: [
+        {
+            id: '1',
+            name: 'Serzh',
+            description: 'description',
+            websiteUrl: 'https://live.com',
+        }
+    ],
+    posts: [
+        {
+            id: '1',
+            title: 'Back',
+            shortDescription: 'shortDescription',
+            content: 'content',
+            blogId: '1',
+            blogName: 'Serzh'
+        }
+    ]
 }
 
 export const blog: BlogViewModel = {
