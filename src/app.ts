@@ -3,12 +3,14 @@ import cors from "cors"
 import { HTTP_STATUSES, SETTINGS } from "./settings"
 import { videoRouter } from "./videos/videoRouter"
 import { db } from "./db/db"
+import { blogRouter } from "./routes/blogs-router"
+import { postRouter } from "./routes/posts-router"
 
 export const app = express()
 app.use(express.json())
 app.use(cors())
-app.use(SETTINGS.PATH.BLOGS, videoRouter)
-app.use(SETTINGS.PATH.POSTS, videoRouter)
+app.use(SETTINGS.PATH.BLOGS, blogRouter)
+app.use(SETTINGS.PATH.POSTS, postRouter)
 
 app.delete("/testing/all-data", (req: Request, res: Response) => {
   db.blogs = []
