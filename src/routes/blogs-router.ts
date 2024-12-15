@@ -2,6 +2,12 @@ import { NextFunction, Router, Request, Response } from "express"
 import { blogsRepository } from "../repositories/blogs-repository"
 import { HTTP_STATUSES } from "../settings"
 import { BlogInputModel } from "../types/types"
+import {
+  blogDescriptionValidator,
+  blogNameValidator,
+  blogWebsiteUrlValidator,
+} from "../validation/express-validator/field-validators"
+import { errorsResultMiddleware } from "../validation/express-validator/errors-result-middleware"
 
 export const blogRouter = Router()
 
@@ -13,11 +19,6 @@ export const blogController = {
 
   createBlog(req: Request, res: Response, next: NextFunction) {
     const body: BlogInputModel = req.body
-
-    // Validate the blog data (basic validation example)
-    /*if (!blogData.title || !blogData.content) {
-            return res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ error: 'Title and content are required.' });
-        }*/
 
     const newBlog = blogsRepository.createBlog(body)
     res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
@@ -54,7 +55,21 @@ export const blogController = {
 }
 
 blogRouter.get("/", blogController.getBlogs)
-blogRouter.post("/", blogController.createBlog)
+blogRouter.post(
+  "/",
+  blogNameValidator,
+  blogDescriptionValidator,
+  blogWebsiteUrlValidator,
+  errorsResultMiddleware,
+  blogController.createBlog,
+)
 blogRouter.get("/:id", blogController.getBlogById)
-blogRouter.put("/:id", blogController.updateBlog)
+blogRouter.put(
+  "/:id",
+  blogNameValidator,
+  blogDescriptionValidator,
+  blogWebsiteUrlValidator,
+  errorsResultMiddleware,
+  blogController.updateBlog,
+)
 blogRouter.delete("/:id", blogController.deleteBlog)

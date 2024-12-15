@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express"
 import cors from "cors"
 import { HTTP_STATUSES, SETTINGS } from "./settings"
-import { videoRouter } from "./videos/videoRouter"
 import { db } from "./db/db"
 import { blogRouter } from "./routes/blogs-router"
 import { postRouter } from "./routes/posts-router"
