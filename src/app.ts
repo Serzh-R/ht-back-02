@@ -18,5 +18,5 @@ app.delete("/testing/all-data", (req: Request, res: Response) => {
 })
 
 app.get("/", (req: Request, res: Response) => {
-  res.status(HTTP_STATUSES.OK_200).json("Ciao Back-end!")
+  res.status(HTTP_STATUSES.OK_200).json("Ciao HT-BACK-02!")
 })
