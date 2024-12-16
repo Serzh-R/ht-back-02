@@ -70,15 +70,15 @@ blogRouter.post(
   errorsResultMiddleware,
   blogController.createBlog,
 )
-blogRouter.get("/:id", idParamValidator, blogController.getBlogById)
+blogRouter.get("/:id", idParamValidator, errorsResultMiddleware, blogController.getBlogById)
 blogRouter.put(
   "/:id",
-  idParamValidator,
   authMiddleware,
+  idParamValidator,
   blogNameValidator,
   blogDescriptionValidator,
   blogWebsiteUrlValidator,
   errorsResultMiddleware,
   blogController.updateBlog,
 )
-blogRouter.delete("/:id", idParamValidator, authMiddleware, blogController.deleteBlog)
+blogRouter.delete("/:id", authMiddleware, idParamValidator, errorsResultMiddleware, blogController.deleteBlog)
