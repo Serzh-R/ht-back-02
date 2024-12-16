@@ -2,7 +2,7 @@ import { db } from "../db/db"
 import { BlogInputModel, BlogViewModel } from "../types/types"
 
 export const blogsRepository = {
-  getBlogs() {
+  getBlogs(): BlogViewModel[] {
     return db.blogs
   },
 

@@ -1,5 +1,12 @@
-import { body } from "express-validator"
+import { body, param } from "express-validator"
 import { blogsRepository } from "../../repositories/blogs-repository"
+
+export const idParamValidator = param("id")
+  .isString()
+  .withMessage("name should be a string")
+  .trim()
+  .notEmpty()
+  .withMessage("name is required")
 
 export const blogIdValidator = body("blogId")
   .isString()
@@ -68,6 +75,7 @@ export const postContentValidator = body("content")
   .withMessage("content should contain 10 - 1000 symbols")
 
 export const nwArray = [
+  idParamValidator,
   blogIdValidator,
   blogNameValidator,
   blogDescriptionValidator,
