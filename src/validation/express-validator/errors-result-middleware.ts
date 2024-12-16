@@ -9,7 +9,7 @@ export const errorsResultMiddleware = (req: Request, res: Response, next: NextFu
       errorsMessages: errors.array({ onlyFirstError: true }).map((err) => {
         return {
           message: err.msg,
-          field: (err as any).param || "unknown",
+          field: (err as any).param,
         }
       }),
     })
