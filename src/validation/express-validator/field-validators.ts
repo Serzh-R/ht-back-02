@@ -1,7 +1,7 @@
 import { body, param } from "express-validator"
 import { blogsRepository } from "../../blogs/blogs-repository"
 
-export const allowedFieldsValidator = body().custom((_, { req }) => {
+/*export const allowedFieldsValidator = body().custom((_, { req }) => {
   const allowedFields = ["name", "websiteUrl", "description"]
 
   const requestFields = Object.keys(req.body)
@@ -13,6 +13,20 @@ export const allowedFieldsValidator = body().custom((_, { req }) => {
   }
 
   return true
+})*/
+
+export const allowedFieldsValidator = body().custom((_, { req }) => {
+  const allowedFields = ["name", "websiteUrl", "description"]
+
+  const requestFields = Object.keys(req.body)
+
+  const invalidFields = requestFields.filter((field) => !allowedFields.includes(field))
+
+  if (invalidFields.length > 0) {
+    return false
+  } else {
+    return true
+  }
 })
 
 export const idParamValidator = param("id")
