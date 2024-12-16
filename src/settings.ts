@@ -4,6 +4,10 @@ config() // добавление переменных из файла .env в pr
 export const SETTINGS = {
   // все хардкодные значения должны быть здесь, для удобства их изменения
   PORT: process.env.PORT || 3003,
+  CREDENTIALS: {
+    LOGIN: "admin",
+    PASSWORD: "qwerty",
+  },
   PATH: {
     BLOGS: "/blogs",
     POSTS: "/posts",

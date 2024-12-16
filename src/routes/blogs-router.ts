@@ -8,6 +8,7 @@ import {
   blogWebsiteUrlValidator,
 } from "../validation/express-validator/field-validators"
 import { errorsResultMiddleware } from "../validation/express-validator/errors-result-middleware"
+import { authMiddleware } from "../middlewares/auth-middleware"
 
 export const blogRouter = Router()
 
@@ -53,6 +54,7 @@ export const blogController = {
 blogRouter.get("/", blogController.getBlogs)
 blogRouter.post(
   "/",
+  authMiddleware,
   blogNameValidator,
   blogDescriptionValidator,
   blogWebsiteUrlValidator,
@@ -62,10 +64,11 @@ blogRouter.post(
 blogRouter.get("/:id", blogController.getBlogById)
 blogRouter.put(
   "/:id",
+  authMiddleware,
   blogNameValidator,
   blogDescriptionValidator,
   blogWebsiteUrlValidator,
   errorsResultMiddleware,
   blogController.updateBlog,
 )
-blogRouter.delete("/:id", blogController.deleteBlog)
+blogRouter.delete("/:id", authMiddleware, blogController.deleteBlog)

@@ -9,6 +9,7 @@ import {
   postTitleValidator,
 } from "../validation/express-validator/field-validators"
 import { errorsResultMiddleware } from "../validation/express-validator/errors-result-middleware"
+import { authMiddleware } from "../middlewares/auth-middleware"
 
 export const postRouter = Router()
 
@@ -54,6 +55,7 @@ export const postController = {
 postRouter.get("/", postController.getPosts)
 postRouter.post(
   "/",
+  authMiddleware,
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
@@ -64,6 +66,7 @@ postRouter.post(
 postRouter.get("/:id", postController.getPostById)
 postRouter.put(
   "/:id",
+  authMiddleware,
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
@@ -71,4 +74,4 @@ postRouter.put(
   errorsResultMiddleware,
   postController.updatePost,
 )
-postRouter.delete("/:id", postController.deletePost)
+postRouter.delete("/:id", authMiddleware, postController.deletePost)
