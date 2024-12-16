@@ -3,6 +3,7 @@ import { blogsRepository } from "./blogs-repository"
 import { HTTP_STATUSES } from "../settings"
 import { BlogInputModel } from "../types/types"
 import {
+  allowedFieldsValidator,
   blogDescriptionValidator,
   blogNameValidator,
   blogWebsiteUrlValidator,
@@ -64,6 +65,7 @@ blogRouter.get("/", blogController.getBlogs)
 blogRouter.post(
   "/",
   authMiddleware,
+  allowedFieldsValidator,
   blogNameValidator,
   blogDescriptionValidator,
   blogWebsiteUrlValidator,
@@ -74,6 +76,7 @@ blogRouter.get("/:id", idParamValidator, errorsResultMiddleware, blogController.
 blogRouter.put(
   "/:id",
   authMiddleware,
+  allowedFieldsValidator,
   idParamValidator,
   blogNameValidator,
   blogDescriptionValidator,

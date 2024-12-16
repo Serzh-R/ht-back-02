@@ -1,6 +1,20 @@
 import { body, param } from "express-validator"
 import { blogsRepository } from "../../blogs/blogs-repository"
 
+export const allowedFieldsValidator = body().custom((_, { req }) => {
+  const allowedFields = ["name", "websiteUrl", "description"]
+
+  const requestFields = Object.keys(req.body)
+
+  const invalidFields = requestFields.filter((field) => !allowedFields.includes(field))
+
+  if (invalidFields.length > 0) {
+    throw new Error(`Unexpected field(s): ${invalidFields.join(", ")}. Allowed fields: ${allowedFields.join(", ")}`)
+  }
+
+  return true
+})
+
 export const idParamValidator = param("id")
   .isString()
   .withMessage("name should be a string")
@@ -75,6 +89,7 @@ export const postContentValidator = body("content")
   .withMessage("content should contain 10 - 1000 symbols")
 
 export const nwArray = [
+  allowedFieldsValidator,
   idParamValidator,
   blogIdValidator,
   blogNameValidator,
