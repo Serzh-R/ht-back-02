@@ -2,6 +2,13 @@ import { NextFunction, Router, Request, Response } from "express"
 import { postsRepository } from "../repositories/posts-repository"
 import { HTTP_STATUSES } from "../settings"
 import { PostInputModel } from "../types/types"
+import {
+  blogIdValidator,
+  postContentValidator,
+  postShortDescriptionValidator,
+  postTitleValidator,
+} from "../validation/express-validator/field-validators"
+import { errorsResultMiddleware } from "../validation/express-validator/errors-result-middleware"
 
 export const postRouter = Router()
 
@@ -13,11 +20,6 @@ export const postController = {
 
   createPost(req: Request, res: Response, next: NextFunction) {
     const postData: PostInputModel = req.body
-
-    // Validate the incoming data
-    /*if (!postData.title || !postData.content || !postData.blogId) {
-            return res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ error: 'Title, content, and blogId are required.' });
-        }*/
 
     const newPost = postsRepository.createPost(postData)
     res.status(HTTP_STATUSES.CREATED_201).json(newPost)
@@ -50,7 +52,23 @@ export const postController = {
 }
 
 postRouter.get("/", postController.getPosts)
-postRouter.post("/", postController.createPost)
+postRouter.post(
+  "/",
+  postTitleValidator,
+  postShortDescriptionValidator,
+  postContentValidator,
+  blogIdValidator,
+  errorsResultMiddleware,
+  postController.createPost,
+)
 postRouter.get("/:id", postController.getPostById)
-postRouter.put("/:id", postController.updatePost)
+postRouter.put(
+  "/:id",
+  postTitleValidator,
+  postShortDescriptionValidator,
+  postContentValidator,
+  blogIdValidator,
+  errorsResultMiddleware,
+  postController.updatePost,
+)
 postRouter.delete("/:id", postController.deletePost)

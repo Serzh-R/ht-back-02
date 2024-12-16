@@ -41,15 +41,11 @@ export const blogController = {
   deleteBlog(req: Request, res: Response, next: NextFunction) {
     const blogId = req.params.id
 
-    try {
-      const isDeleted = blogsRepository.deleteBlog(blogId)
-      if (isDeleted) {
-        res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-      } else {
-        res.status(HTTP_STATUSES.NOT_FOUND_404).json({ error: "Blog not found." })
-      }
-    } catch (error) {
-      next(error)
+    const isDeleted = blogsRepository.deleteBlog(blogId)
+    if (isDeleted) {
+      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+    } else {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ error: "Blog not found." })
     }
   },
 }
