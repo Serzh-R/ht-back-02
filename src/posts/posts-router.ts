@@ -1,5 +1,5 @@
 import { NextFunction, Router, Request, Response } from "express"
-import { postsRepository } from "../repositories/posts-repository"
+import { postsRepository } from "./posts-repository"
 import { HTTP_STATUSES } from "../settings"
 import { PostInputModel } from "../types/types"
 import {

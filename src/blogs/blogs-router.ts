@@ -1,5 +1,5 @@
 import { NextFunction, Router, Request, Response } from "express"
-import { blogsRepository } from "../repositories/blogs-repository"
+import { blogsRepository } from "./blogs-repository"
 import { HTTP_STATUSES } from "../settings"
 import { BlogInputModel } from "../types/types"
 import {
@@ -49,9 +49,9 @@ export const blogController = {
   },
 
   deleteBlog(req: Request, res: Response) {
-    const blogId = req.params.id
+    const id = req.params.id
 
-    const isDeleted = blogsRepository.deleteBlog(blogId)
+    const isDeleted = blogsRepository.deleteBlog(id)
     if (isDeleted) {
       res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     } else {

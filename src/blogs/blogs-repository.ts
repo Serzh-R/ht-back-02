@@ -38,14 +38,9 @@ export const blogsRepository = {
     return
   },
 
-  deleteBlog(blogId: string) {
-    const blogIndex = db.blogs.findIndex((blog) => blog.id === blogId)
-
-    if (blogIndex === -1) {
-      return false
-    }
-
-    db.blogs.splice(blogIndex, 1)
-    return true
+  deleteBlog(id: string) {
+    const initialLength = db.blogs.length
+    db.blogs = db.blogs.filter((blog) => blog.id !== id)
+    return db.blogs.length < initialLength
   },
 }
