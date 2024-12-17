@@ -20,7 +20,7 @@ export const postsRepository = {
     return newPost
   },
 
-  getPostById(postId: string) {
+  getPostById(postId: string): PostViewModel | undefined {
     return db.posts.find((post) => post.id === postId)
   },
 

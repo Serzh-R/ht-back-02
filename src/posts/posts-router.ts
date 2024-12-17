@@ -21,9 +21,9 @@ export const postController = {
   },
 
   createPost(req: Request, res: Response) {
-    const postData: PostInputModel = req.body
+    const body: PostInputModel = req.body
 
-    const newPost = postsRepository.createPost(postData)
+    const newPost = postsRepository.createPost(body)
     res.status(HTTP_STATUSES.CREATED_201).json(newPost)
   },
 
@@ -31,24 +31,32 @@ export const postController = {
     const postId = req.params.id
 
     const postById = postsRepository.getPostById(postId)
-    res.status(HTTP_STATUSES.OK_200).json(postById)
+    if (!postById) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
+    } else {
+      res.status(HTTP_STATUSES.OK_200).json(postById)
+    }
   },
 
   updatePost(req: Request, res: Response) {
     const postId = req.params.id
     const body = req.body
-    postsRepository.updatePost(postId, body)
-    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+    const isUpdated = postsRepository.updatePost(postId, body)
+    if (!isUpdated) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
+    } else {
+      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+    }
   },
 
   deletePost(req: Request, res: Response) {
     const postId = req.params.id
 
     const isDeleted = postsRepository.deletePost(postId)
-    if (isDeleted) {
-      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+    if (!isDeleted) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
     } else {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ error: "Post not found." })
+      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     }
   },
 }
