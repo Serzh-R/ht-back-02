@@ -4,6 +4,7 @@ import { HTTP_STATUSES } from "../settings"
 import { PostInputModel } from "../types/types"
 import {
   blogIdValidator,
+  idParamValidator,
   postContentValidator,
   postShortDescriptionValidator,
   postTitleValidator,
@@ -63,10 +64,11 @@ postRouter.post(
   errorsResultMiddleware,
   postController.createPost,
 )
-postRouter.get("/:id", postController.getPostById)
+postRouter.get("/:id", idParamValidator, postController.getPostById)
 postRouter.put(
   "/:id",
   authMiddleware,
+  idParamValidator,
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
@@ -74,4 +76,4 @@ postRouter.put(
   errorsResultMiddleware,
   postController.updatePost,
 )
-postRouter.delete("/:id", authMiddleware, postController.deletePost)
+postRouter.delete("/:id", authMiddleware, idParamValidator, postController.deletePost)
