@@ -44,13 +44,22 @@ export const postsRepository = {
   },
 
   deletePost(postId: string) {
-    const postIndex = db.posts.findIndex((post) => post.id === postId)
+    const post: PostViewModel | undefined = db.posts.find((p) => p.id === postId)
 
-    if (postIndex === -1) {
+    if (!post) {
       return false
     }
 
-    db.posts.splice(postIndex, 1)
+    db.posts = db.posts.filter((post) => post.id !== postId)
     return true
+
+    /*const postIndex = db.posts.findIndex((post) => post.id === postId)
+
+    if (postIndex === -1) {
+      return false
+    }*/
+
+    /*db.posts.splice(postIndex, 1)
+    return true*/
   },
 }
