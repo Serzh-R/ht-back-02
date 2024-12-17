@@ -1,34 +1,6 @@
 import { body, param } from "express-validator"
 import { blogsRepository } from "../../blogs/blogs-repository"
 
-/*export const allowedFieldsValidator = body().custom((_, { req }) => {
-  const allowedFields = ["name", "websiteUrl", "description"]
-
-  const requestFields = Object.keys(req.body)
-
-  const invalidFields = requestFields.filter((field) => !allowedFields.includes(field))
-
-  if (invalidFields.length > 0) {
-    throw new Error(`Unexpected field(s): ${invalidFields.join(", ")}. Allowed fields: ${allowedFields.join(", ")}`)
-  }
-
-  return true
-})*/
-
-export const allowedFieldsValidator = body().custom((_, { req }) => {
-  const allowedFields = ["name", "websiteUrl", "description"]
-
-  const requestFields = Object.keys(req.body)
-
-  const invalidFields = requestFields.filter((field) => !allowedFields.includes(field))
-
-  if (invalidFields.length > 0) {
-    return false
-  } else {
-    return true
-  }
-})
-
 export const idParamValidator = param("id")
   .isString()
   .withMessage("name should be a string")
@@ -46,25 +18,72 @@ export const blogIdValidator = body("blogId")
   })
   .withMessage("no blog")
 
-export const blogNameValidator = body("name")
+const BlogFields: string = "name" | "description" | "websiteUrl"
+
+export const specificFieldsValidator = (BlogFields) => {
+  return body().custom((_, { req }) => {
+    const bodyKeys = Object.keys(req.body) // Получаем все ключи из тела запроса
+    const invalidFields = bodyKeys.filter((key) => !BlogFields.includes(key))
+
+    if (invalidFields.length > 0) {
+      throw new Error(`Invalid fields: ${invalidFields.join(", ")}`)
+    }
+
+    allowedFields.forEach((field) => {
+      if (!req.body.hasOwnProperty(field)) {
+        throw new Error(`Missing required field: ${field}`)
+      }
+    })
+
+    return true // Все проверки прошли
+  })
+}
+
+export const blogFieldsValidator = [
+  specificFieldsValidator(BlogFields),
+  body("name")
+    .isString()
+    .withMessage("name should be a string")
+    .trim()
+    .notEmpty()
+    .withMessage("name is required")
+    .isLength({ min: 1, max: 15 })
+    .withMessage("name should contain 1 - 15 symbols"),
+  body("description")
+    .isString()
+    .withMessage("description should be a string")
+    .trim()
+    .notEmpty()
+    .withMessage("description is required")
+    .isLength({ min: 1, max: 300 })
+    .withMessage("description should contain 1 - 300 symbols"),
+  body("websiteUrl")
+    .isURL()
+    .withMessage("websiteUrl should be a valid URL")
+    .trim()
+    .notEmpty()
+    .withMessage("websiteUrl is required"),
+]
+
+/*export const blogNameValidator = body("name")
   .isString()
   .withMessage("name should be a string")
   .trim()
   .notEmpty()
   .withMessage("name is required")
   .isLength({ min: 1, max: 15 })
-  .withMessage("name should contain 1 - 15 symbols")
+  .withMessage("name should contain 1 - 15 symbols")*/
 
-export const blogDescriptionValidator = body("description")
+/*export const blogDescriptionValidator = body("description")
   .isString()
   .withMessage("description should be a string")
   .trim()
   .notEmpty()
   .withMessage("description is required")
   .isLength({ min: 10, max: 500 })
-  .withMessage("description should contain 10 - 500 symbols")
+  .withMessage("description should contain 10 - 500 symbols")*/
 
-export const blogWebsiteUrlValidator = body("websiteUrl")
+/*export const blogWebsiteUrlValidator = body("websiteUrl")
   .isString()
   .withMessage("websiteUrl should be a string")
   .trim()
@@ -73,7 +92,7 @@ export const blogWebsiteUrlValidator = body("websiteUrl")
   .isLength({ max: 100 })
   .withMessage("websiteUrl should not exceed 100 symbols")
   .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}\/?([a-zA-Z0-9._-]+\/?)*$/)
-  .withMessage("websiteUrl must be a valid URL starting with https://")
+  .withMessage("websiteUrl must be a valid URL starting with https://")*/
 
 export const postTitleValidator = body("title")
   .isString()
@@ -103,7 +122,6 @@ export const postContentValidator = body("content")
   .withMessage("content should contain 10 - 1000 symbols")
 
 export const nwArray = [
-  allowedFieldsValidator,
   idParamValidator,
   blogIdValidator,
   blogNameValidator,
