@@ -26,7 +26,7 @@ export const specificFieldsValidator = (fields: string[]) => {
 
     const invalidFields = bodyKeys.filter((key) => !fields.includes(key))
     if (invalidFields.length > 0) {
-      throw new Error(`Недопустимые поля: ${invalidFields.join(", ")}`)
+      //throw new Error(`Недопустимые поля: ${invalidFields.join(", ")}`)
     }
     return true
   })
