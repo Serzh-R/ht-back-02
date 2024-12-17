@@ -27,15 +27,15 @@ export const blogsRepository = {
 
     if (blogIndex === -1) {
       return false
+    } else {
+      db.blogs[blogIndex] = {
+        ...db.blogs[blogIndex],
+        name: body.name,
+        description: body.description,
+        websiteUrl: body.websiteUrl,
+      }
     }
-
-    db.blogs[blogIndex] = {
-      ...db.blogs[blogIndex],
-      name: body.name,
-      description: body.description,
-      websiteUrl: body.websiteUrl,
-    }
-    return
+    return true
   },
 
   deleteBlog(id: string) {

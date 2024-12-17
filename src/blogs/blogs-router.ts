@@ -31,10 +31,10 @@ export const blogController = {
     const blogId = req.params.id
 
     const blogById = blogsRepository.getBlogById(blogId)
-    if (blogById) {
-      res.status(HTTP_STATUSES.OK_200).json(blogById)
+    if (!blogById) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
     } else {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ error: "Blog not found." })
+      res.status(HTTP_STATUSES.OK_200).json(blogById)
     }
   },
 
@@ -42,10 +42,10 @@ export const blogController = {
     const blogId = req.params.id
     const body: BlogInputModel = req.body
     const isUpdated = blogsRepository.updateBlog(blogId, body)
-    if (isUpdated) {
-      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+    if (!isUpdated) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
     } else {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ error: "Blog not found." })
+      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     }
   },
 
@@ -53,35 +53,22 @@ export const blogController = {
     const id = req.params.id
 
     const isDeleted = blogsRepository.deleteBlog(id)
-    if (isDeleted) {
-      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+    if (!isDeleted) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
     } else {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ error: "Blog not found." })
+      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     }
   },
 }
 
 blogRouter.get("/", blogController.getBlogs)
-blogRouter.post(
-  "/",
-  authMiddleware,
-  blogFieldsValidator,
-  //blogNameValidator,
-  //blogDescriptionValidator,
-  //blogWebsiteUrlValidator,
-  errorsResultMiddleware,
-  blogController.createBlog,
-)
+blogRouter.post("/", authMiddleware, blogFieldsValidator, errorsResultMiddleware, blogController.createBlog)
 blogRouter.get("/:id", idParamValidator, errorsResultMiddleware, blogController.getBlogById)
 blogRouter.put(
   "/:id",
   authMiddleware,
-
   idParamValidator,
   blogFieldsValidator,
-  //blogNameValidator,
-  //blogDescriptionValidator,
-  //blogWebsiteUrlValidator,
   errorsResultMiddleware,
   blogController.updateBlog,
 )
