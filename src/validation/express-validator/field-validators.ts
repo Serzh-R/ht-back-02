@@ -20,7 +20,7 @@ export const blogIdValidator = body("blogId")
 
 /*************************************************************************************/
 
-/*const BlogFields: string[] = ["name", "description", "websiteUrl"]
+const BlogFields: string[] = ["name", "description", "websiteUrl"]
 
 export const specificFieldsValidator = (fields: string[]) => {
   return body().custom((_, { req }) => {
@@ -31,12 +31,12 @@ export const specificFieldsValidator = (fields: string[]) => {
     }
     return true
   })
-}*/
+}
 
 export const blogFieldsValidator = [
-  //specificFieldsValidator(BlogFields),
+  specificFieldsValidator(BlogFields),
   body("name")
-    .optional()
+    //.optional()
     .isString()
     .withMessage("name should be a string")
     .trim()
@@ -45,7 +45,7 @@ export const blogFieldsValidator = [
     .isLength({ max: 15 })
     .withMessage("the name length should not exceed 15 characters"),
   body("description")
-    .optional()
+    //.optional()
     .isString()
     .withMessage("description should be a string")
     .trim()
@@ -54,7 +54,7 @@ export const blogFieldsValidator = [
     .isLength({ max: 500 })
     .withMessage("the description length should not exceed 500 characters"),
   body("websiteUrl")
-    .optional()
+    //.optional()
     .isURL()
     .withMessage("websiteUrl should be a valid URL")
     .isString()
@@ -68,7 +68,7 @@ export const blogFieldsValidator = [
     .withMessage("websiteUrl must be a valid URL starting with https://"),
 
   // Проверяем, что в body нет лишних полей
-  checkExact([], { message: "Invalid fields in request body" }),
+  //checkExact([], { message: "Invalid fields in request body" }),
 ]
 
 /*****************************************************************************************************/
