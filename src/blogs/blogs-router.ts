@@ -3,9 +3,10 @@ import { blogsRepository } from "./blogs-repository"
 import { HTTP_STATUSES } from "../settings"
 import { BlogInputModel } from "../types/types"
 import {
-  blogDescriptionValidator,
-  blogNameValidator,
-  blogWebsiteUrlValidator,
+  //blogDescriptionValidator,
+  blogFieldsValidator,
+  //blogNameValidator,
+  //blogWebsiteUrlValidator,
   idParamValidator,
 } from "../validation/express-validator/field-validators"
 import { errorsResultMiddleware } from "../validation/express-validator/errors-result-middleware"
@@ -64,10 +65,10 @@ blogRouter.get("/", blogController.getBlogs)
 blogRouter.post(
   "/",
   authMiddleware,
-
-  blogNameValidator,
-  blogDescriptionValidator,
-  blogWebsiteUrlValidator,
+  blogFieldsValidator,
+  //blogNameValidator,
+  //blogDescriptionValidator,
+  //blogWebsiteUrlValidator,
   errorsResultMiddleware,
   blogController.createBlog,
 )
@@ -77,9 +78,10 @@ blogRouter.put(
   authMiddleware,
 
   idParamValidator,
-  blogNameValidator,
-  blogDescriptionValidator,
-  blogWebsiteUrlValidator,
+  blogFieldsValidator,
+  //blogNameValidator,
+  //blogDescriptionValidator,
+  //blogWebsiteUrlValidator,
   errorsResultMiddleware,
   blogController.updateBlog,
 )

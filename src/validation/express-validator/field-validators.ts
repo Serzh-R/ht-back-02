@@ -18,24 +18,17 @@ export const blogIdValidator = body("blogId")
   })
   .withMessage("no blog")
 
-const BlogFields: string = "name" | "description" | "websiteUrl"
+const BlogFields: string[] = ["name", "description", "websiteUrl"]
 
-export const specificFieldsValidator = (BlogFields) => {
+export const specificFieldsValidator = (fields: string[]) => {
   return body().custom((_, { req }) => {
     const bodyKeys = Object.keys(req.body) // Получаем все ключи из тела запроса
-    const invalidFields = bodyKeys.filter((key) => !BlogFields.includes(key))
 
+    const invalidFields = bodyKeys.filter((key) => !fields.includes(key))
     if (invalidFields.length > 0) {
-      throw new Error(`Invalid fields: ${invalidFields.join(", ")}`)
+      throw new Error(`Недопустимые поля: ${invalidFields.join(", ")}`)
     }
-
-    allowedFields.forEach((field) => {
-      if (!req.body.hasOwnProperty(field)) {
-        throw new Error(`Missing required field: ${field}`)
-      }
-    })
-
-    return true // Все проверки прошли
+    return true
   })
 }
 
@@ -55,14 +48,20 @@ export const blogFieldsValidator = [
     .trim()
     .notEmpty()
     .withMessage("description is required")
-    .isLength({ min: 1, max: 300 })
-    .withMessage("description should contain 1 - 300 symbols"),
+    .isLength({ min: 10, max: 500 })
+    .withMessage("description should contain 10 - 500 symbols"),
   body("websiteUrl")
     .isURL()
     .withMessage("websiteUrl should be a valid URL")
+    .isString()
+    .withMessage("websiteUrl should be a string")
     .trim()
     .notEmpty()
-    .withMessage("websiteUrl is required"),
+    .withMessage("websiteUrl is required")
+    .isLength({ max: 100 })
+    .withMessage("websiteUrl should not exceed 100 symbols")
+    .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}\/?([a-zA-Z0-9._-]+\/?)*$/)
+    .withMessage("websiteUrl must be a valid URL starting with https://"),
 ]
 
 /*export const blogNameValidator = body("name")
@@ -124,9 +123,9 @@ export const postContentValidator = body("content")
 export const nwArray = [
   idParamValidator,
   blogIdValidator,
-  blogNameValidator,
-  blogDescriptionValidator,
-  blogWebsiteUrlValidator,
+  //blogNameValidator,
+  //blogDescriptionValidator,
+  //blogWebsiteUrlValidator,
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
