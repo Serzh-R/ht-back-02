@@ -13,6 +13,8 @@ export const SETTINGS = {
     POSTS: "/posts",
     DELETE_ALL: "/testing/all-data",
   },
+  MONGO_URL: process.env.MONGO_URL || "mongodb://localhost:27017",
+  DB_NAME: process.env.DB_NAME || "test",
 }
 
 export const HTTP_STATUSES = {

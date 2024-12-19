@@ -15,8 +15,8 @@ import { authMiddleware } from "../middlewares/auth-middleware"
 export const blogRouter = Router()
 
 export const blogController = {
-  getBlogs(req: Request, res: Response) {
-    const blogs = blogsRepository.getBlogs()
+  async getBlogs(req: Request, res: Response) {
+    const blogs = await blogsRepository.getBlogs()
     res.status(HTTP_STATUSES.OK_200).json(blogs)
   },
 

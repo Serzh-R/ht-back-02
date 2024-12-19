@@ -1,9 +1,11 @@
 import { db } from "../db/db"
 import { BlogInputModelType, BlogViewModelType } from "../types/types"
+import { blogsCollection } from "../db/mongoDb"
 
 export const blogsRepository = {
-  getBlogs(): BlogViewModelType[] {
-    return db.blogs
+  async getBlogs(): Promise<BlogViewModelType[]> {
+    return await blogsCollection.find().toArray()
+    //return await db.blogs
   },
 
   createBlog(body: BlogInputModelType) {
