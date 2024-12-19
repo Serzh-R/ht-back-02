@@ -21,7 +21,7 @@ export const db: DBType = {
   ],
 }
 
-export const blog: BlogViewModelType = {
+/*export const blog: BlogViewModelType = {
   id: "1",
   name: "live",
   description: "beautiful",
@@ -35,7 +35,7 @@ export const post: PostViewModelType = {
   content: "belissimo",
   blogId: "1",
   blogName: "live",
-}
+}*/
 
 // функция для быстрой очистки/заполнения базы данных для тестов
 export const setDB = (dataset?: Partial<DBType>) => {
