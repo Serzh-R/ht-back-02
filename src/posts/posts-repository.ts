@@ -1,13 +1,13 @@
 import { db } from "../db/db"
-import { PostInputModel, PostViewModel } from "../types/types"
+import { PostInputModelType, PostViewModelType } from "../types/types"
 
 export const postsRepository = {
   getPosts() {
     return db.posts
   },
 
-  createPost(body: PostInputModel) {
-    const newPost: PostViewModel = {
+  createPost(body: PostInputModelType) {
+    const newPost: PostViewModelType = {
       id: (Date.now() + Math.random()).toString(),
       title: body.title,
       shortDescription: body.shortDescription,
@@ -20,11 +20,11 @@ export const postsRepository = {
     return newPost
   },
 
-  getPostById(postId: string): PostViewModel | undefined {
+  getPostById(postId: string): PostViewModelType | undefined {
     return db.posts.find((post) => post.id === postId)
   },
 
-  updatePost(postId: string, body: PostInputModel) {
+  updatePost(postId: string, body: PostInputModelType) {
     const postIndex = db.posts.findIndex((post) => post.id === postId)
 
     if (postIndex === -1) {
@@ -44,7 +44,7 @@ export const postsRepository = {
   },
 
   deletePost(postId: string) {
-    const post: PostViewModel | undefined = db.posts.find((p) => p.id === postId)
+    const post: PostViewModelType | undefined = db.posts.find((p) => p.id === postId)
 
     if (!post) {
       return false

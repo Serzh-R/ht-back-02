@@ -1,4 +1,4 @@
-import { BlogViewModel, DBType, PostViewModel } from "../types/types"
+import { BlogViewModelType, DBType, PostViewModelType } from "../types/types"
 
 export const db: DBType = {
   blogs: [
@@ -21,14 +21,14 @@ export const db: DBType = {
   ],
 }
 
-export const blog: BlogViewModel = {
+export const blog: BlogViewModelType = {
   id: "1",
   name: "live",
   description: "beautiful",
   websiteUrl: "https://live.com",
 }
 
-export const post: PostViewModel = {
+export const post: PostViewModelType = {
   id: "2",
   title: "Back",
   shortDescription: "beautiful",

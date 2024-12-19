@@ -1,31 +1,31 @@
 export type DBType = {
-  blogs: BlogViewModel[]
-  posts: PostViewModel[]
+  blogs: BlogViewModelType[]
+  posts: PostViewModelType[]
 }
 
-export type FieldError = {
+export type FieldErrorType = {
   message: string
   field: string
 }
 
-export type APIErrorResult = {
-  errorsMessages: FieldError[]
+export type APIErrorResultType = {
+  errorsMessages: FieldErrorType[]
 }
 
-export type BlogViewModel = {
+export type BlogViewModelType = {
   id: string
   name: string
   description: string
   websiteUrl: string
 }
 
-export type BlogInputModel = {
+export type BlogInputModelType = {
   name: string
   description: string
   websiteUrl: string
 }
 
-export type PostViewModel = {
+export type PostViewModelType = {
   id: string
   title: string
   shortDescription: string
@@ -34,7 +34,7 @@ export type PostViewModel = {
   blogName: string
 }
 
-export type PostInputModel = {
+export type PostInputModelType = {
   title: string
   shortDescription: string
   content: string

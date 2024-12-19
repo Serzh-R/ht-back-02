@@ -1,13 +1,13 @@
 import { db } from "../db/db"
-import { BlogInputModel, BlogViewModel } from "../types/types"
+import { BlogInputModelType, BlogViewModelType } from "../types/types"
 
 export const blogsRepository = {
-  getBlogs(): BlogViewModel[] {
+  getBlogs(): BlogViewModelType[] {
     return db.blogs
   },
 
-  createBlog(body: BlogInputModel) {
-    const newBlog: BlogViewModel = {
+  createBlog(body: BlogInputModelType) {
+    const newBlog: BlogViewModelType = {
       id: (Date.now() + Math.random()).toString(),
       name: body.name,
       description: body.description,
@@ -22,7 +22,7 @@ export const blogsRepository = {
     return db.blogs.find((blog) => blog.id === blogId) || null
   },
 
-  updateBlog(blogId: string, body: BlogInputModel) {
+  updateBlog(blogId: string, body: BlogInputModelType) {
     const blogIndex = db.blogs.findIndex((blog) => blog.id === blogId)
 
     if (blogIndex === -1) {

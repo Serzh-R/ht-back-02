@@ -11,7 +11,7 @@ app.use(cors())
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
 app.use(SETTINGS.PATH.POSTS, postRouter)
 
-app.delete("/testing/all-data", (req: Request, res: Response) => {
+app.delete(SETTINGS.PATH.DELETE_ALL, (req: Request, res: Response) => {
   db.blogs = []
   db.posts = []
 

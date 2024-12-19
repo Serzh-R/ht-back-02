@@ -11,6 +11,7 @@ export const SETTINGS = {
   PATH: {
     BLOGS: "/blogs",
     POSTS: "/posts",
+    DELETE_ALL: "/testing/all-data",
   },
 }
 

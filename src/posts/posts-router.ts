@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express"
 import { postsRepository } from "./posts-repository"
 import { HTTP_STATUSES } from "../settings"
-import { PostInputModel } from "../types/types"
+import { PostInputModelType } from "../types/types"
 import {
   blogIdValidator,
   idParamValidator,
@@ -21,7 +21,7 @@ export const postController = {
   },
 
   createPost(req: Request, res: Response) {
-    const body: PostInputModel = req.body
+    const body: PostInputModelType = req.body
 
     const newPost = postsRepository.createPost(body)
     res.status(HTTP_STATUSES.CREATED_201).json(newPost)

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express"
 import { blogsRepository } from "./blogs-repository"
 import { HTTP_STATUSES } from "../settings"
-import { BlogInputModel } from "../types/types"
+import { BlogInputModelType } from "../types/types"
 import {
   //blogDescriptionValidator,
   blogFieldsValidator,
@@ -21,7 +21,7 @@ export const blogController = {
   },
 
   createBlog(req: Request, res: Response) {
-    const body: BlogInputModel = req.body
+    const body: BlogInputModelType = req.body
 
     const newBlog = blogsRepository.createBlog(body)
     res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
@@ -40,7 +40,7 @@ export const blogController = {
 
   updateBlog(req: Request, res: Response) {
     const blogId = req.params.id
-    const body: BlogInputModel = req.body
+    const body: BlogInputModelType = req.body
     const isUpdated = blogsRepository.updateBlog(blogId, body)
     if (!isUpdated) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
