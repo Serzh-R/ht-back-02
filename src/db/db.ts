@@ -7,6 +7,8 @@ export const db: DBType = {
       name: "Serzh",
       description: "description",
       websiteUrl: "https://live.com",
+      createdAt: new Date().toISOString(),
+      isMembership: false,
     },
   ],
   posts: [
@@ -17,6 +19,7 @@ export const db: DBType = {
       content: "content",
       blogId: "1",
       blogName: "Serzh",
+      createdAt: new Date().toISOString(),
     },
   ],
 }
@@ -26,6 +29,8 @@ export const blog: BlogViewModelType = {
   name: "live",
   description: "beautiful",
   websiteUrl: "https://live.com",
+  createdAt: new Date().toISOString(),
+  isMembership: false,
 }
 
 export const post: PostViewModelType = {
@@ -35,6 +40,7 @@ export const post: PostViewModelType = {
   content: "belissimo",
   blogId: "1",
   blogName: "live",
+  createdAt: new Date().toISOString(),
 }
 
 // функция для быстрой очистки/заполнения базы данных для тестов
