@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express"
 import cors from "cors"
 import { HTTP_STATUSES, SETTINGS } from "./settings"
-import { db } from "./db/db"
 import { blogRouter } from "./blogs/blogs-router"
 import { postRouter } from "./posts/posts-router"
 import { blogsCollection, postsCollection } from "./db/mongoDb"
