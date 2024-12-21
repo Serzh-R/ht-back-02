@@ -15,22 +15,22 @@ import { authMiddleware } from "../middlewares/auth-middleware"
 export const postRouter = Router()
 
 export const postController = {
-  getPosts(req: Request, res: Response) {
-    const posts = postsRepository.getPosts()
+  async getPosts(req: Request, res: Response) {
+    const posts = await postsRepository.getPosts()
     res.status(HTTP_STATUSES.OK_200).json(posts)
   },
 
-  createPost(req: Request, res: Response) {
+  async createPost(req: Request, res: Response) {
     const body: PostInputModelType = req.body
 
-    const newPost = postsRepository.createPost(body)
+    const newPost = await postsRepository.createPost(body)
     res.status(HTTP_STATUSES.CREATED_201).json(newPost)
   },
 
-  getPostById(req: Request, res: Response) {
+  async getPostById(req: Request, res: Response) {
     const postId = req.params.id
 
-    const postById = postsRepository.getPostById(postId)
+    const postById = await postsRepository.getPostById(postId)
     if (!postById) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
     } else {
@@ -38,10 +38,10 @@ export const postController = {
     }
   },
 
-  updatePost(req: Request, res: Response) {
+  async updatePost(req: Request, res: Response) {
     const postId = req.params.id
     const body = req.body
-    const isUpdated = postsRepository.updatePost(postId, body)
+    const isUpdated = await postsRepository.updatePost(postId, body)
     if (!isUpdated) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
     } else {
@@ -49,10 +49,10 @@ export const postController = {
     }
   },
 
-  deletePost(req: Request, res: Response) {
+  async deletePost(req: Request, res: Response) {
     const postId = req.params.id
 
-    const isDeleted = postsRepository.deletePost(postId)
+    const isDeleted = await postsRepository.deletePost(postId)
     if (!isDeleted) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
     } else {

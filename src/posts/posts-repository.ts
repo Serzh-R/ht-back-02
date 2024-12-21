@@ -1,65 +1,51 @@
 import { db } from "../db/db"
 import { PostInputModelType, PostViewModelType } from "../types/types"
+import { blogsCollection, postsCollection } from "../db/mongoDb"
 
 export const postsRepository = {
-  getPosts() {
-    return db.posts
+  async getPosts(): Promise<PostViewModelType[]> {
+    return await postsCollection.find().toArray() // Получение всех постов
   },
 
-  createPost(body: PostInputModelType) {
+  async createPost(body: PostInputModelType): Promise<PostViewModelType> {
+    const blog = await blogsCollection.findOne({ id: body.blogId })
     const newPost: PostViewModelType = {
       id: (Date.now() + Math.random()).toString(),
       title: body.title,
       shortDescription: body.shortDescription,
       content: body.content,
       blogId: body.blogId,
-      blogName: db.blogs.find((blog) => blog.id === body.blogId)?.name || "Unknown Blog",
+      blogName: blog?.name || "Unknown Blog", // Проверка существования блога
     }
 
-    db.posts = [...db.posts, newPost]
+    await postsCollection.insertOne(newPost) // Добавление поста в коллекцию
     return newPost
   },
 
-  getPostById(postId: string): PostViewModelType | undefined {
-    return db.posts.find((post) => post.id === postId)
+  async getPostById(postId: string): Promise<PostViewModelType | null> {
+    return await postsCollection.findOne({ id: postId }) // Поиск поста по ID
   },
 
-  updatePost(postId: string, body: PostInputModelType) {
-    const postIndex = db.posts.findIndex((post) => post.id === postId)
+  async updatePost(postId: string, body: PostInputModelType): Promise<boolean> {
+    const blog = await blogsCollection.findOne({ id: body.blogId })
+    const result = await postsCollection.updateOne(
+      { id: postId },
+      {
+        $set: {
+          title: body.title,
+          shortDescription: body.shortDescription,
+          content: body.content,
+          blogId: body.blogId,
+          blogName: blog?.name || "Unknown Blog", // Проверка существования блога
+        },
+      },
+    )
 
-    if (postIndex === -1) {
-      return false
-    }
-
-    db.posts[postIndex] = {
-      ...db.posts[postIndex],
-      title: body.title,
-      shortDescription: body.shortDescription,
-      content: body.content,
-      blogId: body.blogId,
-      blogName: db.blogs.find((blog) => blog.id === body.blogId)?.name || db.posts[postIndex].blogName,
-    }
-
-    return true
+    return result.matchedCount > 0 // Возвращает true, если обновление успешно
   },
 
-  deletePost(postId: string) {
-    const post: PostViewModelType | undefined = db.posts.find((p) => p.id === postId)
-
-    if (!post) {
-      return false
-    }
-
-    db.posts = db.posts.filter((post) => post.id !== postId)
-    return true
-
-    /*const postIndex = db.posts.findIndex((post) => post.id === postId)
-
-    if (postIndex === -1) {
-      return false
-    }*/
-
-    /*db.posts.splice(postIndex, 1)
-    return true*/
+  async deletePost(postId: string): Promise<boolean> {
+    const result = await postsCollection.deleteOne({ id: postId })
+    return result.deletedCount > 0 // Возвращает true, если удаление успешно
   },
 }

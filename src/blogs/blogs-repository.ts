@@ -5,10 +5,9 @@ import { blogsCollection } from "../db/mongoDb"
 export const blogsRepository = {
   async getBlogs(): Promise<BlogViewModelType[]> {
     return await blogsCollection.find().toArray()
-    //return await db.blogs
   },
 
-  createBlog(body: BlogInputModelType) {
+  async createBlog(body: BlogInputModelType): Promise<BlogViewModelType> {
     const newBlog: BlogViewModelType = {
       id: (Date.now() + Math.random()).toString(),
       name: body.name,
@@ -16,33 +15,26 @@ export const blogsRepository = {
       websiteUrl: body.websiteUrl,
     }
 
-    db.blogs = [...db.blogs, newBlog]
+    await blogsCollection.insertOne(newBlog) // Добавление в коллекцию MongoDB
     return newBlog
   },
 
-  getBlogById(blogId: string) {
-    return db.blogs.find((blog) => blog.id === blogId) || null
+  async getBlogById(blogId: string): Promise<BlogViewModelType | null> {
+    return await blogsCollection.findOne({ id: blogId }) // Поиск блога по ID
+    //return (await db.blogs.find((blog) => blog.id === blogId)) || null
   },
 
-  updateBlog(blogId: string, body: BlogInputModelType) {
-    const blogIndex = db.blogs.findIndex((blog) => blog.id === blogId)
+  async updateBlog(blogId: string, body: BlogInputModelType): Promise<boolean> {
+    const result = await blogsCollection.updateOne(
+      { id: blogId },
+      { $set: { name: body.name, description: body.description, websiteUrl: body.websiteUrl } },
+    )
 
-    if (blogIndex === -1) {
-      return false
-    } else {
-      db.blogs[blogIndex] = {
-        ...db.blogs[blogIndex],
-        name: body.name,
-        description: body.description,
-        websiteUrl: body.websiteUrl,
-      }
-    }
-    return true
+    return result.matchedCount > 0 // Возвращает true, если обновление успешно
   },
 
-  deleteBlog(id: string) {
-    const initialLength = db.blogs.length
-    db.blogs = db.blogs.filter((blog) => blog.id !== id)
-    return db.blogs.length < initialLength
+  async deleteBlog(id: string): Promise<boolean> {
+    const result = await blogsCollection.deleteOne({ id })
+    return result.deletedCount > 0 // Возвращает true, если удаление успешно
   },
 }

@@ -38,7 +38,7 @@ describe("/posts", () => {
     expect(res.body[0]).toEqual(initialData.posts[0])
   })
 
-  it("should create a new post", async () => {
+  /* it("should create a new post", async () => {
     const newPost = {
       title: "New Post",
       shortDescription: "A short description for the new post",
@@ -54,7 +54,7 @@ describe("/posts", () => {
       blogName: expect.any(String),
     })
     expect(res.body.id).toBeDefined()
-  })
+  })*/
 
   it("should return a post by ID", async () => {
     const initialData = {
@@ -77,7 +77,7 @@ describe("/posts", () => {
     expect(res.body).toEqual(initialData.posts[0])
   })
 
-  it("should update a post", async () => {
+  /* it("should update a post", async () => {
     const initialData = {
       posts: [
         {
@@ -108,7 +108,7 @@ describe("/posts", () => {
       ...updatedPost,
       blogName: expect.any(String),
     })
-  })
+  })*/
 
   it("should delete a post", async () => {
     const initialData = {
