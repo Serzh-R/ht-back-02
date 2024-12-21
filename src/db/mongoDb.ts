@@ -23,13 +23,3 @@ export async function runDb(url: string): Promise<boolean> {
     return false
   }
 }
-
-// Закрытие клиента при завершении работы приложения
-export async function closeDb(client: MongoClient): Promise<void> {
-  try {
-    await client.close()
-    console.log("MongoDB connection closed")
-  } catch (err) {
-    console.error("Error closing MongoDB connection:", err)
-  }
-}
