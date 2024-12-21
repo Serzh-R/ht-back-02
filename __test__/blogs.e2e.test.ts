@@ -3,8 +3,11 @@ import { setDB } from "../src/db/db"
 import { SETTINGS } from "../src/settings"
 
 describe("/blogs", () => {
+  const authHeader = { Authorization: "Basic " + Buffer.from("admin:qwerty").toString("base64") }
+
   beforeEach(() => {
     setDB() // Очистка базы данных перед каждым тестом
+    console.log("DB State:", JSON.stringify(setDB)) // Логируем состояние базы
   })
 
   it("should return an empty array when no blogs exist", async () => {
@@ -41,7 +44,7 @@ describe("/blogs", () => {
       websiteUrl: "https://newblog.com",
     }
 
-    const res = await req.post(SETTINGS.PATH.BLOGS).send(newBlog).expect(201)
+    const res = await req.post(SETTINGS.PATH.BLOGS).set(authHeader).send(newBlog).expect(201)
 
     console.log(res.body)
     expect(res.body).toMatchObject(newBlog)
@@ -86,7 +89,7 @@ describe("/blogs", () => {
       websiteUrl: "https://updatedtechblog.com",
     }
 
-    await req.put(`${SETTINGS.PATH.BLOGS}/1`).send(updatedBlog).expect(204)
+    await req.put(`${SETTINGS.PATH.BLOGS}/1`).set(authHeader).send(updatedBlog).expect(204)
 
     const res = await req.get(`${SETTINGS.PATH.BLOGS}/1`).expect(200)
 
@@ -107,7 +110,7 @@ describe("/blogs", () => {
     }
     setDB(initialData)
 
-    await req.delete(`${SETTINGS.PATH.BLOGS}/1`).expect(204)
+    await req.delete(`${SETTINGS.PATH.BLOGS}/1`).set(authHeader).expect(204)
 
     const res = await req.get(SETTINGS.PATH.BLOGS).expect(200)
 

@@ -3,6 +3,8 @@ import { setDB } from "../src/db/db"
 import { SETTINGS } from "../src/settings"
 
 describe("/posts", () => {
+  const authHeader = { Authorization: "Basic " + Buffer.from("admin:qwerty").toString("base64") }
+
   beforeEach(() => {
     setDB() // Очистка базы данных перед каждым тестом
   })
@@ -44,7 +46,7 @@ describe("/posts", () => {
       blogId: "1",
     }
 
-    const res = await req.post(SETTINGS.PATH.POSTS).send(newPost).expect(201)
+    const res = await req.post(SETTINGS.PATH.POSTS).set(authHeader).send(newPost).expect(201)
 
     console.log(res.body)
     expect(res.body).toMatchObject({
@@ -97,7 +99,7 @@ describe("/posts", () => {
       blogId: "1",
     }
 
-    await req.put(`${SETTINGS.PATH.POSTS}/1`).send(updatedPost).expect(204)
+    await req.put(`${SETTINGS.PATH.POSTS}/1`).set(authHeader).send(updatedPost).expect(204)
 
     const res = await req.get(`${SETTINGS.PATH.POSTS}/1`).expect(200)
 
@@ -123,7 +125,7 @@ describe("/posts", () => {
     }
     setDB(initialData)
 
-    await req.delete(`${SETTINGS.PATH.POSTS}/1`).expect(204)
+    await req.delete(`${SETTINGS.PATH.POSTS}/1`).set(authHeader).expect(204)
 
     const res = await req.get(SETTINGS.PATH.POSTS).expect(200)
 

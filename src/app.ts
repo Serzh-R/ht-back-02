@@ -6,7 +6,10 @@ import { blogRouter } from "./blogs/blogs-router"
 import { postRouter } from "./posts/posts-router"
 
 export const app = express()
-app.use(express.json())
+
+const jsonBodyMiddleware = express.json()
+
+app.use(jsonBodyMiddleware)
 app.use(cors())
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
 app.use(SETTINGS.PATH.POSTS, postRouter)
