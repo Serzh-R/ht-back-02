@@ -1,4 +1,3 @@
-import { db } from "../db/db"
 import { BlogInputModelType, BlogViewModelType } from "../types/types"
 import { blogsCollection } from "../db/mongoDb"
 
