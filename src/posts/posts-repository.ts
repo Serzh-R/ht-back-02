@@ -15,6 +15,7 @@ export const postsRepository = {
       content: body.content,
       blogId: body.blogId,
       blogName: blog?.name || "Unknown Blog", // Проверка существования блога
+      createdAt: new Date().toISOString(),
     }
 
     await postsCollection.insertOne(newPost) // Добавление поста в коллекцию
