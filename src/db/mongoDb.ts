@@ -9,8 +9,8 @@ export async function runDb(url: string): Promise<boolean> {
   let client = new MongoClient(url)
   let mongoDb = client.db(SETTINGS.DB_NAME)
 
-  blogsCollection = mongoDb.collection<BlogViewModelType>(SETTINGS.PATH.BLOGS)
-  postsCollection = mongoDb.collection<PostViewModelType>(SETTINGS.PATH.POSTS)
+  blogsCollection = mongoDb.collection<BlogViewModelType>("blogs")
+  postsCollection = mongoDb.collection<PostViewModelType>("posts")
 
   try {
     await client.connect()
@@ -18,8 +18,18 @@ export async function runDb(url: string): Promise<boolean> {
     console.log("Connected to MongoDB")
     return true
   } catch (err) {
-    console.log(err)
+    console.error("Error connecting to MongoDB:", err)
     await client.close()
     return false
+  }
+}
+
+// Закрытие клиента при завершении работы приложения
+export async function closeDb(client: MongoClient): Promise<void> {
+  try {
+    await client.close()
+    console.log("MongoDB connection closed")
+  } catch (err) {
+    console.error("Error closing MongoDB connection:", err)
   }
 }
