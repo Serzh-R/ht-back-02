@@ -18,7 +18,6 @@ export const blogsRepository = {
 
     await blogsCollection.insertOne(newBlog)
 
-    // Используем проекцию, чтобы исключить _id
     const blog = await blogsCollection.findOne({ id: newBlog.id }, { projection: { _id: 0 } })
 
     return blog as BlogViewModelType
@@ -29,7 +28,6 @@ export const blogsRepository = {
   },
 
   async updateBlog(blogId: string, body: BlogInputModelType): Promise<boolean> {
-    // Проверка существования блога перед обновлением
     const existingBlog = await blogsCollection.findOne({ id: blogId })
     if (!existingBlog) {
       return false

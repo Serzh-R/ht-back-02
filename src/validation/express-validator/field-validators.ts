@@ -29,7 +29,7 @@ const BlogFields: string[] = ["name", "description", "websiteUrl"]
 
 export const specificFieldsValidator = (fields: string[]) => {
   return body().custom((_, { req }) => {
-    const bodyKeys = Object.keys(req.body) // Получаем все ключи из тела запроса
+    const bodyKeys = Object.keys(req.body)
 
     const invalidFields = bodyKeys.filter((key) => !fields.includes(key))
     if (invalidFields.length > 0) {
