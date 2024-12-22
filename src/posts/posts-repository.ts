@@ -1,4 +1,4 @@
-import { BlogViewModelType, PostInputModelType, PostViewModelType } from "../types/types"
+import { PostInputModelType, PostViewModelType } from "../types/types"
 import { blogsCollection, postsCollection } from "../db/mongoDb"
 
 export const postsRepository = {
