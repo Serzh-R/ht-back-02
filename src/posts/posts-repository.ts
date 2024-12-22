@@ -3,7 +3,7 @@ import { blogsCollection, postsCollection } from "../db/mongoDb"
 
 export const postsRepository = {
   async getPosts(): Promise<PostViewModelType[]> {
-    return await postsCollection.find().toArray() // Получение всех постов
+    return await postsCollection.find().toArray()
   },
 
   async createPost(body: PostInputModelType): Promise<PostViewModelType> {
@@ -14,16 +14,16 @@ export const postsRepository = {
       shortDescription: body.shortDescription,
       content: body.content,
       blogId: body.blogId,
-      blogName: blog?.name || "Unknown Blog", // Проверка существования блога
+      blogName: blog?.name || "Unknown Blog",
       createdAt: new Date().toISOString(),
     }
 
-    await postsCollection.insertOne(newPost) // Добавление поста в коллекцию
+    await postsCollection.insertOne(newPost)
     return newPost
   },
 
   async getPostById(postId: string): Promise<PostViewModelType | null> {
-    return await postsCollection.findOne({ id: postId }) // Поиск поста по ID
+    return await postsCollection.findOne({ id: postId })
   },
 
   async updatePost(postId: string, body: PostInputModelType): Promise<boolean> {
@@ -36,16 +36,16 @@ export const postsRepository = {
           shortDescription: body.shortDescription,
           content: body.content,
           blogId: body.blogId,
-          blogName: blog?.name || "Unknown Blog", // Проверка существования блога
+          blogName: blog?.name || "Unknown Blog",
         },
       },
     )
 
-    return result.matchedCount > 0 // Возвращает true, если обновление успешно
+    return result.matchedCount > 0
   },
 
   async deletePost(postId: string): Promise<boolean> {
     const result = await postsCollection.deleteOne({ id: postId })
-    return result.deletedCount > 0 // Возвращает true, если удаление успешно
+    return result.deletedCount > 0
   },
 }

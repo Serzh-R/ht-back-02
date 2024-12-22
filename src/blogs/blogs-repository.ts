@@ -3,7 +3,7 @@ import { blogsCollection } from "../db/mongoDb"
 
 export const blogsRepository = {
   async getBlogs(): Promise<BlogViewModelType[]> {
-    return await blogsCollection.find().toArray()
+    return await blogsCollection.find({}, { projection: { _id: 0 } }).toArray()
   },
 
   async createBlog(body: BlogInputModelType): Promise<BlogViewModelType> {
@@ -16,13 +16,12 @@ export const blogsRepository = {
       isMembership: false,
     }
 
-    await blogsCollection.insertOne(newBlog) // Добавление в коллекцию MongoDB
+    await blogsCollection.insertOne(newBlog)
     return newBlog
   },
 
   async getBlogById(blogId: string): Promise<BlogViewModelType | null> {
-    return await blogsCollection.findOne({ id: blogId }) // Поиск блога по ID
-    //return (await db.blogs.find((blog) => blog.id === blogId)) || null
+    return await blogsCollection.findOne({ id: blogId }, { projection: { _id: 0 } })
   },
 
   async updateBlog(blogId: string, body: BlogInputModelType): Promise<boolean> {
@@ -31,11 +30,11 @@ export const blogsRepository = {
       { $set: { name: body.name, description: body.description, websiteUrl: body.websiteUrl } },
     )
 
-    return result.matchedCount > 0 // Возвращает true, если обновление успешно
+    return result.matchedCount > 0
   },
 
   async deleteBlog(id: string): Promise<boolean> {
     const result = await blogsCollection.deleteOne({ id })
-    return result.deletedCount > 0 // Возвращает true, если удаление успешно
+    return result.deletedCount > 0
   },
 }

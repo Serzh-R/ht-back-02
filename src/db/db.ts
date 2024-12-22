@@ -1,4 +1,4 @@
-import { BlogViewModelType, DBType, PostViewModelType } from "../types/types"
+import { DBType } from "../types/types"
 
 export const db: DBType = {
   blogs: [
@@ -24,6 +24,19 @@ export const db: DBType = {
   ],
 }
 
+export const setDB = (dataset?: Partial<DBType>) => {
+  if (!dataset) {
+    db.blogs = []
+    db.posts = []
+    return
+  }
+
+  db.blogs = dataset.blogs || db.blogs
+  db.posts = dataset.posts || db.posts
+}
+
+////////////////////////////////////////////////////////////
+
 /*export const blog: BlogViewModelType = {
   id: "1",
   name: "live",
@@ -42,17 +55,3 @@ export const db: DBType = {
   blogName: "live",
   createdAt: new Date().toISOString(),
 }*/
-
-// функция для быстрой очистки/заполнения базы данных для тестов
-export const setDB = (dataset?: Partial<DBType>) => {
-  if (!dataset) {
-    // если в функцию ничего не передано - то очищаем базу данных
-    db.blogs = []
-    db.posts = []
-    return
-  }
-
-  // если что-то передано - то заменяем старые значения новыми
-  db.blogs = dataset.blogs || db.blogs
-  db.posts = dataset.posts || db.posts
-}
