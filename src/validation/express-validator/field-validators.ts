@@ -20,7 +20,7 @@ export const blogIdValidator = body("blogId")
 
 /*************************************************************************************/
 
-const BlogFields: string[] = ["name", "description", "websiteUrl", "createdAt", "isMembership"]
+const BlogFields: string[] = ["name", "description", "websiteUrl"]
 
 export const specificFieldsValidator = (fields: string[]) => {
   return body().custom((_, { req }) => {
@@ -66,12 +66,12 @@ export const blogFieldsValidator = [
     .withMessage("websiteUrl should not exceed 100 symbols")
     .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}\/?([a-zA-Z0-9._-]+\/?)*$/)
     .withMessage("websiteUrl must be a valid URL starting with https://"),
-  body("createdAt")
+  /*body("createdAt")
     .isString()
     .withMessage("createdAt should be a string")
     .isISO8601()
     .withMessage("createdAt should be a valid ISO8601 date"),
-  body("isMembership").isBoolean().withMessage("isMembership should be a boolean"),
+  body("isMembership").isBoolean().withMessage("isMembership should be a boolean"),*/
 
   // Проверяем, что в body нет лишних полей
   //checkExact([], { message: "Invalid fields in request body" }),
@@ -137,11 +137,11 @@ export const postContentValidator = body("content")
   .isLength({ max: 1000 })
   .withMessage("content should contain 1000 symbols")
 
-export const postCreatedAtValidator = body("createdAt")
+/*export const postCreatedAtValidator = body("createdAt")
   .isString()
   .withMessage("createdAt should be a string")
   .isISO8601()
-  .withMessage("createdAt should be a valid ISO8601 date")
+  .withMessage("createdAt should be a valid ISO8601 date")*/
 
 export const nwArray = [
   idParamValidator,
@@ -150,5 +150,5 @@ export const nwArray = [
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
-  postCreatedAtValidator,
+  //postCreatedAtValidator,
 ]
