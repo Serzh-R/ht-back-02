@@ -3,7 +3,7 @@ import { blogsCollection, postsCollection } from "../db/mongoDb"
 
 export const postsRepository = {
   async getPosts(): Promise<PostViewModelType[]> {
-    return await postsCollection.find().toArray()
+    return await postsCollection.find({}, { projection: { _id: 0 } }).toArray()
   },
 
   async createPost(body: PostInputModelType): Promise<PostViewModelType> {
