@@ -1,4 +1,4 @@
-import { PostInputModelType, PostViewModelType } from "../types/types"
+import { BlogViewModelType, PostInputModelType, PostViewModelType } from "../types/types"
 import { blogsCollection, postsCollection } from "../db/mongoDb"
 
 export const postsRepository = {
@@ -19,7 +19,10 @@ export const postsRepository = {
     }
 
     await postsCollection.insertOne(newPost)
-    return newPost
+
+    const post = await postsCollection.findOne({ id: newPost.id }, { projection: { _id: 0 } })
+
+    return post as PostViewModelType
   },
 
   async getPostById(postId: string): Promise<PostViewModelType | null> {
