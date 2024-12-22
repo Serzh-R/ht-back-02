@@ -6,7 +6,6 @@ import {
   blogIdValidator,
   idParamValidator,
   postContentValidator,
-  postCreatedAtValidator,
   postShortDescriptionValidator,
   postTitleValidator,
 } from "../validation/express-validator/field-validators"
