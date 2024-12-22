@@ -9,9 +9,6 @@ export async function runDb(url: string): Promise<boolean> {
   let client = new MongoClient(url)
   let mongoDb = client.db(SETTINGS.DB_NAME)
 
-  /*blogsCollection = mongoDb.collection<BlogViewModelType>(SETTINGS.PATH.BLOGS)
-  postsCollection = mongoDb.collection<PostViewModelType>(SETTINGS.PATH.POSTS)*/
-
   blogsCollection = mongoDb.collection<BlogViewModelType>("blogs")
   postsCollection = mongoDb.collection<PostViewModelType>("posts")
 
