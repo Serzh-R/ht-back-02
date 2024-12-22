@@ -1,5 +1,6 @@
 import { body, param } from "express-validator"
 import { blogsRepository } from "../../blogs/blogs-repository"
+import { blogsCollection } from "../../db/mongoDb"
 
 export const idParamValidator = param("id")
   .isString()
@@ -10,13 +11,18 @@ export const idParamValidator = param("id")
 
 export const blogIdValidator = body("blogId")
   .isString()
-  .withMessage("no string")
+  .withMessage("blogId should be a string")
   .trim()
-  .custom((blogId) => {
-    const blog = blogsRepository.getBlogById(blogId)
-    return !!blog
+  .notEmpty()
+  .withMessage("blogId is required")
+  .custom(async (blogId) => {
+    const blog = await blogsCollection.findOne({ id: blogId })
+    if (!blog) {
+      throw new Error("No blog found with the provided blogId")
+    }
+    return true
   })
-  .withMessage("no blog")
+  .withMessage("Invalid blogId")
 
 /*************************************************************************************/
 
