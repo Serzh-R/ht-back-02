@@ -8,6 +8,11 @@ export const postsRepository = {
 
   async createPost(body: PostInputModelType): Promise<PostViewModelType> {
     const blog = await blogsCollection.findOne({ id: body.blogId })
+
+    if (!blog) {
+      throw new Error("Blog not found")
+    }
+
     const newPost: PostViewModelType = {
       id: (Date.now() + Math.random()).toString(),
       title: body.title,
@@ -26,11 +31,16 @@ export const postsRepository = {
   },
 
   async getPostById(postId: string): Promise<PostViewModelType | null> {
-    return await postsCollection.findOne({ id: postId })
+    return await postsCollection.findOne({ id: postId }, { projection: { _id: 0 } })
   },
 
   async updatePost(postId: string, body: PostInputModelType): Promise<boolean> {
     const blog = await blogsCollection.findOne({ id: body.blogId })
+
+    if (!blog) {
+      throw new Error("Blog not found")
+    }
+
     const result = await postsCollection.updateOne(
       { id: postId },
       {
