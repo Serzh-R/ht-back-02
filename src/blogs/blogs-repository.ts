@@ -1,5 +1,6 @@
 import { BlogInputModelType, BlogViewModelType } from "../types/types"
 import { blogsCollection } from "../db/mongoDb"
+import { req } from "../../__test__/test-helpers"
 
 export const blogsRepository = {
   async getBlogs(): Promise<BlogViewModelType[]> {
@@ -16,7 +17,8 @@ export const blogsRepository = {
       isMembership: false,
     }
 
-    await blogsCollection.insertOne(newBlog)
+    await blogsCollection.insertOne(newBlog) // Добавление в коллекцию MongoDB
+
     return newBlog
   },
 
