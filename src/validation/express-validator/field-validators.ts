@@ -1,5 +1,4 @@
 import { body, param } from "express-validator"
-import { blogsRepository } from "../../blogs/blogs-repository"
 import { blogsCollection } from "../../db/mongoDb"
 
 export const idParamValidator = param("id")
