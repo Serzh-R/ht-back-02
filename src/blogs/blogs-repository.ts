@@ -1,6 +1,5 @@
 import { BlogInputModelType, BlogViewModelType } from "../types/types"
 import { blogsCollection } from "../db/mongoDb"
-import { ObjectId } from "mongodb"
 
 export const blogsRepository = {
   async getBlogs(): Promise<BlogViewModelType[]> {
@@ -9,18 +8,22 @@ export const blogsRepository = {
 
   async createBlog(body: BlogInputModelType): Promise<BlogViewModelType> {
     const newBlog: BlogViewModelType = {
-      //_id: body._id ? body._id : undefined,
       id: (Date.now() + Math.random()).toString(),
       name: body.name,
       description: body.description,
       websiteUrl: body.websiteUrl,
       createdAt: new Date().toISOString(),
-      isMembership: true,
+      isMembership: false,
     }
 
     await blogsCollection.insertOne(newBlog)
 
-    return newBlog
+    return {
+      ...newBlog,
+    }
+    // Удаляем поле `_id`, чтобы вернуть объект, соответствующий ожидаемому в тестах
+    /*const { _id, ...blogWithoutId } = newBlog
+    return blogWithoutId as BlogViewModelType*/
   },
 
   async getBlogById(blogId: string): Promise<BlogViewModelType | null> {
@@ -28,6 +31,12 @@ export const blogsRepository = {
   },
 
   async updateBlog(blogId: string, body: BlogInputModelType): Promise<boolean> {
+    // Проверка существования блога перед обновлением
+    const existingBlog = await blogsCollection.findOne({ id: blogId })
+    if (!existingBlog) {
+      return false
+    }
+
     const result = await blogsCollection.updateOne(
       { id: blogId },
       { $set: { name: body.name, description: body.description, websiteUrl: body.websiteUrl } },

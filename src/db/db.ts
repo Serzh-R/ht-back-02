@@ -24,7 +24,7 @@ export const db: DBType = {
   ],
 }
 
-export const setDB = (dataset?: Partial<DBType>) => {
+/*export const setDB = (dataset?: Partial<DBType>) => {
   if (!dataset) {
     db.blogs = []
     db.posts = []
@@ -33,7 +33,7 @@ export const setDB = (dataset?: Partial<DBType>) => {
 
   db.blogs = dataset.blogs || db.blogs
   db.posts = dataset.posts || db.posts
-}
+}*/
 
 ////////////////////////////////////////////////////////////
 
