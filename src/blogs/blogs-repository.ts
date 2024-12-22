@@ -18,12 +18,10 @@ export const blogsRepository = {
 
     await blogsCollection.insertOne(newBlog)
 
-    return {
-      ...newBlog,
-    }
-    // Удаляем поле `_id`, чтобы вернуть объект, соответствующий ожидаемому в тестах
-    /*const { _id, ...blogWithoutId } = newBlog
-    return blogWithoutId as BlogViewModelType*/
+    // Используем проекцию, чтобы исключить _id
+    const blog = await blogsCollection.findOne({ id: newBlog.id }, { projection: { _id: 0 } })
+
+    return blog as BlogViewModelType
   },
 
   async getBlogById(blogId: string): Promise<BlogViewModelType | null> {
