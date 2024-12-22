@@ -1,10 +1,17 @@
 import { req } from "./test-helpers"
 
 import { SETTINGS } from "../src/settings"
-import { setDB } from "../src/db/mongoDb"
+import { runDb, setDB } from "../src/db/mongoDb"
 
 describe("/blogs", () => {
   const authHeader = { Authorization: "Basic " + Buffer.from("admin:qwerty").toString("base64") }
+
+  beforeAll(async () => {
+    const connected = await runDb(process.env.MONGO_URL!)
+    if (!connected) {
+      throw new Error("Failed to connect to MongoDB")
+    }
+  })
 
   beforeEach(async () => {
     await setDB()
