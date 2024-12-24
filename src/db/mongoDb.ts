@@ -1,13 +1,15 @@
 import { SETTINGS } from "../settings"
-import { MongoClient, Collection } from "mongodb"
-import { BlogViewModelType, DBType, PostViewModelType } from "../types/types"
+import { MongoClient, Collection, Db } from "mongodb"
+import { BlogViewModelType, PostViewModelType } from "../types/types"
 
 export let blogsCollection: Collection<BlogViewModelType>
 export let postsCollection: Collection<PostViewModelType>
+export let client: MongoClient
+export let mongoDb: Db
 
 export async function runDb(url: string): Promise<boolean> {
-  let client = new MongoClient(url)
-  let mongoDb = client.db(SETTINGS.DB_NAME)
+  client = new MongoClient(url)
+  mongoDb = client.db(SETTINGS.DB_NAME)
 
   blogsCollection = mongoDb.collection<BlogViewModelType>("blogs")
   postsCollection = mongoDb.collection<PostViewModelType>("posts")
@@ -24,7 +26,12 @@ export async function runDb(url: string): Promise<boolean> {
   }
 }
 
-export const setDB = async (dataset?: Partial<DBType>) => {
+//Эта функция предназначена для остановки продакшн- или тестовой базы данных в зависимости от вызванного контекста (runDb)
+export const stopDb = async () => {
+  await client.close()
+}
+
+/*export const setDB = async (dataset?: Partial<DBType>) => {
   await blogsCollection.deleteMany({})
   await postsCollection.deleteMany({})
 
@@ -36,4 +43,4 @@ export const setDB = async (dataset?: Partial<DBType>) => {
   if (dataset.posts) {
     await postsCollection.insertMany(dataset.posts)
   }
-}
+}*/

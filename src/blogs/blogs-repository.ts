@@ -9,7 +9,7 @@ export const blogsRepository = {
   async createBlog(body: BlogInputModelType): Promise<BlogViewModelType> {
     const newBlog: BlogViewModelType = {
       id: (Date.now() + Math.random()).toString(),
-      name: body.name,
+      name: body.name ? body.name : "",
       description: body.description,
       websiteUrl: body.websiteUrl,
       createdAt: new Date().toISOString(),
@@ -23,8 +23,8 @@ export const blogsRepository = {
     return blog as BlogViewModelType
   },
 
-  async getBlogById(blogId: string): Promise<BlogViewModelType | null> {
-    return await blogsCollection.findOne({ id: blogId }, { projection: { _id: 0 } })
+  async getBlogById(id: string): Promise<BlogViewModelType | null> {
+    return await blogsCollection.findOne({ id }, { projection: { _id: 0 } })
   },
 
   async updateBlog(blogId: string, body: BlogInputModelType): Promise<boolean> {

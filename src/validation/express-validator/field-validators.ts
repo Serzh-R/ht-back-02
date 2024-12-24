@@ -41,7 +41,7 @@ export const specificFieldsValidator = (fields: string[]) => {
 export const blogFieldsValidator = [
   specificFieldsValidator(BlogFields),
   body("name")
-    //.optional()
+    // .optional()
     .isString()
     .withMessage("name should be a string")
     .trim()

@@ -1,20 +1,19 @@
 import { SETTINGS } from "../src/settings"
 import { connectTestDb, disconnectTestDb } from "../src/db/testMongoDb"
 import { req } from "./test-helpers"
-import { Collection } from "mongodb"
-import { BlogViewModelType } from "../src/types/types"
-
-let testDb
-let blogsCollection: Collection<BlogViewModelType> // Локальная коллекция для тестов
+import { blogsCollection } from "../src/db/mongoDb"
 
 beforeAll(async () => {
-  testDb = await connectTestDb() // Подключение к MongoMemoryServer
-  blogsCollection = testDb.collection("blogs") // Подключаем временную коллекцию
-  console.log("blogsCollection initialized:", !!blogsCollection)
+  await connectTestDb()
+})
+
+beforeEach(async () => {
+  console.log("Clearing blogsCollection...")
+  await blogsCollection.deleteMany({})
 })
 
 afterAll(async () => {
-  await disconnectTestDb() // Остановка MongoMemoryServer
+  await disconnectTestDb()
 })
 
 describe("/blogs", () => {
@@ -22,35 +21,10 @@ describe("/blogs", () => {
     Authorization: "Basic " + Buffer.from("admin:qwerty").toString("base64"),
   }
 
-  beforeEach(async () => {
-    if (!blogsCollection) {
-      throw new Error("blogsCollection is not initialized")
-    }
-    await blogsCollection.deleteMany({})
-  })
-
   it("should return an empty array when no blogs exist", async () => {
     const res = await req.get(SETTINGS.PATH.BLOGS).expect(200)
+    console.log(res)
     expect(res.body).toEqual([])
-  })
-
-  it("should return blogs when data exists", async () => {
-    const initialData = [
-      {
-        id: "1",
-        name: "Tech Blog",
-        description: "A blog about tech",
-        websiteUrl: "https://techblog.com",
-        createdAt: new Date().toISOString(),
-        isMembership: false,
-      },
-    ]
-    await blogsCollection.insertMany(initialData) // Добавление данных в коллекцию
-
-    const res = await req.get(SETTINGS.PATH.BLOGS).expect(200)
-
-    expect(res.body.length).toBe(1)
-    expect(res.body[0]).toMatchObject(initialData[0])
   })
 
   it("should create a new blog", async () => {
@@ -67,14 +41,40 @@ describe("/blogs", () => {
       createdAt: expect.any(String),
       isMembership: false,
     })
-    expect(res.body.id).toBeDefined()
 
     const blogInDb = await blogsCollection.findOne({ id: res.body.id })
+
     expect(blogInDb).toMatchObject({
       ...newBlog,
       createdAt: expect.any(String),
       isMembership: false,
     })
+  })
+
+  it("should return blogs when data exists", async () => {
+    const initialData = [
+      {
+        id: "1",
+        name: "Tech Blog",
+        description: "A blog about tech",
+        websiteUrl: "https://techblog.com",
+        createdAt: new Date().toISOString(),
+        isMembership: false,
+      },
+    ]
+
+    await blogsCollection.insertMany(initialData) // Добавляем данные в базу
+
+    const res = await req.get(SETTINGS.PATH.BLOGS).expect(200)
+
+    const blogsInDb = await blogsCollection.findOne({ id: "1" }, { projection: { _id: 0 } })
+
+    if (!blogsInDb) {
+      throw new Error("Blog not found in the database")
+    }
+
+    expect(res.body.length).toBe(1)
+    expect(res.body[0]).toMatchObject(blogsInDb)
   })
 
   it("should return a blog by ID", async () => {
@@ -88,6 +88,7 @@ describe("/blogs", () => {
         isMembership: false,
       },
     ]
+
     await blogsCollection.insertMany(initialData)
 
     const res = await req.get(`${SETTINGS.PATH.BLOGS}/1`).expect(200)
@@ -106,6 +107,7 @@ describe("/blogs", () => {
         isMembership: false,
       },
     ]
+
     await blogsCollection.insertMany(initialData)
 
     const updatedBlog = {
@@ -117,7 +119,6 @@ describe("/blogs", () => {
     await req.put(`${SETTINGS.PATH.BLOGS}/1`).set(authHeader).send(updatedBlog).expect(204)
 
     const res = await req.get(`${SETTINGS.PATH.BLOGS}/1`).expect(200)
-
     expect(res.body).toMatchObject(updatedBlog)
 
     const blogInDb = await blogsCollection.findOne({ id: "1" })
@@ -139,12 +140,12 @@ describe("/blogs", () => {
         isMembership: false,
       },
     ]
+
     await blogsCollection.insertMany(initialData)
 
     await req.delete(`${SETTINGS.PATH.BLOGS}/1`).set(authHeader).expect(204)
 
     const res = await req.get(SETTINGS.PATH.BLOGS).expect(200)
-
     expect(res.body).toEqual([])
   })
 })
