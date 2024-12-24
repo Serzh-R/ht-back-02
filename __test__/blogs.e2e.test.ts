@@ -91,9 +91,15 @@ describe("/blogs", () => {
 
     await blogsCollection.insertMany(initialData)
 
+    const blogById = await blogsCollection.findOne({ id: "1" }, { projection: { _id: 0 } })
+
+    if (!blogById) {
+      throw new Error("Blog not found in the database")
+    }
+
     const res = await req.get(`${SETTINGS.PATH.BLOGS}/1`).expect(200)
 
-    expect(res.body).toMatchObject(initialData[0])
+    expect(res.body).toMatchObject(blogById)
   })
 
   it("should update a blog", async () => {
@@ -116,12 +122,16 @@ describe("/blogs", () => {
       websiteUrl: "https://updatedtechblog.com",
     }
 
+    const blogsBeforeUpdate = await blogsCollection.find().toArray()
+    console.log("Blogs before update:", blogsBeforeUpdate)
+
     await req.put(`${SETTINGS.PATH.BLOGS}/1`).set(authHeader).send(updatedBlog).expect(204)
 
     const res = await req.get(`${SETTINGS.PATH.BLOGS}/1`).expect(200)
     expect(res.body).toMatchObject(updatedBlog)
 
     const blogInDb = await blogsCollection.findOne({ id: "1" })
+    console.log("Blog in DB after update:", blogInDb)
     expect(blogInDb).toMatchObject({
       ...updatedBlog,
       createdAt: expect.any(String),
