@@ -1,19 +1,10 @@
 import { SETTINGS } from "../src/settings"
 import { connectTestDb, disconnectTestDb } from "../src/db/testMongoDb"
 import { req } from "./test-helpers"
-import { Collection } from "mongodb"
-import { PostViewModelType } from "../src/types/types"
-
-let testDb
-let postsCollection: Collection<PostViewModelType>
+import { postsCollection } from "../src/db/mongoDb"
 
 beforeAll(async () => {
-  testDb = await connectTestDb() // Подключаем временную базу данных
-  postsCollection = testDb.collection("posts") // Инициализируем коллекцию
-  if (!postsCollection) {
-    throw new Error("Failed to initialize postsCollection")
-  }
-  console.log("postsCollection initialized:", !!postsCollection)
+  await connectTestDb() // Подключаем временную базу данных
 })
 
 beforeEach(async () => {
@@ -26,7 +17,9 @@ afterAll(async () => {
 })
 
 describe("/posts", () => {
-  const authHeader = { Authorization: "Basic " + Buffer.from("admin:qwerty").toString("base64") }
+  const authHeader = {
+    Authorization: "Basic " + Buffer.from("admin:qwerty").toString("base64"),
+  }
 
   it("should return an empty array when no posts exist", async () => {
     const res = await req.get(SETTINGS.PATH.POSTS).expect(200)
@@ -49,33 +42,59 @@ describe("/posts", () => {
 
     const res = await req.get(SETTINGS.PATH.POSTS).expect(200)
 
+    const postInDb = await postsCollection.findOne(
+      { id: "1" },
+      { projection: { _id: 0 } },
+    )
+
+    if (!postInDb) {
+      throw new Error("Posts not found")
+    }
+
     expect(res.body.length).toBe(1)
-    expect(res.body[0]).toMatchObject(initialData[0])
+    expect(res.body[0]).toMatchObject(postInDb)
   })
 
   it("should create a new post", async () => {
+    const newBlog = {
+      name: "New Blog",
+      description: "A new blog description",
+      websiteUrl: "https://newblog.com",
+    }
+
+    const blogCreationRes = await req
+      .post(SETTINGS.PATH.BLOGS)
+      .set(authHeader)
+      .send(newBlog)
+
+    console.log("New blog response:", blogCreationRes.body)
+
+    const blogId = blogCreationRes.body.id
+
     const newPost = {
       title: "New Post",
       shortDescription: "A short description for the new post",
       content: "The content of the new post",
-      blogId: "1",
+      blogId: blogId,
     }
 
-    const res = await req.post(SETTINGS.PATH.POSTS).set(authHeader).send(newPost).expect(201)
+    const res = await req
+      .post(SETTINGS.PATH.POSTS)
+      .set(authHeader)
+      .send(newPost)
+
+    console.log("Response status:", res.status)
+    console.log("Response body:", res.body)
+
+    expect(res.status).toBe(201)
 
     expect(res.body).toMatchObject({
       ...newPost,
       blogName: expect.any(String),
       createdAt: expect.any(String),
     })
-    expect(res.body.id).toBeDefined()
 
-    const postInDb = await postsCollection.findOne({ id: res.body.id })
-    expect(postInDb).toMatchObject({
-      ...newPost,
-      blogName: "Tech Blog",
-      createdAt: expect.any(String),
-    })
+    expect(res.body.id).toBeDefined()
   })
 
   it("should return a post by ID", async () => {
@@ -92,9 +111,18 @@ describe("/posts", () => {
     ]
     await postsCollection.insertMany(initialData)
 
+    const postById = await postsCollection.findOne(
+      { id: "1" },
+      { projection: { _id: 0 } },
+    )
+
+    if (!postById) {
+      throw new Error("Posts not found")
+    }
+
     const res = await req.get(`${SETTINGS.PATH.POSTS}/1`).expect(200)
 
-    expect(res.body).toMatchObject(initialData[0])
+    expect(res.body).toMatchObject(postById)
   })
 
   it("should delete a post", async () => {

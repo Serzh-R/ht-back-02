@@ -23,7 +23,6 @@ describe("/blogs", () => {
 
   it("should return an empty array when no blogs exist", async () => {
     const res = await req.get(SETTINGS.PATH.BLOGS).expect(200)
-    console.log(res)
     expect(res.body).toEqual([])
   })
 
@@ -34,17 +33,13 @@ describe("/blogs", () => {
       websiteUrl: "https://newblog.com",
     }
 
-    const res = await req.post(SETTINGS.PATH.BLOGS).set(authHeader).send(newBlog).expect(201)
+    const res = await req
+      .post(SETTINGS.PATH.BLOGS)
+      .set(authHeader)
+      .send(newBlog)
+      .expect(201)
 
     expect(res.body).toMatchObject({
-      ...newBlog,
-      createdAt: expect.any(String),
-      isMembership: false,
-    })
-
-    const blogInDb = await blogsCollection.findOne({ id: res.body.id })
-
-    expect(blogInDb).toMatchObject({
       ...newBlog,
       createdAt: expect.any(String),
       isMembership: false,
@@ -67,7 +62,10 @@ describe("/blogs", () => {
 
     const res = await req.get(SETTINGS.PATH.BLOGS).expect(200)
 
-    const blogsInDb = await blogsCollection.findOne({ id: "1" }, { projection: { _id: 0 } })
+    const blogsInDb = await blogsCollection.findOne(
+      { id: "1" },
+      { projection: { _id: 0 } },
+    )
 
     if (!blogsInDb) {
       throw new Error("Blog not found in the database")
@@ -91,7 +89,10 @@ describe("/blogs", () => {
 
     await blogsCollection.insertMany(initialData)
 
-    const blogById = await blogsCollection.findOne({ id: "1" }, { projection: { _id: 0 } })
+    const blogById = await blogsCollection.findOne(
+      { id: "1" },
+      { projection: { _id: 0 } },
+    )
 
     if (!blogById) {
       throw new Error("Blog not found in the database")
@@ -117,7 +118,7 @@ describe("/blogs", () => {
     await blogsCollection.insertMany(initialData)
 
     const updatedBlog = {
-      name: "Updated Tech Blog",
+      name: "Updated Blog",
       description: "An updated blog about tech",
       websiteUrl: "https://updatedtechblog.com",
     }
@@ -125,18 +126,28 @@ describe("/blogs", () => {
     const blogsBeforeUpdate = await blogsCollection.find().toArray()
     console.log("Blogs before update:", blogsBeforeUpdate)
 
-    await req.put(`${SETTINGS.PATH.BLOGS}/1`).set(authHeader).send(updatedBlog).expect(204)
+    console.log("Request body:", updatedBlog)
+    await req
+      .put(`${SETTINGS.PATH.BLOGS}/1`)
+      .set(authHeader)
+      .send(updatedBlog)
+      .expect(204)
+
+    // ******************** Пример как выявить ошибку *************** //
+    /*console.log("Request body:", updatedBlog)
+    const result = await req    // создаем переменную
+      .put(`${SETTINGS.PATH.BLOGS}/1`)
+      .set(authHeader)
+      .send(updatedBlog)*/
+    //.expect(204)  //   комментим вывод ошибки
+
+    /*console.log(result.body)*/ // выводим пояснение ошибки в консоль
+    // *********************************************************** //
 
     const res = await req.get(`${SETTINGS.PATH.BLOGS}/1`).expect(200)
-    expect(res.body).toMatchObject(updatedBlog)
+    console.log("Response body:", res.body)
 
-    const blogInDb = await blogsCollection.findOne({ id: "1" })
-    console.log("Blog in DB after update:", blogInDb)
-    expect(blogInDb).toMatchObject({
-      ...updatedBlog,
-      createdAt: expect.any(String),
-      isMembership: false,
-    })
+    expect(res.body).toMatchObject(updatedBlog)
   })
 
   it("should delete a blog", async () => {

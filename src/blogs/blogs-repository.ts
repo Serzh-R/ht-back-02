@@ -18,7 +18,10 @@ export const blogsRepository = {
 
     await blogsCollection.insertOne(newBlog)
 
-    const blog = await blogsCollection.findOne({ id: newBlog.id }, { projection: { _id: 0 } })
+    const blog = await blogsCollection.findOne(
+      { id: newBlog.id },
+      { projection: { _id: 0 } },
+    )
 
     return blog as BlogViewModelType
   },
@@ -28,14 +31,24 @@ export const blogsRepository = {
   },
 
   async updateBlog(blogId: string, body: BlogInputModelType): Promise<boolean> {
-    const existingBlog = await blogsCollection.findOne({ id: blogId })
-    if (!existingBlog) {
+    if (!body.name || !body.description || !body.websiteUrl) {
+      console.error("Invalid input data:", body)
       return false
     }
+    /*const existingBlog = await blogsCollection.findOne({ id: blogId })
+    if (!existingBlog) {
+      return false
+    }*/
 
     const result = await blogsCollection.updateOne(
       { id: blogId },
-      { $set: { name: body.name, description: body.description, websiteUrl: body.websiteUrl } },
+      {
+        $set: {
+          name: body.name,
+          description: body.description,
+          websiteUrl: body.websiteUrl,
+        },
+      },
     )
 
     return result.matchedCount > 0
