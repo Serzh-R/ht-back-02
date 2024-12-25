@@ -1,6 +1,11 @@
 export type DBType = {
-  blogs: BlogViewModelType[]
-  posts: PostViewModelType[]
+  blogs: BlogType[]
+  posts: PostType[]
+}
+
+export enum SortDirectionsEnam {
+  ASC = "asc",
+  DESC = "desc",
 }
 
 export type FieldErrorType = {
@@ -12,7 +17,7 @@ export type APIErrorResultType = {
   errorsMessages: FieldErrorType[]
 }
 
-export type BlogViewModelType = {
+export type BlogType = {
   id: string
   name: string
   description: string
@@ -21,13 +26,21 @@ export type BlogViewModelType = {
   isMembership: boolean
 }
 
-export type BlogInputModelType = {
+export type PaginatorBlogType = {
+  pagesCount: number
+  page: number
+  pageSize: number
+  totalCount: number
+  items: BlogType[]
+}
+
+export type BlogInputType = {
   name: string
   description: string
   websiteUrl: string
 }
 
-export type PostViewModelType = {
+export type PostType = {
   id: string
   title: string
   shortDescription: string
@@ -37,7 +50,21 @@ export type PostViewModelType = {
   createdAt: string
 }
 
-export type PostInputModelType = {
+export type PaginatorPostType = {
+  pagesCount: number
+  page: number
+  pageSize: number
+  totalCount: number
+  items: PostType[]
+}
+
+export type BlogPostInputType = {
+  title: string // maxLength: 30
+  shortDescription: string // maxLength: 100
+  content: string // maxLength: 1000
+}
+
+export type PostInputType = {
   title: string
   shortDescription: string
   content: string

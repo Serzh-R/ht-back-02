@@ -1,13 +1,13 @@
-import { BlogInputModelType, BlogViewModelType } from "../types/types"
+import { BlogInputType, BlogType } from "../types/types"
 import { blogsCollection } from "../db/mongoDb"
 
 export const blogsRepository = {
-  async getBlogs(): Promise<BlogViewModelType[]> {
+  async getBlogs(): Promise<BlogType[]> {
     return await blogsCollection.find({}, { projection: { _id: 0 } }).toArray()
   },
 
-  async createBlog(body: BlogInputModelType): Promise<BlogViewModelType> {
-    const newBlog: BlogViewModelType = {
+  async createBlog(body: BlogInputType): Promise<BlogType> {
+    const newBlog: BlogType = {
       id: (Date.now() + Math.random()).toString(),
       name: body.name ? body.name : "",
       description: body.description,
@@ -23,14 +23,14 @@ export const blogsRepository = {
       { projection: { _id: 0 } },
     )
 
-    return blog as BlogViewModelType
+    return blog as BlogType
   },
 
-  async getBlogById(id: string): Promise<BlogViewModelType | null> {
+  async getBlogById(id: string): Promise<BlogType | null> {
     return await blogsCollection.findOne({ id }, { projection: { _id: 0 } })
   },
 
-  async updateBlog(blogId: string, body: BlogInputModelType): Promise<boolean> {
+  async updateBlog(blogId: string, body: BlogInputType): Promise<boolean> {
     if (!body.name || !body.description || !body.websiteUrl) {
       console.error("Invalid input data:", body)
       return false

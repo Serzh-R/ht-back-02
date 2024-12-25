@@ -1,8 +1,11 @@
 import { Router, Request, Response } from "express"
 import { blogsRepository } from "./blogs-repository"
 import { HTTP_STATUSES } from "../settings"
-import { BlogInputModelType } from "../types/types"
-import { blogFieldsValidator, idParamValidator } from "../validation/express-validator/field-validators"
+import { BlogInputType } from "../types/types"
+import {
+  blogFieldsValidator,
+  idParamValidator,
+} from "../validation/express-validator/field-validators"
 import { errorsResultMiddleware } from "../validation/express-validator/errors-result-middleware"
 import { authMiddleware } from "../middlewares/auth-middleware"
 
@@ -15,7 +18,7 @@ export const blogController = {
   },
 
   async createBlog(req: Request, res: Response) {
-    const body: BlogInputModelType = req.body
+    const body: BlogInputType = req.body
 
     const newBlog = await blogsRepository.createBlog(body)
     res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
@@ -34,7 +37,7 @@ export const blogController = {
 
   async updateBlog(req: Request, res: Response) {
     const blogId = req.params.id
-    const body: BlogInputModelType = req.body
+    const body: BlogInputType = req.body
     const isUpdated = await blogsRepository.updateBlog(blogId, body)
     if (!isUpdated) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
@@ -56,8 +59,19 @@ export const blogController = {
 }
 
 blogRouter.get("/", blogController.getBlogs)
-blogRouter.post("/", authMiddleware, blogFieldsValidator, errorsResultMiddleware, blogController.createBlog)
-blogRouter.get("/:id", idParamValidator, errorsResultMiddleware, blogController.getBlogById)
+blogRouter.post(
+  "/",
+  authMiddleware,
+  blogFieldsValidator,
+  errorsResultMiddleware,
+  blogController.createBlog,
+)
+blogRouter.get(
+  "/:id",
+  idParamValidator,
+  errorsResultMiddleware,
+  blogController.getBlogById,
+)
 blogRouter.put(
   "/:id",
   authMiddleware,
@@ -66,4 +80,10 @@ blogRouter.put(
   errorsResultMiddleware,
   blogController.updateBlog,
 )
-blogRouter.delete("/:id", authMiddleware, idParamValidator, errorsResultMiddleware, blogController.deleteBlog)
+blogRouter.delete(
+  "/:id",
+  authMiddleware,
+  idParamValidator,
+  errorsResultMiddleware,
+  blogController.deleteBlog,
+)

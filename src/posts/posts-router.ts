@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express"
 import { postsRepository } from "./posts-repository"
 import { HTTP_STATUSES } from "../settings"
-import { PostInputModelType } from "../types/types"
+import { PostInputType } from "../types/types"
 import {
   blogIdValidator,
   idParamValidator,
@@ -21,7 +21,7 @@ export const postController = {
   },
 
   async createPost(req: Request, res: Response) {
-    const body: PostInputModelType = req.body
+    const body: PostInputType = req.body
 
     const newPost = await postsRepository.createPost(body)
     res.status(HTTP_STATUSES.CREATED_201).json(newPost)
@@ -84,4 +84,9 @@ postRouter.put(
   errorsResultMiddleware,
   postController.updatePost,
 )
-postRouter.delete("/:id", authMiddleware, idParamValidator, postController.deletePost)
+postRouter.delete(
+  "/:id",
+  authMiddleware,
+  idParamValidator,
+  postController.deletePost,
+)

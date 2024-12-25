@@ -1,19 +1,19 @@
-import { PostInputModelType, PostViewModelType } from "../types/types"
+import { PostInputType, PostType } from "../types/types"
 import { blogsCollection, postsCollection } from "../db/mongoDb"
 
 export const postsRepository = {
-  async getPosts(): Promise<PostViewModelType[]> {
+  async getPosts(): Promise<PostType[]> {
     return await postsCollection.find({}, { projection: { _id: 0 } }).toArray()
   },
 
-  async createPost(body: PostInputModelType): Promise<PostViewModelType> {
+  async createPost(body: PostInputType): Promise<PostType> {
     const blog = await blogsCollection.findOne({ id: body.blogId })
 
     if (!blog) {
       throw new Error("Blog not found")
     }
 
-    const newPost: PostViewModelType = {
+    const newPost: PostType = {
       id: (Date.now() + Math.random()).toString(),
       title: body.title,
       shortDescription: body.shortDescription,
@@ -25,16 +25,22 @@ export const postsRepository = {
 
     await postsCollection.insertOne(newPost)
 
-    const post = await postsCollection.findOne({ id: newPost.id }, { projection: { _id: 0 } })
+    const post = await postsCollection.findOne(
+      { id: newPost.id },
+      { projection: { _id: 0 } },
+    )
 
-    return post as PostViewModelType
+    return post as PostType
   },
 
-  async getPostById(postId: string): Promise<PostViewModelType | null> {
-    return await postsCollection.findOne({ id: postId }, { projection: { _id: 0 } })
+  async getPostById(postId: string): Promise<PostType | null> {
+    return await postsCollection.findOne(
+      { id: postId },
+      { projection: { _id: 0 } },
+    )
   },
 
-  async updatePost(postId: string, body: PostInputModelType): Promise<boolean> {
+  async updatePost(postId: string, body: PostInputType): Promise<boolean> {
     const blog = await blogsCollection.findOne({ id: body.blogId })
 
     if (!blog) {
