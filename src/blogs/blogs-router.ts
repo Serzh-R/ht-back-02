@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express"
 import { blogsRepository } from "./blogs-repository"
 import { HTTP_STATUSES } from "../settings"
-import { BlogInputType } from "../types/types"
+import { BlogInputType, SortDirectionsEnam } from "../types/types"
 import {
   blogFieldsValidator,
   idParamValidator,
@@ -12,7 +12,29 @@ import { authMiddleware } from "../middlewares/auth-middleware"
 export const blogRouter = Router()
 
 export const blogController = {
-  async getBlogs(req: Request, res: Response) {
+    async getBlogs(req: Request, res: Response) {
+      let searchNameTerm = req.query.searchNameTerm ? req.query.searchNameTerm.toString() : null
+      let sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
+      let sortDirection: SortDirectionsEnam =
+        req.query.sortDirection && req.query.sortDirection.toString() === SortDirectionsEnam.ASC
+          ? SortDirectionsEnam.ASC
+          : SortDirectionsEnam.DESC
+      let pageNumber = req.query.pageNumber ? +req.query.pageNumber : 1
+      let pageSize = req.query.pageSize ? + req.query.pageSize : 10
+
+      const blogs = await blogsService.getBlogs(
+        searchNameTerm,
+        sortBy,
+        sortDirection,
+        pageNumber,
+        pageSize
+      )
+      res.status(200).send(blogs)
+
+
+
+    },
+  /*async getBlogs(req: Request, res: Response) {
     const blogs = await blogsRepository.getBlogs()
     res.status(HTTP_STATUSES.OK_200).json(blogs)
   },
@@ -32,7 +54,7 @@ export const blogController = {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
     } else {
       res.status(HTTP_STATUSES.OK_200).json(blogById)
-    }
+    }*/
   },
 
   async updateBlog(req: Request, res: Response) {

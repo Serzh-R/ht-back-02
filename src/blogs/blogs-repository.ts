@@ -30,7 +30,7 @@ export const blogsRepository = {
     return await blogsCollection.findOne({ id }, { projection: { _id: 0 } })
   },
 
-  async updateBlog(blogId: string, body: BlogInputType): Promise<boolean> {
+  async updateBlog(id: string, body: BlogInputType): Promise<boolean> {
     if (!body.name || !body.description || !body.websiteUrl) {
       console.error("Invalid input data:", body)
       return false
@@ -41,7 +41,7 @@ export const blogsRepository = {
     }*/
 
     const result = await blogsCollection.updateOne(
-      { id: blogId },
+      { id },
       {
         $set: {
           name: body.name,

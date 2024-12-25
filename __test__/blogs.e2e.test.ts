@@ -62,17 +62,17 @@ describe("/blogs", () => {
 
     const res = await req.get(SETTINGS.PATH.BLOGS).expect(200)
 
-    const blogsInDb = await blogsCollection.findOne(
+    const blog = await blogsCollection.findOne(
       { id: "1" },
       { projection: { _id: 0 } },
     )
 
-    if (!blogsInDb) {
+    if (!blog) {
       throw new Error("Blog not found in the database")
     }
 
     expect(res.body.length).toBe(1)
-    expect(res.body[0]).toMatchObject(blogsInDb)
+    expect(res.body[0]).toMatchObject(blog)
   })
 
   it("should return a blog by ID", async () => {

@@ -42,17 +42,17 @@ describe("/posts", () => {
 
     const res = await req.get(SETTINGS.PATH.POSTS).expect(200)
 
-    const postInDb = await postsCollection.findOne(
+    const post = await postsCollection.findOne(
       { id: "1" },
       { projection: { _id: 0 } },
     )
 
-    if (!postInDb) {
+    if (!post) {
       throw new Error("Posts not found")
     }
 
     expect(res.body.length).toBe(1)
-    expect(res.body[0]).toMatchObject(postInDb)
+    expect(res.body[0]).toMatchObject(post)
   })
 
   it("should create a new post", async () => {
