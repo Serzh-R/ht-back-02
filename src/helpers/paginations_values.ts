@@ -13,8 +13,14 @@ export const paginationQueries = (req: Request) => {
     req.query.sortDirection.toString() === SortDirectionsEnam.ASC
       ? SortDirectionsEnam.ASC
       : SortDirectionsEnam.DESC
-  let pageNumber: number = req.query.pageNumber ? +req.query.pageNumber : 1
-  let pageSize: number = req.query.pageSize ? +req.query.pageSize : 10
+  let pageNumber: number =
+    req.query.pageNumber !== undefined && Number(req.query.pageNumber) >= 0
+      ? Number(req.query.pageNumber)
+      : 1
+  let pageSize: number =
+    req.query.pageSize !== undefined && +req.query.pageSize >= 0
+      ? +req.query.pageSize
+      : 10
 
   return { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize }
 }
