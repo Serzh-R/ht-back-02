@@ -1,15 +1,14 @@
-import { SortDirection } from "mongodb"
-import { SortDirectionsEnam } from "../types/types"
 import { blogsRepository } from "./blogs-repository"
+import { PaginatorBlogType } from "../types/types"
 
 export const blogsService = {
   async getBlogs(
     searchNameTerm: string | null,
     sortBy: string,
-    sortDirection: SortDirectionsEnam.ASC | SortDirectionsEnam.DESC,
+    sortDirection: "asc" | "desc",
     pageNumber: number,
     pageSize: number,
-  ) {
+  ): Promise<PaginatorBlogType> {
     const blogs = await blogsRepository.getBlogs(
       searchNameTerm,
       sortBy,

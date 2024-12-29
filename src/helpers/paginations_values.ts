@@ -1,5 +1,4 @@
 import { Request } from "express"
-import { SortDirectionsEnam } from "../types/types"
 
 export const paginationQueries = (req: Request) => {
   let searchNameTerm: string | null = req.query.searchNameTerm
@@ -8,11 +7,10 @@ export const paginationQueries = (req: Request) => {
   let sortBy: string = req.query.sortBy
     ? req.query.sortBy.toString()
     : "createdAt"
-  let sortDirection: SortDirectionsEnam.ASC | SortDirectionsEnam.DESC =
-    req.query.sortDirection &&
-    req.query.sortDirection.toString() === SortDirectionsEnam.ASC
-      ? SortDirectionsEnam.ASC
-      : SortDirectionsEnam.DESC
+  let sortDirection: "asc" | "desc" =
+    req.query.sortDirection && req.query.sortDirection.toString() === "asc"
+      ? "asc"
+      : "desc"
   let pageNumber: number =
     req.query.pageNumber !== undefined && Number(req.query.pageNumber) >= 0
       ? Number(req.query.pageNumber)

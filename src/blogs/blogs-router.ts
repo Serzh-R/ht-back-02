@@ -14,7 +14,7 @@ import { paginationQueries } from "../helpers/paginations_values"
 export const blogRouter = Router()
 
 export const blogController = {
-    async    getBlogs(req: Request, res: Response) {
+    async getBlogs(req: Request, res: Response) {
 
       const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
 
@@ -27,8 +27,6 @@ export const blogController = {
       )
       res.status(200).send(blogs)
     },
-
-
   },
 
   async updateBlog(req: Request, res: Response) {
