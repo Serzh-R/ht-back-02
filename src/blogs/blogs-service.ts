@@ -1,5 +1,5 @@
 import { blogsRepository } from "./blogs-repository"
-import { PaginatorBlogType } from "../types/types"
+import { BlogInputType, BlogType, PaginatorBlogType } from "../types/types"
 
 export const blogsService = {
   async getBlogs(
@@ -25,5 +25,10 @@ export const blogsService = {
       totalCount: blogsCount,
       items: blogs,
     }
+  },
+
+  async createBlog(body: BlogInputType): Promise<BlogType> {
+    const newBlog = await blogsRepository.createBlog(body)
+    return newBlog
   },
 }

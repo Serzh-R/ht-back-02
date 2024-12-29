@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express"
 import { blogsRepository } from "./blogs-repository"
 import { HTTP_STATUSES } from "../settings"
-import { BlogInputType} from "../types/types"
+import { BlogInputType } from "../types/types"
 import {
   blogFieldsValidator,
   idParamValidator,
@@ -14,20 +14,36 @@ import { paginationQueries } from "../helpers/paginations_values"
 export const blogRouter = Router()
 
 export const blogController = {
-    async getBlogs(req: Request, res: Response) {
+  async getBlogs(req: Request, res: Response) {
+    const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
+      paginationQueries(req)
 
-      const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
-
-      const blogs = await blogsService.getBlogs(
-        searchNameTerm,
-        sortBy,
-        sortDirection,
-        pageNumber,
-        pageSize
-      )
-      res.status(200).send(blogs)
-    },
+    const blogs = await blogsService.getBlogs(
+      searchNameTerm,
+      sortBy,
+      sortDirection,
+      pageNumber,
+      pageSize,
+    )
+    res.status(200).send(blogs)
   },
+
+  async createBlog(req: Request, res: Response) {
+    const body: BlogInputType = req.body
+
+    const newBlog = await blogsService.createBlog(body)
+    res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
+  },
+
+  /*async getBlogById(req: Request, res: Response) {
+  const blogId = req.params.id
+
+  const blogById = await blogsRepository.getBlogById(blogId)
+  if (!blogById) {
+    res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
+  } else {
+    res.status(HTTP_STATUSES.OK_200).json(blogById)
+  }
 
   async updateBlog(req: Request, res: Response) {
     const blogId = req.params.id
@@ -40,6 +56,7 @@ export const blogController = {
     }
   },
 
+
   async deleteBlog(req: Request, res: Response) {
     const id = req.params.id
 
@@ -49,7 +66,7 @@ export const blogController = {
     } else {
       res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     }
-  },
+  },*/
 }
 
 blogRouter.get("/", blogController.getBlogs)
