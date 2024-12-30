@@ -3,11 +3,6 @@ export type DBType = {
   posts: PostType[]
 }
 
-export enum SortDirectionsEnam {
-  ASC = "asc",
-  DESC = "desc",
-}
-
 export type FieldErrorType = {
   message: string
   field: string

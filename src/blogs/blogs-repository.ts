@@ -2,8 +2,33 @@ import { BlogInputType, BlogType } from "../types/types"
 import { blogsCollection } from "../db/mongoDb"
 
 export const blogsRepository = {
-  async getBlogs(): Promise<BlogType[]> {
-    return await blogsCollection.find({}, { projection: { _id: 0 } }).toArray()
+  async getBlogs(
+    searchNameTerm: string | null,
+    sortBy: string,
+    sortDirection: "asc" | "desc",
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<BlogType[]> {
+    const filter: any = {}
+
+    if (searchNameTerm) {
+      filter.name = { $regex: searchNameTerm, $options: "i" } // { projection: { _id: 0 }}
+    }
+
+    return await blogsCollection
+      .find({ filter }, { projection: { _id: 0 } })
+      .sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray()
+  },
+
+  async getBlogsCount(searchNameTerm: string | null): Promise<number> {
+    const filter: any = {}
+    if (searchNameTerm) {
+      filter.name = { $regex: searchNameTerm, $options: "i" }
+    }
+    return blogsCollection.countDocuments(filter)
   },
 
   async createBlog(body: BlogInputType): Promise<BlogType> {
@@ -35,10 +60,6 @@ export const blogsRepository = {
       console.error("Invalid input data:", body)
       return false
     }
-    /*const existingBlog = await blogsCollection.findOne({ id: blogId })
-    if (!existingBlog) {
-      return false
-    }*/
 
     const result = await blogsCollection.updateOne(
       { id },
