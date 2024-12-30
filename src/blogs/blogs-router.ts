@@ -57,16 +57,16 @@ export const blogController = {
     }
   },
 
-  /*async deleteBlog(req: Request, res: Response) {
+  async deleteBlog(req: Request, res: Response) {
     const id = req.params.id
 
-    const isDeleted = await blogsRepository.deleteBlog(id)
+    const isDeleted = await blogsService.deleteBlog(id)
     if (!isDeleted) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
     } else {
       res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     }
-  },*/
+  },
 }
 
 blogRouter.get("/", blogController.getBlogs)

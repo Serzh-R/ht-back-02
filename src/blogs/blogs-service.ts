@@ -41,4 +41,9 @@ export const blogsService = {
     const isUpdated = await blogsRepository.updateBlog(id, blogData)
     return isUpdated
   },
+
+  async deleteBlog(id: string): Promise<boolean> {
+    const isDeleted = await blogsRepository.deleteBlog(id)
+    return isDeleted
+  },
 }
