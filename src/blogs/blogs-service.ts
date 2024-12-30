@@ -1,3 +1,4 @@
+import { SortDirection } from "mongodb"
 import { SortDirectionsEnam } from "../types/types"
 import { blogsRepository } from "./blogs-repository"
 

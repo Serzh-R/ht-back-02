@@ -8,19 +8,24 @@ import {
 } from "../validation/express-validator/field-validators"
 import { errorsResultMiddleware } from "../validation/express-validator/errors-result-middleware"
 import { authMiddleware } from "../middlewares/auth-middleware"
+import { blogsService } from "./blogs-service"
+import { paginationQueries } from "../helpers/paginations_values"
 
 export const blogRouter = Router()
 
 export const blogController = {
     async getBlogs(req: Request, res: Response) {
-      let searchNameTerm = req.query.searchNameTerm ? req.query.searchNameTerm.toString() : null
+
+      /*let searchNameTerm = req.query.searchNameTerm ? req.query.searchNameTerm.toString() : null
       let sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
       let sortDirection: SortDirectionsEnam =
         req.query.sortDirection && req.query.sortDirection.toString() === SortDirectionsEnam.ASC
           ? SortDirectionsEnam.ASC
           : SortDirectionsEnam.DESC
       let pageNumber = req.query.pageNumber ? +req.query.pageNumber : 1
-      let pageSize = req.query.pageSize ? + req.query.pageSize : 10
+      let pageSize = req.query.pageSize ? + req.query.pageSize : 10*/
+
+      const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
 
       const blogs = await blogsService.getBlogs(
         searchNameTerm,
@@ -30,10 +35,8 @@ export const blogController = {
         pageSize
       )
       res.status(200).send(blogs)
-
-
-
     },
+
   /*async getBlogs(req: Request, res: Response) {
     const blogs = await blogsRepository.getBlogs()
     res.status(HTTP_STATUSES.OK_200).json(blogs)
