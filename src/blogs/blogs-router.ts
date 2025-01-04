@@ -121,7 +121,7 @@ blogRouter.get(
   "/:id/posts",
   blogFieldsValidator,
   idParamValidator,
-  blogIdValidator,
+  //blogIdValidator,
   errorsResultMiddleware,
   blogController.getPostsInBlogById,
 )
@@ -138,7 +138,6 @@ blogRouter.post(
   "/:id/posts",
   authMiddleware,
   idParamValidator,
-  //blogIdValidator,
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
