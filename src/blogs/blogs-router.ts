@@ -3,7 +3,6 @@ import { HTTP_STATUSES } from "../settings"
 import { BlogInputType, PostInputType } from "../types/types"
 import {
   blogFieldsValidator,
-  blogIdValidator,
   idParamValidator,
   postContentValidator,
   postShortDescriptionValidator,
