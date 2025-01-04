@@ -52,4 +52,8 @@ export const postsService = {
   async updatePost(id: string, body: PostInputType): Promise<boolean> {
     return await postsRepository.updatePost(id, body)
   },
+
+  async deletePost(id: string): Promise<boolean> {
+    return await postsRepository.deletePost(id)
+  },
 }

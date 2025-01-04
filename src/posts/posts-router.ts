@@ -69,9 +69,9 @@ export const postController = {
   },
 
   async deletePost(req: Request, res: Response) {
-    const postId = req.params.id
+    const id = req.params.id
 
-    const isDeleted = await postsRepository.deletePost(postId)
+    const isDeleted = await postsService.deletePost(id)
     if (!isDeleted) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
     } else {
