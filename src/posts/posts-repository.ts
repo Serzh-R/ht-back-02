@@ -21,7 +21,11 @@ export const postsRepository = {
 
   async createPost(newPost: PostType): Promise<PostType> {
     await postsCollection.insertOne(newPost)
-    return newPost
+
+    return (await postsCollection.findOne(
+      { id: newPost.id },
+      { projection: { _id: 0 } },
+    )) as PostType
   },
 
   async getPostById(id: string): Promise<PostType | null> {
