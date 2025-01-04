@@ -69,16 +69,17 @@ export const blogController = {
 
   async getPostsInBlogById(req: Request, res: Response): Promise<void> {
     const blogId = req.params.id
-    const { pageNumber, pageSize, sortBy, sortDirection } =
-      paginationQueries(req)
 
     const blog = await blogsRepository.getBlogById(blogId)
     if (!blog) {
       res
         .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json({ message: "Blog not found", field: "id" })
+        .json({ message: "Blog not found", field: "blogId" })
       return
     }
+
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationQueries(req)
 
     const posts = await postsService.getPostsForBlog(
       blogId,
