@@ -2,8 +2,21 @@ import { PostInputType, PostType } from "../types/types"
 import { blogsCollection, postsCollection } from "../db/mongoDb"
 
 export const postsRepository = {
-  async getPosts(): Promise<PostType[]> {
-    return await postsCollection.find({}, { projection: { _id: 0 } }).toArray()
+  async getPosts(
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: "asc" | "desc",
+  ): Promise<PostType[]> {
+    return await postsCollection
+      .find({}, { projection: { _id: 0 } })
+      .sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray()
+  },
+  async getPostsCount(): Promise<number> {
+    return await postsCollection.countDocuments()
   },
 
   async createPost(body: PostInputType): Promise<PostType> {

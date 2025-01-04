@@ -12,11 +12,11 @@ export const blogsRepository = {
     const filter: any = {}
 
     if (searchNameTerm) {
-      filter.name = { $regex: searchNameTerm, $options: "i" } // { projection: { _id: 0 }}
+      filter.name = { $regex: searchNameTerm, $options: "i" }
     }
 
     return await blogsCollection
-      .find({ filter }, { projection: { _id: 0 } })
+      .find(filter, { projection: { _id: 0 } })
       .sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)

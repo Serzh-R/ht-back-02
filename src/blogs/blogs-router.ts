@@ -1,5 +1,4 @@
 import { Router, Request, Response } from "express"
-import { blogsRepository } from "./blogs-repository"
 import { HTTP_STATUSES } from "../settings"
 import { BlogInputType } from "../types/types"
 import {
@@ -25,7 +24,7 @@ export const blogController = {
       pageNumber,
       pageSize,
     )
-    res.status(200).send(blogs)
+    res.status(HTTP_STATUSES.OK_200).json(blogs)
   },
 
   async createBlog(req: Request, res: Response) {
