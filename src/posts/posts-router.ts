@@ -35,24 +35,32 @@ export const postController = {
 
     const newPost = await postsService.createPost(body)
 
+    if (!newPost) {
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+        errorsMessages: [{ message: "Blog not found", field: "blogId" }],
+      })
+      return
+    }
+
     res.status(HTTP_STATUSES.CREATED_201).json(newPost)
   },
 
   async getPostById(req: Request, res: Response) {
-    const postId = req.params.id
+    const id = req.params.id
 
-    const postById = await postsRepository.getPostById(postId)
+    const postById = await postsService.getPostById(id)
     if (!postById) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
-    } else {
-      res.status(HTTP_STATUSES.OK_200).json(postById)
+      return
     }
+
+    res.status(HTTP_STATUSES.OK_200).json(postById)
   },
 
   async updatePost(req: Request, res: Response) {
-    const postId = req.params.id
+    const id = req.params.id
     const body = req.body
-    const isUpdated = await postsRepository.updatePost(postId, body)
+    const isUpdated = await postsService.updatePost(id, body)
     if (!isUpdated) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json("Post not found")
     } else {

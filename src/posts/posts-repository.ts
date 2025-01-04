@@ -24,14 +24,11 @@ export const postsRepository = {
     return newPost
   },
 
-  async getPostById(postId: string): Promise<PostType | null> {
-    return await postsCollection.findOne(
-      { id: postId },
-      { projection: { _id: 0 } },
-    )
+  async getPostById(id: string): Promise<PostType | null> {
+    return await postsCollection.findOne({ id }, { projection: { _id: 0 } })
   },
 
-  async updatePost(postId: string, body: PostInputType): Promise<boolean> {
+  async updatePost(id: string, body: PostInputType): Promise<boolean> {
     const blog = await blogsCollection.findOne({ id: body.blogId })
 
     if (!blog) {
@@ -39,7 +36,7 @@ export const postsRepository = {
     }
 
     const result = await postsCollection.updateOne(
-      { id: postId },
+      { id },
       {
         $set: {
           title: body.title,

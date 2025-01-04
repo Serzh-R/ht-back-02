@@ -44,4 +44,12 @@ export const postsService = {
 
     return await postsRepository.createPost(newPost)
   },
+
+  async getPostById(id: string): Promise<PostType | null> {
+    return await postsRepository.getPostById(id)
+  },
+
+  async updatePost(id: string, body: PostInputType): Promise<boolean> {
+    return await postsRepository.updatePost(id, body)
+  },
 }
