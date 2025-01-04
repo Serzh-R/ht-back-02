@@ -138,7 +138,7 @@ blogRouter.post(
   "/:id/posts",
   authMiddleware,
   idParamValidator,
-  blogIdValidator,
+  //blogIdValidator,
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
