@@ -33,7 +33,8 @@ export const postController = {
   async createPost(req: Request, res: Response) {
     const body: PostInputType = req.body
 
-    const newPost = await postsRepository.createPost(body)
+    const newPost = await postsService.createPost(body)
+
     res.status(HTTP_STATUSES.CREATED_201).json(newPost)
   },
 

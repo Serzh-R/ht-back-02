@@ -1,5 +1,6 @@
-import { PaginatorPostType } from "../types/types"
+import { PaginatorPostType, PostInputType, PostType } from "../types/types"
 import { postsRepository } from "./posts-repository"
+import { blogsRepository } from "../blogs/blogs-repository"
 
 export const postsService = {
   async getPosts(
@@ -23,5 +24,24 @@ export const postsService = {
       totalCount: postsCount,
       items: posts,
     }
+  },
+
+  async createPost(postInput: PostInputType): Promise<PostType | null> {
+    const blog = await blogsRepository.getBlogById(postInput.blogId)
+    if (!blog) {
+      return null
+    }
+
+    const newPost: PostType = {
+      id: (Date.now() + Math.random()).toString(),
+      title: postInput.title,
+      shortDescription: postInput.shortDescription,
+      content: postInput.content,
+      blogId: postInput.blogId,
+      blogName: blog.name, // Получаем название блога
+      createdAt: new Date().toISOString(),
+    }
+
+    return await postsRepository.createPost(newPost)
   },
 }
