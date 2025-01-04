@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express"
 import { HTTP_STATUSES } from "../settings"
-import { BlogInputType } from "../types/types"
+import { BlogInputType, PostInputType } from "../types/types"
 import {
   blogFieldsValidator,
   idParamValidator,
@@ -9,6 +9,8 @@ import { errorsResultMiddleware } from "../validation/express-validator/errors-r
 import { authMiddleware } from "../middlewares/auth-middleware"
 import { blogsService } from "./blogs-service"
 import { paginationQueries } from "../helpers/paginations_values"
+import { postsService } from "../posts/posts-service"
+import { blogsRepository } from "./blogs-repository"
 
 export const blogRouter = Router()
 
@@ -35,6 +37,22 @@ export const blogController = {
     res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
   },
 
+  async createPostInBlogById(req: Request, res: Response): Promise<void> {
+    const id = req.params.id
+    const body: PostInputType = req.body
+
+    const createdPost = await postsService.createPostForBlog(id, body)
+
+    if (!createdPost) {
+      res
+        .status(HTTP_STATUSES.NOT_FOUND_404)
+        .json({ message: "Blog not found", field: "id" })
+      return
+    }
+
+    res.status(HTTP_STATUSES.CREATED_201).json(createdPost)
+  },
+
   async getBlogById(req: Request, res: Response) {
     const id = req.params.id
 
@@ -44,6 +62,30 @@ export const blogController = {
     } else {
       res.status(HTTP_STATUSES.OK_200).json(blogById)
     }
+  },
+
+  async getPostsInBlogById(req: Request, res: Response): Promise<void> {
+    const blogId = req.params.id
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationQueries(req)
+
+    const blog = await blogsRepository.getBlogById(blogId)
+    if (!blog) {
+      res
+        .status(HTTP_STATUSES.NOT_FOUND_404)
+        .json({ message: "Blog not found", field: "id" })
+      return
+    }
+
+    const posts = await postsService.getPostsForBlog(
+      blogId,
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection,
+    )
+
+    res.status(HTTP_STATUSES.OK_200).json(posts)
   },
 
   async updateBlog(req: Request, res: Response) {
@@ -70,6 +112,14 @@ export const blogController = {
 }
 
 blogRouter.get("/", blogController.getBlogs)
+
+blogRouter.get(
+  "/:id/posts",
+  blogFieldsValidator,
+  errorsResultMiddleware,
+  blogController.getPostsInBlogById,
+)
+
 blogRouter.post(
   "/",
   authMiddleware,
@@ -77,12 +127,22 @@ blogRouter.post(
   errorsResultMiddleware,
   blogController.createBlog,
 )
+
+blogRouter.post(
+  "/:id/posts",
+  authMiddleware,
+  blogFieldsValidator,
+  errorsResultMiddleware,
+  blogController.createPostInBlogById,
+)
+
 blogRouter.get(
   "/:id",
   idParamValidator,
   errorsResultMiddleware,
   blogController.getBlogById,
 )
+
 blogRouter.put(
   "/:id",
   authMiddleware,
@@ -91,6 +151,7 @@ blogRouter.put(
   errorsResultMiddleware,
   blogController.updateBlog,
 )
+
 blogRouter.delete(
   "/:id",
   authMiddleware,

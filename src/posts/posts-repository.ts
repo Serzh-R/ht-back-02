@@ -28,6 +28,25 @@ export const postsRepository = {
     return await postsCollection.findOne({ id }, { projection: { _id: 0 } })
   },
 
+  async getPostsForBlog(
+    blogId: string,
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: "asc" | "desc",
+  ): Promise<PostType[]> {
+    return await postsCollection
+      .find({ blogId }, { projection: { _id: 0 } })
+      .sort({ [sortBy]: sortDirection === "asc" ? 1 : -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray()
+  },
+
+  async getPostsCountForBlog(blogId: string): Promise<number> {
+    return await postsCollection.countDocuments({ blogId })
+  },
+
   async updatePost(id: string, body: PostInputType): Promise<boolean> {
     const blog = await blogsCollection.findOne({ id: body.blogId })
 

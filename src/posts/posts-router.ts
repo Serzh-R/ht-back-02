@@ -1,5 +1,4 @@
 import { Router, Request, Response } from "express"
-import { postsRepository } from "./posts-repository"
 import { HTTP_STATUSES } from "../settings"
 import { PostInputType } from "../types/types"
 import {

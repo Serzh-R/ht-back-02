@@ -38,7 +38,26 @@ export const postsService = {
       shortDescription: postInput.shortDescription,
       content: postInput.content,
       blogId: postInput.blogId,
-      blogName: blog.name, // Получаем название блога
+      blogName: blog.name,
+      createdAt: new Date().toISOString(),
+    }
+
+    return await postsRepository.createPost(newPost)
+  },
+
+  async createPostForBlog(id: string, body: PostInputType) {
+    const blog = await blogsRepository.getBlogById(id)
+    if (!blog) {
+      return null
+    }
+
+    const newPost: PostType = {
+      id: (Date.now() + Math.random()).toString(),
+      title: body.title,
+      shortDescription: body.shortDescription,
+      content: body.content,
+      blogId: id,
+      blogName: blog.name,
       createdAt: new Date().toISOString(),
     }
 
@@ -47,6 +66,32 @@ export const postsService = {
 
   async getPostById(id: string): Promise<PostType | null> {
     return await postsRepository.getPostById(id)
+  },
+
+  async getPostsForBlog(
+    blogId: string,
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: "asc" | "desc",
+  ): Promise<PaginatorPostType> {
+    const posts = await postsRepository.getPostsForBlog(
+      blogId,
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection,
+    )
+
+    const postsCount = await postsRepository.getPostsCountForBlog(blogId)
+
+    return {
+      pagesCount: Math.ceil(postsCount / pageSize),
+      page: pageNumber,
+      pageSize,
+      totalCount: postsCount,
+      items: posts,
+    }
   },
 
   async updatePost(id: string, body: PostInputType): Promise<boolean> {
