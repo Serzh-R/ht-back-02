@@ -37,8 +37,8 @@ export const blogsService = {
     return blogById
   },
 
-  async updateBlog(id: string, blogData: BlogInputType): Promise<boolean> {
-    const isUpdated = await blogsRepository.updateBlog(id, blogData)
+  async updateBlog(id: string, body: BlogInputType): Promise<boolean> {
+    const isUpdated = await blogsRepository.updateBlog(id, body)
     return isUpdated
   },
 

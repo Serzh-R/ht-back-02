@@ -119,7 +119,6 @@ blogRouter.get("/", blogController.getBlogs)
 
 blogRouter.get(
   "/:id/posts",
-  blogFieldsValidator,
   idParamValidator,
   errorsResultMiddleware,
   blogController.getPostsInBlogById,
