@@ -28,13 +28,11 @@ export const blogsService = {
   },
 
   async createBlog(body: BlogInputType): Promise<BlogType> {
-    const newBlog = await blogsRepository.createBlog(body)
-    return newBlog
+    return await blogsRepository.createBlog(body)
   },
 
   async getBlogById(id: string): Promise<BlogType | null> {
-    const blogById = await blogsRepository.getBlogById(id)
-    return blogById
+    return await blogsRepository.getBlogById(id)
   },
 
   async updateBlog(id: string, body: BlogInputType): Promise<boolean> {
