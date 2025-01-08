@@ -65,3 +65,21 @@ export type PostInputType = {
   content: string
   blogId: string
 }
+
+export type UserType = {
+  id: string
+  login: string
+  email: string
+  createdAt: string
+}
+
+export type UserInputType = {
+  login: string
+  password: string
+  email: string
+}
+
+export type LoginInputType = {
+  loginOrEmail: string
+  password: string
+}
