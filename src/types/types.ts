@@ -13,7 +13,7 @@ export type APIErrorResultType = {
 }
 
 export type BlogType = {
-  id: string
+  id?: string
   name: string
   description: string
   websiteUrl: string
