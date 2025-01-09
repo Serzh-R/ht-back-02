@@ -13,13 +13,15 @@ export type APIErrorResultType = {
 }
 
 export type BlogType = {
-  id?: string
+  id: string
   name: string
   description: string
   websiteUrl: string
   createdAt: string
   isMembership: boolean
 }
+
+export type BlogInsertType = Omit<BlogType, 'id'>
 
 export type PaginatorBlogType = {
   pagesCount: number

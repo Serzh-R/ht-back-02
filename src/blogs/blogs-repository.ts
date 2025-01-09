@@ -1,5 +1,6 @@
-import { BlogInputType, BlogType } from '../types/types'
+import { BlogInputType, BlogInsertType, BlogType } from '../types/types'
 import { blogsCollection } from '../db/mongoDb'
+import { OptionalId } from 'mongodb'
 
 export const blogsRepository = {
   async getBlogs(
@@ -32,8 +33,7 @@ export const blogsRepository = {
   },
 
   async createBlog(body: BlogInputType): Promise<BlogType> {
-    const newBlog = {
-      //id: (Date.now() + Math.random()).toString(),
+    const newBlog: BlogInsertType = {
       name: body.name ? body.name : '',
       description: body.description,
       websiteUrl: body.websiteUrl,
@@ -41,7 +41,9 @@ export const blogsRepository = {
       isMembership: false,
     }
 
-    const result = await blogsCollection.insertOne(newBlog)
+    const result = await blogsCollection.insertOne(
+      newBlog as OptionalId<BlogType>,
+    )
 
     const blog = await blogsCollection.findOne(
       { _id: result.insertedId },
