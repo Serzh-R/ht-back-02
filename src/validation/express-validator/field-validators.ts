@@ -1,31 +1,31 @@
-import { body, param } from "express-validator"
-import { blogsCollection } from "../../db/mongoDb"
+import { body, param } from 'express-validator'
+import { blogsCollection } from '../../db/mongoDb'
 
-export const idParamValidator = param("id")
+export const idParamValidator = param('id')
   .isString()
-  .withMessage("name should be a string")
+  .withMessage('name should be a string')
   .trim()
   .notEmpty()
-  .withMessage("name is required")
+  .withMessage('name is required')
 
-export const blogIdValidator = body("blogId")
+export const blogIdValidator = body('blogId')
   .isString()
-  .withMessage("blogId should be a string")
+  .withMessage('blogId should be a string')
   .trim()
   .notEmpty()
-  .withMessage("blogId is required")
+  .withMessage('blogId is required')
   .custom(async (blogId) => {
     const blog = await blogsCollection.findOne({ id: blogId })
     if (!blog) {
-      throw new Error("No blog found with the provided blogId")
+      throw new Error('No blog found with the provided blogId')
     }
     return true
   })
-  .withMessage("Invalid blogId")
+  .withMessage('Invalid blogId')
 
 /*************************************************************************************/
 
-const BlogFields: string[] = ["name", "description", "websiteUrl"]
+const BlogFields: string[] = ['name', 'description', 'websiteUrl']
 
 export const specificFieldsValidator = (fields: string[]) => {
   return body().custom((_, { req }) => {
@@ -40,46 +40,39 @@ export const specificFieldsValidator = (fields: string[]) => {
 
 export const blogFieldsValidator = [
   specificFieldsValidator(BlogFields),
-  body("name")
+  body('name')
     // .optional()
     .isString()
-    .withMessage("name should be a string")
+    .withMessage('name should be a string')
     .trim()
     .notEmpty()
-    .withMessage("name is required")
+    .withMessage('name is required')
     .isLength({ max: 15 })
-    .withMessage("the name length should not exceed 15 characters"),
-  body("description")
+    .withMessage('the name length should not exceed 15 characters'),
+  body('description')
     //.optional()
     .isString()
-    .withMessage("description should be a string")
+    .withMessage('description should be a string')
     .trim()
     .notEmpty()
-    .withMessage("description is required")
+    .withMessage('description is required')
     .isLength({ max: 500 })
-    .withMessage("the description length should not exceed 500 characters"),
-  body("websiteUrl")
+    .withMessage('the description length should not exceed 500 characters'),
+  body('websiteUrl')
     //.optional()
     .isURL()
-    .withMessage("websiteUrl should be a valid URL")
+    .withMessage('websiteUrl should be a valid URL')
     .isString()
-    .withMessage("websiteUrl should be a string")
+    .withMessage('websiteUrl should be a string')
     .trim()
     .notEmpty()
-    .withMessage("websiteUrl is required")
+    .withMessage('websiteUrl is required')
     .isLength({ max: 100 })
-    .withMessage("websiteUrl should not exceed 100 symbols")
-    .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}\/?([a-zA-Z0-9._-]+\/?)*$/)
-    .withMessage("websiteUrl must be a valid URL starting with https://"),
-  /*body("createdAt")
-    .isString()
-    .withMessage("createdAt should be a string")
-    .isISO8601()
-    .withMessage("createdAt should be a valid ISO8601 date"),
-  body("isMembership").isBoolean().withMessage("isMembership should be a boolean"),*/
-
-  // Проверяем, что в body нет лишних полей
-  //checkExact([], { message: "Invalid fields in request body" }),
+    .withMessage('websiteUrl should not exceed 100 symbols')
+    .matches(
+      /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}\/?([a-zA-Z0-9._-]+\/?)*$/,
+    )
+    .withMessage('websiteUrl must be a valid URL starting with https://'),
 ]
 
 /*****************************************************************************************************/
@@ -115,38 +108,32 @@ export const blogFieldsValidator = [
 
 /********************************************************************************************************/
 
-export const postTitleValidator = body("title")
+export const postTitleValidator = body('title')
   .isString()
-  .withMessage("title should be a string")
+  .withMessage('title should be a string')
   .trim()
   .notEmpty()
-  .withMessage("title is required")
+  .withMessage('title is required')
   .isLength({ max: 30 })
-  .withMessage("title should contain 30 symbols")
+  .withMessage('title should contain 30 symbols')
 
-export const postShortDescriptionValidator = body("shortDescription")
+export const postShortDescriptionValidator = body('shortDescription')
   .isString()
-  .withMessage("shortDescription should be a string")
+  .withMessage('shortDescription should be a string')
   .trim()
   .notEmpty()
-  .withMessage("shortDescription is required")
+  .withMessage('shortDescription is required')
   .isLength({ max: 100 })
-  .withMessage("shortDescription should contain 100 symbols")
+  .withMessage('shortDescription should contain 100 symbols')
 
-export const postContentValidator = body("content")
+export const postContentValidator = body('content')
   .isString()
-  .withMessage("content should be a string")
+  .withMessage('content should be a string')
   .trim()
   .notEmpty()
-  .withMessage("content is required")
+  .withMessage('content is required')
   .isLength({ max: 1000 })
-  .withMessage("content should contain 1000 symbols")
-
-/*export const postCreatedAtValidator = body("createdAt")
-  .isString()
-  .withMessage("createdAt should be a string")
-  .isISO8601()
-  .withMessage("createdAt should be a valid ISO8601 date")*/
+  .withMessage('content should contain 1000 symbols')
 
 export const nwArray = [
   idParamValidator,
@@ -155,5 +142,4 @@ export const nwArray = [
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
-  //postCreatedAtValidator,
 ]

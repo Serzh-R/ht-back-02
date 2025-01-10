@@ -81,7 +81,7 @@ export type UserInputType = {
   email: string
 }
 
-export type LoginInputType = {
+export type LoginOrEmailInputType = {
   loginOrEmail: string
   password: string
 }
