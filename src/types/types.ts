@@ -75,6 +75,14 @@ export type UserType = {
   createdAt: string
 }
 
+export type PaginatorUserType = {
+  pagesCount: number
+  page: number
+  pageSize: number
+  totalCount: number
+  items: UserType[]
+}
+
 export type UserInputType = {
   login: string
   password: string

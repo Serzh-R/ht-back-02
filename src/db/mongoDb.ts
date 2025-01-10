@@ -1,9 +1,10 @@
-import { SETTINGS } from "../settings"
-import { MongoClient, Collection, Db } from "mongodb"
-import { BlogType, PostType } from "../types/types"
+import { SETTINGS } from '../settings'
+import { MongoClient, Collection, Db } from 'mongodb'
+import { BlogType, PostType, UserType } from '../types/types'
 
 export let blogsCollection: Collection<BlogType>
 export let postsCollection: Collection<PostType>
+export let usersCollection: Collection<UserType>
 export let client: MongoClient
 export let mongoDb: Db
 
@@ -11,16 +12,17 @@ export async function runDb(url: string): Promise<boolean> {
   client = new MongoClient(url)
   mongoDb = client.db(SETTINGS.DB_NAME)
 
-  blogsCollection = mongoDb.collection<BlogType>("blogs")
-  postsCollection = mongoDb.collection<PostType>("posts")
+  blogsCollection = mongoDb.collection<BlogType>('blogs')
+  postsCollection = mongoDb.collection<PostType>('posts')
+  usersCollection = mongoDb.collection<UserType>('users')
 
   try {
     await client.connect()
     await mongoDb.command({ ping: 1 })
-    console.log("Connected to MongoDB")
+    console.log('Connected to MongoDB')
     return true
   } catch (err) {
-    console.error("Error connecting to MongoDB:", err)
+    console.error('Error connecting to MongoDB:', err)
     await client.close()
     return false
   }
