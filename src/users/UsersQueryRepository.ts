@@ -20,22 +20,20 @@ export const usersQueryRepository = {
       filter.email = { $regex: searchEmailTerm, $options: 'i' }
     }
 
-    const totalCount = await usersCollection.countDocuments(filter)
+    const usersCount = await usersCollection.countDocuments(filter)
 
-    // Пагинация, сортировка и запрос
     const users = await usersCollection
-      .find(filter, { projection: { passwordHash: 0, _id: 0 } }) // Исключаем passwordHash и _id из ответа
+      .find(filter, { projection: { passwordHash: 0, _id: 0 } })
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .toArray()
 
-    // Формируем объект пагинации
     return {
-      pagesCount: Math.ceil(totalCount / pageSize),
+      pagesCount: Math.ceil(usersCount / pageSize),
       page: pageNumber,
       pageSize,
-      totalCount,
+      totalCount: usersCount,
       items: users,
     }
   },

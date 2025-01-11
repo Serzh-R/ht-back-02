@@ -5,6 +5,7 @@ import { BlogType, PostType, UserType } from '../types/types'
 export let blogsCollection: Collection<BlogType>
 export let postsCollection: Collection<PostType>
 export let usersCollection: Collection<UserType>
+
 export let client: MongoClient
 export let mongoDb: Db
 

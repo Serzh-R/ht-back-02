@@ -1,19 +1,20 @@
-import { Router, Request, Response } from "express"
-import { HTTP_STATUSES } from "../settings"
-import { BlogInputType, PostInputType } from "../types/types"
+import { Router, Request, Response } from 'express'
+import { HTTP_STATUSES } from '../settings'
+import { BlogInputType, PostInputType } from '../types/types'
 import {
   blogFieldsValidator,
   idParamValidator,
   postContentValidator,
   postShortDescriptionValidator,
   postTitleValidator,
-} from "../validation/express-validator/field-validators"
-import { errorsResultMiddleware } from "../validation/express-validator/errors-result-middleware"
-import { authMiddleware } from "../middlewares/auth-middleware"
-import { blogsService } from "./blogs-service"
-import { paginationQueries } from "../helpers/paginations_values"
-import { postsService } from "../posts/posts-service"
-import { blogsRepository } from "./blogs-repository"
+} from '../validation/express-validator/field-validators'
+import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
+import { authMiddleware } from '../middlewares/auth-middleware'
+import { blogsService } from './BlogsService'
+import { paginationQueries } from '../helpers/paginations_values'
+import { postsService } from '../posts/PostsService'
+import { blogsRepository } from './BlogsRepository'
+import { blogsQueryRepository } from './BlogsQueryRepository'
 
 export const blogRouter = Router()
 
@@ -22,7 +23,7 @@ export const blogController = {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
       paginationQueries(req)
 
-    const blogs = await blogsService.getBlogs(
+    const blogs = await blogsQueryRepository.getBlogs(
       searchNameTerm,
       sortBy,
       sortDirection,
@@ -49,7 +50,7 @@ export const blogController = {
     if (!createdPost) {
       res
         .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json({ message: "Blog not found", field: "id" })
+        .json({ message: 'Blog not found', field: 'id' })
       return
     }
 
@@ -57,24 +58,26 @@ export const blogController = {
   },
 
   async getBlogById(req: Request, res: Response) {
-    const id = req.params.id
+    const blogId = req.params.id
 
-    const blogById = await blogsService.getBlogById(id)
-    if (!blogById) {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
-    } else {
-      res.status(HTTP_STATUSES.OK_200).json(blogById)
+    const blog = await blogsQueryRepository.getBlogById(blogId)
+    if (!blog) {
+      res
+        .status(HTTP_STATUSES.NOT_FOUND_404)
+        .json({ message: 'Blog not found' })
+      return
     }
+    res.status(HTTP_STATUSES.OK_200).json(blog)
   },
 
   async getPostsInBlogById(req: Request, res: Response): Promise<void> {
     const blogId = req.params.id
 
-    const blog = await blogsRepository.getBlogById(blogId)
+    const blog = await blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
       res
         .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json({ message: "Blog not found", field: "blogId" })
+        .json({ message: 'Blog not found', field: 'blogId' })
       return
     }
 
@@ -97,10 +100,12 @@ export const blogController = {
     const body: BlogInputType = req.body
     const isUpdated = await blogsService.updateBlog(id, body)
     if (!isUpdated) {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
-    } else {
-      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+      res
+        .status(HTTP_STATUSES.NOT_FOUND_404)
+        .json({ message: 'Blog not found' })
+      return
     }
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 
   async deleteBlog(req: Request, res: Response) {
@@ -108,24 +113,26 @@ export const blogController = {
 
     const isDeleted = await blogsService.deleteBlog(id)
     if (!isDeleted) {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json("Blog not found")
-    } else {
-      res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+      res
+        .status(HTTP_STATUSES.NOT_FOUND_404)
+        .json({ message: 'Blog not found' })
+      return
     }
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 }
 
-blogRouter.get("/", blogController.getBlogs)
+blogRouter.get('/', blogController.getBlogs)
 
 blogRouter.get(
-  "/:id/posts",
+  '/:id/posts',
   idParamValidator,
   errorsResultMiddleware,
   blogController.getPostsInBlogById,
 )
 
 blogRouter.post(
-  "/",
+  '/',
   authMiddleware,
   blogFieldsValidator,
   errorsResultMiddleware,
@@ -133,7 +140,7 @@ blogRouter.post(
 )
 
 blogRouter.post(
-  "/:id/posts",
+  '/:id/posts',
   authMiddleware,
   idParamValidator,
   postTitleValidator,
@@ -144,14 +151,14 @@ blogRouter.post(
 )
 
 blogRouter.get(
-  "/:id",
+  '/:id',
   idParamValidator,
   errorsResultMiddleware,
   blogController.getBlogById,
 )
 
 blogRouter.put(
-  "/:id",
+  '/:id',
   authMiddleware,
   idParamValidator,
   blogFieldsValidator,
@@ -160,7 +167,7 @@ blogRouter.put(
 )
 
 blogRouter.delete(
-  "/:id",
+  '/:id',
   authMiddleware,
   idParamValidator,
   errorsResultMiddleware,

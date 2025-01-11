@@ -5,7 +5,7 @@ import {
   loginOrEmailValidation,
   passwordValidation,
 } from '../users/middlewares/user-validators'
-import { authService } from './auth-service'
+import { authService } from './AuthService'
 
 export const authRouter = Router()
 

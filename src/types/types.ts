@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb'
+
 export type DBType = {
   blogs: BlogType[]
   posts: PostType[]
@@ -12,6 +14,15 @@ export type APIErrorResultType = {
   errorsMessages: FieldErrorType[]
 }
 
+export type BlogDBType = {
+  _id?: ObjectId
+  name: string
+  description: string
+  websiteUrl: string
+  createdAt: string
+  isMembership: boolean
+}
+
 export type BlogType = {
   id: string
   name: string
@@ -21,7 +32,7 @@ export type BlogType = {
   isMembership: boolean
 }
 
-export type BlogInsertType = Omit<BlogType, 'id'>
+export type BlogDBInsertType = Omit<BlogType, 'id'>
 
 export type PaginatorBlogType = {
   pagesCount: number
@@ -37,8 +48,8 @@ export type BlogInputType = {
   websiteUrl: string
 }
 
-export type PostType = {
-  id: string
+export type PostDBType = {
+  _id: ObjectId
   title: string
   shortDescription: string
   content: string
@@ -46,6 +57,18 @@ export type PostType = {
   blogName: string
   createdAt: string
 }
+
+export type PostType = {
+  id?: string
+  title: string
+  shortDescription: string
+  content: string
+  blogId: string
+  blogName: string
+  createdAt: string
+}
+
+export type PostDBInsertType = Omit<PostType, 'id'>
 
 export type PaginatorPostType = {
   pagesCount: number
