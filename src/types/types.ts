@@ -59,7 +59,7 @@ export type PostDBType = {
 }
 
 export type PostType = {
-  id?: string
+  id: string
   title: string
   shortDescription: string
   content: string
@@ -68,7 +68,7 @@ export type PostType = {
   createdAt: string
 }
 
-export type PostDBInsertType = Omit<PostType, 'id'>
+export type PostDBInsertType = Omit<PostDBType, '_id'>
 
 export type PaginatorPostType = {
   pagesCount: number
@@ -95,6 +95,21 @@ export type UserType = {
   id: string
   login: string
   email: string
+  createdAt: string
+}
+
+export type UserFullType = {
+  id: string
+  login: string
+  email: string
+  password: string
+  createdAt: string
+}
+
+export type UserDBType = {
+  login: string
+  email: string
+  password: string
   createdAt: string
 }
 

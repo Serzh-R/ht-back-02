@@ -6,6 +6,8 @@ import { usersQueryRepository } from './UsersQueryRepository'
 import { UserInputType } from '../types/types'
 import { userInputValidators } from './middlewares/user-validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
+import { usersService } from './UsersService'
+import { idParamValidator } from '../validation/express-validator/field-validators'
 
 export const usersRouter = Router()
 
@@ -35,9 +37,17 @@ export const usersController = {
     const body: UserInputType = req.body
 
     const userId = await usersService.createUser(body)
-    const newUser = await usersQueryRepository.findById(userId)
+    const newUser = await usersQueryRepository.findUserById(userId)
+    return res.status(HTTP_STATUSES.CREATED_201).send(newUser)
+  },
 
-    return res.status(HTTP_STATUSES.CREATED_201).send(newUser!)
+  async deleteUser(req: Request, res: Response) {
+    const id = req.params.id
+    const user = await usersService.deleteUser(id)
+    if (!user) {
+      return res.status(HTTP_STATUSES.NOT_FOUND_404).send()
+    }
+    return res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 }
 
@@ -48,4 +58,11 @@ usersRouter.post(
   userInputValidators,
   errorsResultMiddleware,
   usersController.createUser,
+)
+usersRouter.delete(
+  '/:id',
+  authMiddleware,
+  idParamValidator,
+  errorsResultMiddleware,
+  usersController.deleteUser,
 )

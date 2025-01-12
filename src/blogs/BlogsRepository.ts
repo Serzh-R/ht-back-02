@@ -18,18 +18,12 @@ export const blogsRepository = {
 
     return {
       id: result.insertedId.toString(),
-      ...newBlog,
+      name: newBlog.name,
+      description: newBlog.description,
+      websiteUrl: newBlog.websiteUrl,
+      createdAt: newBlog.createdAt,
+      isMembership: newBlog.isMembership,
     } as BlogType
-
-    /*const blog = await blogsCollection.findOne(
-      { _id: result.insertedId },
-      { projection: { _id: 0 } },
-    )
-
-    return {
-      ...blog,
-      id: result.insertedId.toString(),
-    } as BlogType*/
   },
 
   async updateBlog(id: string, body: BlogInputType): Promise<boolean> {

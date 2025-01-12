@@ -91,7 +91,12 @@ postRouter.post(
   errorsResultMiddleware,
   postController.createPost,
 )
-postRouter.get('/:id', idParamValidator, postController.getPostById)
+postRouter.get(
+  '/:id',
+  idParamValidator,
+  errorsResultMiddleware,
+  postController.getPostById,
+)
 postRouter.put(
   '/:id',
   authMiddleware,
@@ -107,5 +112,6 @@ postRouter.delete(
   '/:id',
   authMiddleware,
   idParamValidator,
+  errorsResultMiddleware,
   postController.deletePost,
 )

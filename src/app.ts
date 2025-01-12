@@ -5,6 +5,7 @@ import { blogRouter } from './blogs/BlogsRouter'
 import { postRouter } from './posts/PostsRouter'
 import { blogsCollection, postsCollection, usersCollection } from './db/mongoDb'
 import { usersRouter } from './users/UsersRouter'
+import { authRouter } from './auth/AuthRouter'
 
 export const app = express()
 
@@ -14,6 +15,7 @@ app.use(jsonBodyMiddleware)
 app.use(cors())
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
 app.use(SETTINGS.PATH.POSTS, postRouter)
+app.use(SETTINGS.PATH.AUTH, authRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
 
 app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {

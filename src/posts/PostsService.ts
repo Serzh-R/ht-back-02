@@ -1,40 +1,53 @@
-import { PaginatorPostType, PostInputType, PostType } from '../types/types'
+import {
+  PaginatorPostType,
+  PostDBInsertType,
+  PostInputType,
+  PostType,
+} from '../types/types'
 import { postsRepository } from './PostsRepository'
 import { blogsQueryRepository } from '../blogs/BlogsQueryRepository'
+import { ObjectId } from 'mongodb'
 
 export const postsService = {
-  async createPost(postInput: PostInputType): Promise<PostType | null> {
-    const blog = await blogsQueryRepository.getBlogById(postInput.blogId)
+  async createPost(post: PostInputType): Promise<PostType | null> {
+    const blog = await blogsQueryRepository.getBlogById(post.blogId)
     if (!blog) {
       return null
     }
 
-    const newPost: PostType = {
-      id: (Date.now() + Math.random()).toString(),
-      title: postInput.title,
-      shortDescription: postInput.shortDescription,
-      content: postInput.content,
-      blogId: postInput.blogId,
+    return await this._createNewPost({
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
       blogName: blog.name,
-      createdAt: new Date().toISOString(),
-    }
-
-    return await postsRepository.createPost(newPost)
+    })
   },
 
-  async createPostForBlog(id: string, body: PostInputType) {
-    const blog = await blogsQueryRepository.getBlogById(id)
+  async createPostForBlog(blogId: string, post: PostInputType) {
+    const blog = await blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
       return null
     }
 
-    const newPost: PostType = {
-      id: (Date.now() + Math.random()).toString(),
-      title: body.title,
-      shortDescription: body.shortDescription,
-      content: body.content,
-      blogId: id,
+    return await this._createNewPost({
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: blogId,
       blogName: blog.name,
+    })
+  },
+
+  async _createNewPost(
+    post: Omit<PostType, 'id' | 'createdAt'>,
+  ): Promise<PostType> {
+    const newPost: PostDBInsertType = {
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: post.blogName,
       createdAt: new Date().toISOString(),
     }
 
@@ -49,14 +62,16 @@ export const postsService = {
     sortDirection: 'asc' | 'desc',
   ): Promise<PaginatorPostType> {
     const posts = await postsRepository.getPostsForBlog(
-      blogId,
+      new ObjectId(blogId).toString(),
       pageNumber,
       pageSize,
       sortBy,
       sortDirection,
     )
 
-    const postsCount = await postsRepository.getPostsCountForBlog(blogId)
+    const postsCount = await postsRepository.getPostsCountForBlog(
+      new ObjectId(blogId).toString(),
+    )
 
     return {
       pagesCount: Math.ceil(postsCount / pageSize),
@@ -68,10 +83,10 @@ export const postsService = {
   },
 
   async updatePost(id: string, body: PostInputType): Promise<boolean> {
-    return await postsRepository.updatePost(id, body)
+    return await postsRepository.updatePost(new ObjectId(id).toString(), body)
   },
 
   async deletePost(id: string): Promise<boolean> {
-    return await postsRepository.deletePost(id)
+    return await postsRepository.deletePost(new ObjectId(id).toString())
   },
 }

@@ -1,17 +1,10 @@
 import { PostDBInsertType, PostInputType, PostType } from '../types/types'
 import { blogsCollection, postsCollection } from '../db/mongoDb'
-import { ObjectId } from 'mongodb'
+import { ObjectId, OptionalId } from 'mongodb'
 
 export const postsRepository = {
   async createPost(post: PostDBInsertType): Promise<PostType> {
-    const result = await postsCollection.insertOne({
-      title: post.title,
-      shortDescription: post.shortDescription,
-      content: post.content,
-      blogId: post.blogId,
-      blogName: post.blogName,
-      createdAt: new Date().toISOString(),
-    })
+    const result = await postsCollection.insertOne(post as OptionalId<PostType>)
 
     return {
       id: result.insertedId.toString(),
@@ -21,7 +14,35 @@ export const postsRepository = {
       blogId: post.blogId,
       blogName: post.blogName,
       createdAt: post.createdAt,
-    } as PostType
+    }
+    /* const blog: BlogType | null = await blogsCollection.findOne({
+      _id: new ObjectId(post.blogId),
+    })
+    if (!blog) {
+      throw new Error('Blog not found')
+    }
+
+    const newPost = {
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: blog.name,
+      createdAt: new Date().toISOString(),
+    }
+    const result = await postsCollection.insertOne(
+      newPost as OptionalId<PostType>,
+    )
+
+    return {
+      id: result.insertedId.toString(),
+      title: newPost.title,
+      shortDescription: newPost.shortDescription,
+      content: newPost.content,
+      blogId: newPost.blogId,
+      blogName: newPost.blogName,
+      createdAt: newPost.createdAt,
+    } as PostType*/
   },
 
   async getPostsForBlog(
@@ -31,8 +52,10 @@ export const postsRepository = {
     sortBy: string,
     sortDirection: 'asc' | 'desc',
   ): Promise<PostType[]> {
+    const objectId = new ObjectId(blogId)
+
     return await postsCollection
-      .find({ blogId }, { projection: { _id: 0 } })
+      .find({ blogId: objectId.toString() })
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
@@ -40,11 +63,14 @@ export const postsRepository = {
   },
 
   async getPostsCountForBlog(blogId: string): Promise<number> {
-    return await postsCollection.countDocuments({ blogId })
+    const objectId = new ObjectId(blogId)
+    return await postsCollection.countDocuments({ blogId: objectId.toString() })
   },
 
   async updatePost(id: string, body: PostInputType): Promise<boolean> {
-    const blog = await blogsCollection.findOne({ id: body.blogId })
+    const blog = await blogsCollection.findOne({
+      _id: new ObjectId(body.blogId),
+    })
 
     if (!blog) {
       throw new Error('Blog not found')
@@ -57,7 +83,7 @@ export const postsRepository = {
           title: body.title,
           shortDescription: body.shortDescription,
           content: body.content,
-          blogId: body.blogId,
+          blogId: new ObjectId(body.blogId).toString(),
           blogName: blog?.name || 'Unknown Blog',
         },
       },
@@ -67,6 +93,9 @@ export const postsRepository = {
   },
 
   async deletePost(postId: string): Promise<boolean> {
+    if (!ObjectId.isValid(postId)) {
+      throw new Error('Invalid postId format')
+    }
     const result = await postsCollection.deleteOne({
       _id: new ObjectId(postId),
     })
