@@ -38,16 +38,16 @@ export const usersController = {
 
     const userId = await usersService.createUser(body)
     const newUser = await usersQueryRepository.findUserById(userId)
-    return res.status(HTTP_STATUSES.CREATED_201).send(newUser)
+    res.status(HTTP_STATUSES.CREATED_201).send(newUser)
   },
 
   async deleteUser(req: Request, res: Response) {
     const id = req.params.id
     const user = await usersService.deleteUser(id)
     if (!user) {
-      return res.status(HTTP_STATUSES.NOT_FOUND_404).send()
+      res.status(HTTP_STATUSES.NOT_FOUND_404).send()
     }
-    return res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 }
 

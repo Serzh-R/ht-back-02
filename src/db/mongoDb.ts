@@ -1,10 +1,10 @@
 import { SETTINGS } from '../settings'
 import { MongoClient, Collection, Db } from 'mongodb'
-import { BlogType, PostType, UserType } from '../types/types'
+import { BlogDBType, PostDBType, UserDBType } from '../types/types'
 
-export let blogsCollection: Collection<BlogType>
-export let postsCollection: Collection<PostType>
-export let usersCollection: Collection<UserType>
+export let blogsCollection: Collection<BlogDBType>
+export let postsCollection: Collection<PostDBType>
+export let usersCollection: Collection<UserDBType>
 
 export let client: MongoClient
 export let mongoDb: Db
@@ -13,9 +13,9 @@ export async function runDb(url: string): Promise<boolean> {
   client = new MongoClient(url)
   mongoDb = client.db(SETTINGS.DB_NAME)
 
-  blogsCollection = mongoDb.collection<BlogType>('blogs')
-  postsCollection = mongoDb.collection<PostType>('posts')
-  usersCollection = mongoDb.collection<UserType>('users')
+  blogsCollection = mongoDb.collection<BlogDBType>('blogs')
+  postsCollection = mongoDb.collection<PostDBType>('posts')
+  usersCollection = mongoDb.collection<UserDBType>('users')
 
   try {
     await client.connect()

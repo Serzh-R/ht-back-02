@@ -1,6 +1,6 @@
 import { usersCollection } from '../db/mongoDb'
 import { PaginatorUserType, UserDBType, UserType } from '../types/types'
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 export const usersQueryRepository = {
   async getUsers(
@@ -39,21 +39,14 @@ export const usersQueryRepository = {
     }
   },
 
-  async findUserById(id: string): Promise<UserType | null> {
-    let user: WithId<UserDBType> | null = null
-
-    try {
-      user = await usersCollection.findOne({ _id: new ObjectId(id) })
-    } catch (err) {
-      return null
-    }
-
+  async findUserById(id: ObjectId): Promise<UserType | null> {
+    const user = await usersCollection.findOne<UserDBType>({
+      _id: id,
+    })
     return user ? this._getInView(user) : null
-    //if (!this._checkObjectId(id)) return null
-    //const user = await usersCollection.findOne({ _id: new ObjectId(id) })
-    //return user ? this._getInView(user) : null
   },
-  _getInView(user: WithId<UserDBType>): UserType {
+
+  _getInView(user: UserDBType): UserType {
     return {
       id: user._id.toString(),
       login: user.login,
@@ -61,7 +54,4 @@ export const usersQueryRepository = {
       createdAt: user.createdAt,
     }
   },
-  /* _checkObjectId(id: string): boolean {
-    return ObjectId.isValid(id)
-  },*/
 }

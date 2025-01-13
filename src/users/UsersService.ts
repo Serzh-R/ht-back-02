@@ -1,19 +1,30 @@
-import {
-  FieldErrorType,
-  UserFullType,
-  UserInputType,
-  UserType,
-} from '../types/types'
+import { UserDBInsertType, UserInputType } from '../types/types'
 import bcrypt from 'bcrypt'
 import { usersRepository } from './UsersRepository'
+import { ObjectId } from 'mongodb'
 
-type UserCreatedType = {
+/*type UserCreatedType = {
   errorsMessages: FieldErrorType[] | null
   userId: string | null
-}
+}*/
 
 export const usersService = {
-  async createUser(body: UserInputType): Promise<UserCreatedType> {
+  async createUser(body: UserInputType): Promise<ObjectId> {
+    const passwordSalt = await bcrypt.genSalt(10)
+    const passwordHash = await bcrypt.hash(body.password, passwordSalt)
+
+    const userDB: UserDBInsertType = {
+      login: body.login,
+      email: body.email,
+      passwordSalt: passwordSalt,
+      passwordHash: passwordHash,
+      createdAt: new Date().toISOString(),
+    }
+
+    return await usersRepository.createUser(userDB)
+  },
+
+  /*async createUser(body: UserInputType): Promise<UserCreatedType> {
     const existingUserByLogin = await usersRepository.findByLoginOrEmail(
       body.login,
     )
@@ -60,7 +71,7 @@ export const usersService = {
       errorsMessages: null,
       userId,
     }
-  },
+  },*/
 
   async checkCredentials(
     loginOrEmail: string,
@@ -68,7 +79,7 @@ export const usersService = {
   ): Promise<boolean> {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
     if (!user) return false
-    const isPasswordCorrect = await bcrypt.compare(password, user.password)
+    const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash)
     return isPasswordCorrect
   },
 

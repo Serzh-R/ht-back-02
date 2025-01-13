@@ -14,6 +14,8 @@ export type APIErrorResultType = {
   errorsMessages: FieldErrorType[]
 }
 
+//********* Blog ***********************//
+
 export type BlogDBType = {
   _id?: ObjectId
   name: string
@@ -48,6 +50,8 @@ export type BlogInputType = {
   websiteUrl: string
 }
 
+//******* Post **********************//
+
 export type PostDBType = {
   _id: ObjectId
   title: string
@@ -58,6 +62,8 @@ export type PostDBType = {
   createdAt: string
 }
 
+export type PostDBInsertType = Omit<PostDBType, '_id'>
+
 export type PostType = {
   id: string
   title: string
@@ -67,8 +73,6 @@ export type PostType = {
   blogName: string
   createdAt: string
 }
-
-export type PostDBInsertType = Omit<PostDBType, '_id'>
 
 export type PaginatorPostType = {
   pagesCount: number
@@ -91,6 +95,8 @@ export type PostInputType = {
   blogId: string
 }
 
+//****** User ******************//
+
 export type UserType = {
   id: string
   login: string
@@ -98,20 +104,16 @@ export type UserType = {
   createdAt: string
 }
 
-export type UserFullType = {
-  id: string
+export type UserDBType = {
+  _id: ObjectId
   login: string
   email: string
-  password: string
+  passwordHash: string
+  passwordSalt: string
   createdAt: string
 }
 
-export type UserDBType = {
-  login: string
-  email: string
-  password: string
-  createdAt: string
-}
+export type UserDBInsertType = Omit<UserDBType, '_id'>
 
 export type PaginatorUserType = {
   pagesCount: number
