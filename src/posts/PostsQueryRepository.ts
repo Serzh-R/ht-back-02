@@ -1,6 +1,6 @@
 import { PostType, PaginatorPostType, PostDBType } from '../types/types'
 import { postsCollection } from '../db/mongoDb'
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 export const postsQueryRepository = {
   async getPosts(
@@ -32,7 +32,37 @@ export const postsQueryRepository = {
     return post ? this._getInView(post) : null
   },
 
-  _getInView(post: WithId<PostDBType>): PostType {
+  async getPostsForBlog(
+    blogId: string,
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: 'asc' | 'desc',
+  ): Promise<PaginatorPostType> {
+    const postsCount = await postsCollection.countDocuments({ blogId })
+
+    const posts = await postsCollection
+      .find({ blogId })
+      .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray()
+
+    return {
+      pagesCount: Math.ceil(postsCount / pageSize),
+      page: pageNumber,
+      pageSize,
+      totalCount: postsCount,
+      items: posts.map((post: PostDBType) => this._getInView(post)),
+    }
+  },
+
+  async getPostsCountForBlog(blogId: string): Promise<number> {
+    const objectId = new ObjectId(blogId)
+    return await postsCollection.countDocuments({ blogId: objectId.toString() })
+  },
+
+  _getInView(post: PostDBType): PostType {
     return {
       id: post._id.toString(),
       title: post.title,

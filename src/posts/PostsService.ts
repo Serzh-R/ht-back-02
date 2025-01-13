@@ -1,6 +1,7 @@
 import {
-  PaginatorPostType,
+  BlogPostInputType,
   PostDBInsertType,
+  PostDBType,
   PostInputType,
   PostType,
 } from '../types/types'
@@ -15,16 +16,61 @@ export const postsService = {
       return null
     }
 
-    return await this._createNewPost({
+    const newPost: PostDBInsertType = {
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
       blogId: post.blogId,
       blogName: blog.name,
-    })
+      createdAt: new Date().toISOString(),
+    }
+
+    const createdPost = await postsRepository.createPost(newPost)
+
+    return this._getInView(createdPost)
   },
 
-  async createPostForBlog(blogId: string, post: PostInputType) {
+  async createPostForBlog(blogId: string, post: BlogPostInputType): Promise<PostType | null> {
+    const blog = await blogsQueryRepository.getBlogById(blogId)
+    if (!blog) {
+      return null
+    }
+
+    const newPost: PostDBInsertType = {
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: blogId,
+      blogName: blog.name,
+      createdAt: new Date().toISOString(),
+    }
+
+    const createdPost = await postsRepository.createPost(newPost)
+
+    return this._getInView(createdPost)
+  },
+
+  _getInView(post: PostDBType): PostType {
+    return {
+      id: post._id.toString(),
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: post.blogName,
+      createdAt: post.createdAt,
+    }
+  },
+
+  async updatePost(id: string, body: PostInputType): Promise<boolean> {
+    return await postsRepository.updatePost(new ObjectId(id).toString(), body)
+  },
+
+  async deletePost(id: string): Promise<boolean> {
+    return await postsRepository.deletePost(new ObjectId(id).toString())
+  },
+
+  /*async createPostForBlog(blogId: string, post: BlogPostInputType): Promise<PostType | null> {
     const blog = await blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
       return null
@@ -37,11 +83,9 @@ export const postsService = {
       blogId: blogId,
       blogName: blog.name,
     })
-  },
+  },*/
 
-  async _createNewPost(
-    post: Omit<PostType, 'id' | 'createdAt'>,
-  ): Promise<PostType> {
+  /*async _createNewPost(post: Omit<PostType, 'id' | 'createdAt'>): Promise<PostType> {
     const newPost: PostDBInsertType = {
       title: post.title,
       shortDescription: post.shortDescription,
@@ -52,41 +96,5 @@ export const postsService = {
     }
 
     return await postsRepository.createPost(newPost)
-  },
-
-  async getPostsForBlog(
-    blogId: string,
-    pageNumber: number,
-    pageSize: number,
-    sortBy: string,
-    sortDirection: 'asc' | 'desc',
-  ): Promise<PaginatorPostType> {
-    const posts = await postsRepository.getPostsForBlog(
-      new ObjectId(blogId).toString(),
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortDirection,
-    )
-
-    const postsCount = await postsRepository.getPostsCountForBlog(
-      new ObjectId(blogId).toString(),
-    )
-
-    return {
-      pagesCount: Math.ceil(postsCount / pageSize),
-      page: pageNumber,
-      pageSize,
-      totalCount: postsCount,
-      items: posts,
-    }
-  },
-
-  async updatePost(id: string, body: PostInputType): Promise<boolean> {
-    return await postsRepository.updatePost(new ObjectId(id).toString(), body)
-  },
-
-  async deletePost(id: string): Promise<boolean> {
-    return await postsRepository.deletePost(new ObjectId(id).toString())
-  },
+  },*/
 }

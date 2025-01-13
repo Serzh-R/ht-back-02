@@ -18,8 +18,4 @@ export const usersRepository = {
     const result = await usersCollection.deleteOne({ _id: new ObjectId(id) })
     return result.deletedCount > 0
   },
-
-  /*async findUserById(id: string): Promise<UserDBType | null> {
-    return await usersCollection.findOne({ _id: new ObjectId(id) })
-  },*/
 }

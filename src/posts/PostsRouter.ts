@@ -13,6 +13,7 @@ import { authMiddleware } from '../middlewares/auth-middleware'
 import { paginationQueries } from '../helpers/paginations_values'
 import { postsService } from './PostsService'
 import { postsQueryRepository } from './PostsQueryRepository'
+import { ObjectId } from 'mongodb'
 
 export const postRouter = Router()
 

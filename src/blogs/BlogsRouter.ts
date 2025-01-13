@@ -1,6 +1,11 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
-import { BlogInputType, PostInputType } from '../types/types'
+import {
+  BlogInputType,
+  BlogPostInputType,
+  PaginatorPostType,
+  PostInputType,
+} from '../types/types'
 import {
   blogFieldsValidator,
   idParamValidator,
@@ -13,8 +18,8 @@ import { authMiddleware } from '../middlewares/auth-middleware'
 import { blogsService } from './BlogsService'
 import { paginationQueries } from '../helpers/paginations_values'
 import { postsService } from '../posts/PostsService'
-import { blogsRepository } from './BlogsRepository'
 import { blogsQueryRepository } from './BlogsQueryRepository'
+import { postsQueryRepository } from '../posts/PostsQueryRepository'
 
 export const blogRouter = Router()
 
@@ -41,9 +46,9 @@ export const blogController = {
     res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
   },
 
-  async createPostInBlogById(req: Request, res: Response): Promise<void> {
+  async createPostForBlog(req: Request, res: Response): Promise<void> {
     const id = req.params.id
-    const body: PostInputType = req.body
+    const body: BlogPostInputType = req.body
 
     const createdPost = await postsService.createPostForBlog(id, body)
 
@@ -70,7 +75,7 @@ export const blogController = {
     res.status(HTTP_STATUSES.OK_200).json(blog)
   },
 
-  async getPostsInBlogById(req: Request, res: Response): Promise<void> {
+  async getPostsForBlog(req: Request, res: Response): Promise<void> {
     const blogId = req.params.id
 
     const blog = await blogsQueryRepository.getBlogById(blogId)
@@ -84,7 +89,7 @@ export const blogController = {
     const { pageNumber, pageSize, sortBy, sortDirection } =
       paginationQueries(req)
 
-    const posts = await postsService.getPostsForBlog(
+    const posts: PaginatorPostType = await postsQueryRepository.getPostsForBlog(
       blogId,
       pageNumber,
       pageSize,
@@ -128,7 +133,7 @@ blogRouter.get(
   '/:id/posts',
   idParamValidator,
   errorsResultMiddleware,
-  blogController.getPostsInBlogById,
+  blogController.getPostsForBlog,
 )
 
 blogRouter.post(
@@ -147,7 +152,7 @@ blogRouter.post(
   postShortDescriptionValidator,
   postContentValidator,
   errorsResultMiddleware,
-  blogController.createPostInBlogById,
+  blogController.createPostForBlog,
 )
 
 blogRouter.get(
