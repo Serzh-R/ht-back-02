@@ -1,27 +1,15 @@
-import { UserType } from '../types/types'
 import { usersRepository } from '../users/UsersRepository'
+import bcrypt from 'bcrypt'
 
 export const authService = {
-  async loginUser(
+  async checkCredentials(
     loginOrEmail: string,
     password: string,
-  ): Promise<UserType | null> {
-    return this.checkUserCredentials(loginOrEmail, password)
-  },
-
-  async checkUserCredentials(
-    loginOrEmail: string,
-    password: string,
-  ): Promise<UserType | null> {
+  ): Promise<boolean> {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
-    if (!user) return null
+    if (!user) return false
 
-    const isPassCorrect = await bcryptService.checkPassword(
-      password,
-      user.passwordHash,
-    )
-    if (!isPassCorrect) return null
-
-    return user
+    const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash)
+    return isPasswordCorrect
   },
 }
