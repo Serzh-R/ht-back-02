@@ -1,4 +1,4 @@
-import { UserDBInsertType, UserInputType } from '../types/types'
+import { FieldErrorType, UserDBInsertType, UserInputType } from '../types/types'
 import bcrypt from 'bcrypt'
 import { usersRepository } from './UsersRepository'
 import { ObjectId } from 'mongodb'
@@ -9,7 +9,35 @@ import { ObjectId } from 'mongodb'
 }*/
 
 export const usersService = {
-  async createUser(body: UserInputType): Promise<ObjectId> {
+  async createUser(
+    body: UserInputType,
+  ): Promise<{ userId: ObjectId | null; errorsMessages: FieldErrorType[] }> {
+    const userByLogin = await usersRepository.findByLoginOrEmail(body.login)
+    if (userByLogin) {
+      return {
+        userId: null,
+        errorsMessages: [
+          {
+            field: 'login',
+            message: 'login should be unique',
+          },
+        ],
+      }
+    }
+
+    const userByEmail = await usersRepository.findByLoginOrEmail(body.email)
+    if (userByEmail) {
+      return {
+        userId: null,
+        errorsMessages: [
+          {
+            field: 'email',
+            message: 'email should be unique',
+          },
+        ],
+      }
+    }
+
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await bcrypt.hash(body.password, passwordSalt)
 
@@ -21,7 +49,12 @@ export const usersService = {
       createdAt: new Date().toISOString(),
     }
 
-    return await usersRepository.createUser(userDB)
+    const userId = await usersRepository.createUser(userDB)
+
+    return {
+      userId,
+      errorsMessages: [],
+    }
   },
 
   /*async createUser(body: UserInputType): Promise<UserCreatedType> {
@@ -86,9 +119,4 @@ export const usersService = {
   async deleteUser(id: string): Promise<boolean> {
     return await usersRepository.deleteUser(id)
   },
-
-  /*async _generateHash(password: string, salt: string) {
-    const hash = await bcrypt.hash(password, salt)
-    return hash
-  },*/
 }

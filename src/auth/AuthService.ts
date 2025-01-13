@@ -1,4 +1,5 @@
 import { UserType } from '../types/types'
+import { usersRepository } from '../users/UsersRepository'
 
 export const authService = {
   async loginUser(

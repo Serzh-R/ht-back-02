@@ -36,8 +36,16 @@ export const usersController = {
   async createUser(req: Request, res: Response) {
     const body: UserInputType = req.body
 
-    const userId = await usersService.createUser(body)
-    const newUser = await usersQueryRepository.findUserById(userId)
+    const result = await usersService.createUser(body)
+
+    if (result.errorsMessages.length > 0) {
+      res
+        .status(HTTP_STATUSES.BAD_REQUEST_400)
+        .json({ errorsMessages: result.errorsMessages })
+      return
+    }
+
+    const newUser = await usersQueryRepository.findUserById(result.userId!)
     res.status(HTTP_STATUSES.CREATED_201).send(newUser)
   },
 
@@ -46,6 +54,7 @@ export const usersController = {
     const user = await usersService.deleteUser(id)
     if (!user) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).send()
+      return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
