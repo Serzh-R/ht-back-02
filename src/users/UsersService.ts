@@ -4,6 +4,14 @@ import { usersRepository } from './UsersRepository'
 import { ObjectId } from 'mongodb'
 
 export const usersService = {
+  async hashPassword(
+    password: string,
+  ): Promise<{ passwordHash: string; passwordSalt: string }> {
+    const passwordSalt = await bcrypt.genSalt(10)
+    const passwordHash = await bcrypt.hash(password, passwordSalt)
+    return { passwordHash, passwordSalt }
+  },
+
   async createUser(
     body: UserInputType,
   ): Promise<{ userId: ObjectId | null; errorsMessages: FieldErrorType[] }> {
@@ -33,14 +41,15 @@ export const usersService = {
       }
     }
 
-    const passwordSalt = await bcrypt.genSalt(10)
-    const passwordHash = await bcrypt.hash(body.password, passwordSalt)
+    const { passwordHash, passwordSalt } = await this.hashPassword(
+      body.password,
+    )
 
     const userDB: UserDBInsertType = {
       login: body.login,
       email: body.email,
-      passwordSalt: passwordSalt,
-      passwordHash: passwordHash,
+      passwordSalt,
+      passwordHash,
       createdAt: new Date().toISOString(),
     }
 
