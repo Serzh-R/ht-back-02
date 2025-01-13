@@ -1,4 +1,4 @@
-import { ObjectId, OptionalId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import { UserDBInsertType, UserDBType } from '../types/types'
 import { usersCollection } from '../db/mongoDb'
 
