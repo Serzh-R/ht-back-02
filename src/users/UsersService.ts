@@ -3,11 +3,6 @@ import bcrypt from 'bcrypt'
 import { usersRepository } from './UsersRepository'
 import { ObjectId } from 'mongodb'
 
-/*type UserCreatedType = {
-  errorsMessages: FieldErrorType[] | null
-  userId: string | null
-}*/
-
 export const usersService = {
   async createUser(
     body: UserInputType,
@@ -56,55 +51,6 @@ export const usersService = {
       errorsMessages: [],
     }
   },
-
-  /*async createUser(body: UserInputType): Promise<UserCreatedType> {
-    const existingUserByLogin = await usersRepository.findByLoginOrEmail(
-      body.login,
-    )
-    if (existingUserByLogin) {
-      return {
-        errorsMessages: [
-          {
-            field: 'login',
-            message: 'login should be unique',
-          },
-        ],
-        userId: null,
-      }
-    }
-
-    const existingUserByEmail = await usersRepository.findByLoginOrEmail(
-      body.email,
-    )
-    if (existingUserByEmail) {
-      return {
-        errorsMessages: [
-          {
-            field: 'email',
-            message: 'email should be unique',
-          },
-        ],
-        userId: null,
-      }
-    }
-
-    const passwordSalt = await bcrypt.genSalt(10)
-    const passwordHash = await bcrypt.hash(body.password, passwordSalt)
-
-    const newUser = {
-      login: body.login,
-      email: body.email,
-      passwordSalt: passwordSalt,
-      passwordHash: passwordHash,
-      createdAt: new Date().toISOString(),
-    }
-
-    const userId = await usersRepository.createUser(newUser)
-    return {
-      errorsMessages: null,
-      userId,
-    }
-  },*/
 
   async checkCredentials(
     loginOrEmail: string,
