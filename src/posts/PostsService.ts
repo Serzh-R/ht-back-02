@@ -13,7 +13,7 @@ export const postsService = {
   async createPost(post: PostInputType): Promise<PostType | null> {
     const blog = await blogsQueryRepository.getBlogById(post.blogId)
     if (!blog) {
-      return null
+      throw new Error('Invalid blogId')
     }
 
     const newPost: PostDBInsertType = {
