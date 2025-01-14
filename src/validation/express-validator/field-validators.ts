@@ -1,5 +1,6 @@
 import { body, param } from 'express-validator'
 import { blogsCollection } from '../../db/mongoDb'
+import { ObjectId } from 'mongodb'
 
 export const idParamValidator = param('id')
   .isString()
@@ -13,15 +14,18 @@ export const blogIdValidator = body('blogId')
   .withMessage('blogId should be a string')
   .trim()
   .notEmpty()
-  .withMessage('blogId is required')
   .custom(async (blogId) => {
-    const blog = await blogsCollection.findOne({ id: blogId })
+    if (!ObjectId.isValid(blogId)) {
+      throw new Error('Invalid blogId format')
+    }
+
+    const blog = await blogsCollection.findOne({ _id: new ObjectId(blogId) })
     if (!blog) {
       throw new Error('No blog found with the provided blogId')
     }
+
     return true
   })
-  .withMessage('Invalid blogId')
 
 /*************************************************************************************/
 
@@ -69,9 +73,7 @@ export const blogFieldsValidator = [
     .withMessage('websiteUrl is required')
     .isLength({ max: 100 })
     .withMessage('websiteUrl should not exceed 100 symbols')
-    .matches(
-      /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}\/?([a-zA-Z0-9._-]+\/?)*$/,
-    )
+    .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}\/?([a-zA-Z0-9._-]+\/?)*$/)
     .withMessage('websiteUrl must be a valid URL starting with https://'),
 ]
 
