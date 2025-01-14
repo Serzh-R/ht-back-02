@@ -13,18 +13,22 @@ export const usersQueryRepository = {
   ): Promise<PaginatorUserType> {
     const filter: any = {}
 
-    if (searchLoginTerm) {
-      filter.login = { $regex: searchLoginTerm, $options: 'i' }
-    }
+    if (searchLoginTerm || searchEmailTerm) {
+      filter.$or = []
 
-    if (searchEmailTerm) {
-      filter.email = { $regex: searchEmailTerm, $options: 'i' }
+      if (searchLoginTerm) {
+        filter.$or.push({ login: { $regex: searchLoginTerm, $options: 'i' } })
+      }
+
+      if (searchEmailTerm) {
+        filter.$or.push({ email: { $regex: searchEmailTerm, $options: 'i' } })
+      }
     }
 
     const usersCount = await usersCollection.countDocuments(filter)
 
     const users = await usersCollection
-      .find(filter)
+      .find(filter, { projection: { passwordHash: 0, passwordSalt: 0 } })
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
