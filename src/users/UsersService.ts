@@ -4,9 +4,7 @@ import { usersRepository } from './UsersRepository'
 import { ObjectId } from 'mongodb'
 
 export const usersService = {
-  async hashPassword(
-    password: string,
-  ): Promise<{ passwordHash: string; passwordSalt: string }> {
+  async hashPassword(password: string): Promise<{ passwordHash: string; passwordSalt: string }> {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await bcrypt.hash(password, passwordSalt)
     return { passwordHash, passwordSalt }
@@ -41,9 +39,7 @@ export const usersService = {
       }
     }
 
-    const { passwordHash, passwordSalt } = await this.hashPassword(
-      body.password,
-    )
+    const { passwordHash, passwordSalt } = await this.hashPassword(body.password)
 
     const userDB: UserDBInsertType = {
       login: body.login,
@@ -61,14 +57,10 @@ export const usersService = {
     }
   },
 
-  async checkCredentials(
-    loginOrEmail: string,
-    password: string,
-  ): Promise<boolean> {
+  async checkCredentials(loginOrEmail: string, password: string): Promise<boolean> {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
     if (!user) return false
-    const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash)
-    return isPasswordCorrect
+    return await bcrypt.compare(password, user.passwordHash)
   },
 
   async deleteUser(id: string): Promise<boolean> {
