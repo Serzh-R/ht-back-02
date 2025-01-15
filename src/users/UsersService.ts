@@ -40,7 +40,7 @@ export const usersService = {
       email: body.email,
       passwordSalt,
       passwordHash,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     }
 
     const userId = await usersRepository.createUser(userDB)

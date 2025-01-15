@@ -110,7 +110,7 @@ export type UserDBType = {
   email: string
   passwordHash: string
   passwordSalt: string
-  createdAt: string
+  createdAt: Date
 }
 
 export type UserDBInsertType = Omit<UserDBType, '_id'>
