@@ -25,9 +25,12 @@ export const HTTP_STATUSES = {
   NO_CONTENT_204: 204,
 
   BAD_REQUEST_400: 400,
+  UNAUTHORIZED_401: 401,
   NOT_FOUND_404: 404,
 
   INTERNAL_SERVER_ERROR_500: 500,
 }
 
 export const BCRYPT_SALT = 10
+
+export const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key'

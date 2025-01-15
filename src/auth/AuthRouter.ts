@@ -1,11 +1,33 @@
 import { Router, Request, Response } from 'express'
-import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
-import { loginOrEmailValidation, passwordValidation } from '../users/middlewares/user-validators'
 import { usersService } from '../users/UsersService'
+import { HTTP_STATUSES } from '../settings'
+import { authService } from './AuthService'
+import { jwtAuthMiddleware } from '../middlewares/jwt-auth-middleware'
 
 export const authRouter = Router()
 
-authRouter.post(
+export const authController = {
+  async login(req: Request, res: Response) {
+    const { loginOrEmail, password } = req.body
+
+    const user = await usersService.checkCredentials(loginOrEmail, password)
+
+    if (!user) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
+        errorsMessages: [{ field: 'loginOrEmail', message: 'Invalid credentials' }],
+      })
+      return
+    }
+
+    const token = authService.generateToken(user.id)
+
+    res.status(HTTP_STATUSES.OK_200).send({ accessToken: token })
+  },
+}
+
+authRouter.post('/login', jwtAuthMiddleware, authController.login)
+
+/*authRouter.post(
   '/login',
   loginOrEmailValidation,
   passwordValidation,
@@ -21,4 +43,4 @@ authRouter.post(
     }
     res.sendStatus(204)
   },
-)
+)*/

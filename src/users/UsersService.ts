@@ -1,4 +1,10 @@
-import { FieldErrorType, UserDBInsertType, UserInputType } from '../types/types'
+import {
+  FieldErrorType,
+  UserDBInsertType,
+  UserDBType,
+  UserInputType,
+  UserType,
+} from '../types/types'
 import { usersRepository } from './UsersRepository'
 import { ObjectId } from 'mongodb'
 import { bcryptService } from '../common/adapters/bcrypt-service'
@@ -50,10 +56,18 @@ export const usersService = {
     }
   },
 
-  async checkCredentials(loginOrEmail: string, password: string): Promise<boolean> {
+  async checkCredentials(loginOrEmail: string, password: string): Promise<UserType | null> {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
-    if (!user) return false
-    return await bcryptService.checkPassword(password, user.passwordHash)
+    if (!user) return null
+    const isPasswordCorrect = await bcryptService.checkPassword(password, user.passwordHash)
+    if (!isPasswordCorrect) return null
+
+    return {
+      id: user._id.toString(),
+      login: user.login,
+      email: user.email,
+      createdAt: user.createdAt.toISOString(),
+    }
   },
 
   async deleteUser(id: string): Promise<boolean> {
