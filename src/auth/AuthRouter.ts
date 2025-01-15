@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
 import { loginOrEmailValidation, passwordValidation } from '../users/middlewares/user-validators'
-import { authService } from './AuthService'
 import { usersService } from '../users/UsersService'
 
 export const authRouter = Router()
