@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt'
+import { BCRYPT_SALT } from '../../settings'
 
 export const bcryptService = {
-  async generateHash(password: string): Promise<{ passwordHash: string; passwordSalt: string }> {
-    const passwordSalt = await bcrypt.genSalt(10)
-    const passwordHash = await bcrypt.hash(password, passwordSalt)
-    return { passwordHash, passwordSalt }
+  async generateHash(password: string): Promise<{ passwordHash: string }> {
+    const passwordHash = await bcrypt.hash(password, BCRYPT_SALT)
+    return { passwordHash }
   },
 
   async checkPassword(password: string, passwordHash: string) {

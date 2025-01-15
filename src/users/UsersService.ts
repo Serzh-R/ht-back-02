@@ -33,12 +33,11 @@ export const usersService = {
       }
     }
 
-    const { passwordHash, passwordSalt } = await bcryptService.generateHash(body.password)
+    const { passwordHash } = await bcryptService.generateHash(body.password)
 
     const userDB: UserDBInsertType = {
       login: body.login,
       email: body.email,
-      passwordSalt,
       passwordHash,
       createdAt: new Date(),
     }

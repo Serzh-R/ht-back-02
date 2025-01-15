@@ -29,3 +29,5 @@ export const HTTP_STATUSES = {
 
   INTERNAL_SERVER_ERROR_500: 500,
 }
+
+export const BCRYPT_SALT = 10

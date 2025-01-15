@@ -1,10 +1,8 @@
 import { Router, Request, Response } from 'express'
 import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
-import {
-  loginOrEmailValidation,
-  passwordValidation,
-} from '../users/middlewares/user-validators'
+import { loginOrEmailValidation, passwordValidation } from '../users/middlewares/user-validators'
 import { authService } from './AuthService'
+import { usersService } from '../users/UsersService'
 
 export const authRouter = Router()
 
@@ -16,7 +14,7 @@ authRouter.post(
   async (req: Request, res: Response) => {
     const { loginOrEmail, password } = req.body
 
-    const isValid = await authService.checkCredentials(loginOrEmail, password)
+    const isValid = await usersService.checkCredentials(loginOrEmail, password)
 
     if (!isValid) {
       res.sendStatus(401)
