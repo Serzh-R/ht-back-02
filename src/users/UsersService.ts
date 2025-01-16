@@ -1,10 +1,4 @@
-import {
-  FieldErrorType,
-  UserDBInsertType,
-  UserDBType,
-  UserInputType,
-  UserType,
-} from '../types/types'
+import { FieldErrorType, UserDBInsertType, UserInputType, UserType } from '../types/types'
 import { usersRepository } from './UsersRepository'
 import { ObjectId } from 'mongodb'
 import { bcryptService } from '../common/adapters/bcrypt-service'

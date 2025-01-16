@@ -31,6 +31,6 @@ export const HTTP_STATUSES = {
   INTERNAL_SERVER_ERROR_500: 500,
 }
 
-export const BCRYPT_SALT = 10
+export const BCRYPT_SALT = 5
 
 export const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key'

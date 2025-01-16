@@ -3,14 +3,6 @@ import { authService } from '../auth/AuthService'
 import { HTTP_STATUSES } from '../settings'
 import { DecodedToken } from '../coment/types'
 
-declare global {
-  namespace Express {
-    interface Request {
-      userId?: string
-    }
-  }
-}
-
 export const jwtAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization
 
