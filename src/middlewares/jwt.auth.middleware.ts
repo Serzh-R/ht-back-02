@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import { authService } from '../auth/AuthService'
 import { HTTP_STATUSES } from '../settings'
-import { DecodedToken } from '../comments/types'
+import { jwtService } from '../common/adapters/jwt.service'
 
-export const jwtAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -15,7 +14,7 @@ export const jwtAuthMiddleware = (req: Request, res: Response, next: NextFunctio
 
   const token = authHeader.split(' ')[1]
 
-  const user = authService.verifyToken(token) as DecodedToken | null
+  const user = (await jwtService.verifyToken(token)) as { userId: string }
 
   if (!user) {
     res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({

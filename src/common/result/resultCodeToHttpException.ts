@@ -10,6 +10,7 @@ export function resultCodeToHttpException(resultStatus: ResultStatus): number {
     case ResultStatus.NoContent:
       return HTTP_STATUSES.NO_CONTENT_204
     case ResultStatus.BadRequest:
+    case ResultStatus.ConfirmCodeExpired:
       return HTTP_STATUSES.BAD_REQUEST_400
     case ResultStatus.Unauthorized:
       return HTTP_STATUSES.UNAUTHORIZED_401

@@ -6,6 +6,6 @@ export enum ResultStatus {
   Unauthorized = 'Unauthorized',
   Forbidden = 'Forbidden',
   NotFound = 'NotFound',
-  ServerError = 'ServerError',
   ConfirmCodeExpired = 'ConfirmCodeExpired',
+  ServerError = 'ServerError',
 }
