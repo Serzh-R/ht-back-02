@@ -13,6 +13,7 @@ export const SETTINGS = {
     POSTS: '/posts',
     AUTH: '/auth',
     USERS: '/users',
+    COMMENTS: '/comments',
     DELETE_ALL: '/testing/all-data',
   },
   MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017',

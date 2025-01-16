@@ -13,21 +13,14 @@ import { authMiddleware } from '../middlewares/auth-middleware'
 import { paginationQueries } from '../helpers/paginations_values'
 import { postsService } from './PostsService'
 import { postsQueryRepository } from './PostsQueryRepository'
-import { ObjectId } from 'mongodb'
 
 export const postRouter = Router()
 
 export const postController = {
   async getPosts(req: Request, res: Response) {
-    const { pageNumber, pageSize, sortBy, sortDirection } =
-      paginationQueries(req)
+    const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
 
-    const posts = await postsQueryRepository.getPosts(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortDirection,
-    )
+    const posts = await postsQueryRepository.getPosts(pageNumber, pageSize, sortBy, sortDirection)
     res.status(HTTP_STATUSES.OK_200).json(posts)
   },
 
@@ -92,12 +85,7 @@ postRouter.post(
   errorsResultMiddleware,
   postController.createPost,
 )
-postRouter.get(
-  '/:id',
-  idParamValidator,
-  errorsResultMiddleware,
-  postController.getPostById,
-)
+postRouter.get('/:id', idParamValidator, errorsResultMiddleware, postController.getPostById)
 postRouter.put(
   '/:id',
   authMiddleware,

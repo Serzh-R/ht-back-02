@@ -74,7 +74,7 @@ export const postsQueryRepository = {
     }
   },
 
-  _checkObjectId(id: string): boolean {
+  /*_checkObjectId(id: string): boolean {
     return ObjectId.isValid(id)
-  },
+  },*/
 }
