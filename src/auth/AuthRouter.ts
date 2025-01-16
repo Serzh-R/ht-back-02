@@ -1,11 +1,12 @@
 import { Router, Request, Response } from 'express'
-import { usersService } from '../users/UsersService'
 import { HTTP_STATUSES } from '../settings'
 import { authService } from './AuthService'
-import { loginOrEmailValidation, passwordValidation } from '../users/middlewares/user-validators'
-import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
-import { jwtAuthMiddleware } from '../middlewares/jwt-auth-middleware'
+import { loginOrEmailValidation, passwordValidation } from '../users/middlewares/user.validators'
+import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
+import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { usersQueryRepository } from '../users/UsersQueryRepository'
+import { ResultStatus } from '../common/result/resultCode'
+import { resultCodeToHttpException } from '../common/result/resultCodeToHttpException'
 
 export const authRouter = Router()
 
@@ -13,18 +14,13 @@ export const authController = {
   async login(req: Request, res: Response) {
     const { loginOrEmail, password } = req.body
 
-    const user = await usersService.checkCredentials(loginOrEmail, password)
+    const result = await authService.loginUser(loginOrEmail, password)
 
-    if (!user) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
-        errorsMessages: [{ field: 'loginOrEmail', message: 'Invalid credentials' }],
-      })
+    if (result.status !== ResultStatus.Success) {
+      res.status(resultCodeToHttpException(result.status)).send(result.extensions)
       return
     }
-
-    const token = authService.generateToken(user.id)
-
-    res.status(HTTP_STATUSES.OK_200).send({ accessToken: token })
+    res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
   },
 
   async me(req: Request, res: Response) {
@@ -63,21 +59,3 @@ authRouter.post(
 )
 
 authRouter.get('/me', jwtAuthMiddleware, authController.me)
-
-/*authRouter.post(
-  '/login',
-  loginOrEmailValidation,
-  passwordValidation,
-  errorsResultMiddleware,
-  async (req: Request, res: Response) => {
-    const { loginOrEmail, password } = req.body
-
-    const isValid = await usersService.checkCredentials(loginOrEmail, password)
-
-    if (!isValid) {
-      res.sendStatus(401)
-      return
-    }
-    res.sendStatus(204)
-  },
-)*/

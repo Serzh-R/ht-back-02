@@ -7,10 +7,10 @@ import {
   postContentValidator,
   postShortDescriptionValidator,
   postTitleValidator,
-} from '../validation/express-validator/field-validators'
-import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
-import { authMiddleware } from '../middlewares/auth-middleware'
-import { paginationQueries } from '../helpers/paginations_values'
+} from '../validation/express-validator/field.validators'
+import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
+import { authMiddleware } from '../middlewares/auth.middleware'
+import { paginationQueries } from '../helpers/paginations.values'
 import { postsService } from './PostsService'
 import { postsQueryRepository } from './PostsQueryRepository'
 

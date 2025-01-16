@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { authService } from '../auth/AuthService'
 import { HTTP_STATUSES } from '../settings'
-import { DecodedToken } from '../coment/types'
+import { DecodedToken } from '../comments/types'
 
 export const jwtAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization

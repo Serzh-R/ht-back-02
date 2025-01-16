@@ -1,26 +1,20 @@
 import { Router, Request, Response } from 'express'
-import { paginationQueries } from '../helpers/paginations_values'
+import { paginationQueries } from '../helpers/paginations.values'
 import { HTTP_STATUSES } from '../settings'
-import { authMiddleware } from '../middlewares/auth-middleware'
+import { authMiddleware } from '../middlewares/auth.middleware'
 import { usersQueryRepository } from './UsersQueryRepository'
 import { UserInputType } from '../types/types'
-import { userInputValidators } from './middlewares/user-validators'
-import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
+import { userInputValidators } from './middlewares/user.validators'
+import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { usersService } from './UsersService'
-import { idParamValidator } from '../validation/express-validator/field-validators'
+import { idParamValidator } from '../validation/express-validator/field.validators'
 
 export const usersRouter = Router()
 
 export const usersController = {
   async getUsers(req: Request, res: Response) {
-    const {
-      sortBy,
-      sortDirection,
-      pageNumber,
-      pageSize,
-      searchLoginTerm,
-      searchEmailTerm,
-    } = paginationQueries(req)
+    const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } =
+      paginationQueries(req)
 
     const users = await usersQueryRepository.getUsers(
       sortBy,
@@ -39,9 +33,7 @@ export const usersController = {
     const result = await usersService.createUser(body)
 
     if (result.errorsMessages.length > 0) {
-      res
-        .status(HTTP_STATUSES.BAD_REQUEST_400)
-        .json({ errorsMessages: result.errorsMessages })
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ errorsMessages: result.errorsMessages })
       return
     }
 

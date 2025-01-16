@@ -79,34 +79,13 @@ export const blogFieldsValidator = [
 
 /*****************************************************************************************************/
 
-/*export const blogNameValidator = body("name")
+export const commentContentValidator = body('content')
   .isString()
-  .withMessage("name should be a string")
   .trim()
   .notEmpty()
-  .withMessage("name is required")
-  .isLength({ min: 1, max: 15 })
-  .withMessage("name should contain 1 - 15 symbols")*/
-
-/*export const blogDescriptionValidator = body("description")
-  .isString()
-  .withMessage("description should be a string")
-  .trim()
-  .notEmpty()
-  .withMessage("description is required")
-  .isLength({ min: 10, max: 500 })
-  .withMessage("description should contain 10 - 500 symbols")*/
-
-/*export const blogWebsiteUrlValidator = body("websiteUrl")
-  .isString()
-  .withMessage("websiteUrl should be a string")
-  .trim()
-  .notEmpty()
-  .withMessage("websiteUrl is required")
-  .isLength({ max: 100 })
-  .withMessage("websiteUrl should not exceed 100 symbols")
-  .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}\/?([a-zA-Z0-9._-]+\/?)*$/)
-  .withMessage("websiteUrl must be a valid URL starting with https://")*/
+  .withMessage('title is required')
+  .isLength({ min: 20, max: 300 })
+  .withMessage('content should contain min-20 and max-300 symbols')
 
 /********************************************************************************************************/
 

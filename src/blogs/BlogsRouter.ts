@@ -1,22 +1,17 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
-import {
-  BlogInputType,
-  BlogPostInputType,
-  PaginatorPostType,
-  PostInputType,
-} from '../types/types'
+import { BlogInputType, BlogPostInputType, PaginatorPostType, PostInputType } from '../types/types'
 import {
   blogFieldsValidator,
   idParamValidator,
   postContentValidator,
   postShortDescriptionValidator,
   postTitleValidator,
-} from '../validation/express-validator/field-validators'
-import { errorsResultMiddleware } from '../validation/express-validator/errors-result-middleware'
-import { authMiddleware } from '../middlewares/auth-middleware'
+} from '../validation/express-validator/field.validators'
+import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
+import { authMiddleware } from '../middlewares/auth.middleware'
 import { blogsService } from './BlogsService'
-import { paginationQueries } from '../helpers/paginations_values'
+import { paginationQueries } from '../helpers/paginations.values'
 import { postsService } from '../posts/PostsService'
 import { blogsQueryRepository } from './BlogsQueryRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
@@ -25,8 +20,7 @@ export const blogRouter = Router()
 
 export const blogController = {
   async getBlogs(req: Request, res: Response) {
-    const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
-      paginationQueries(req)
+    const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
 
     const blogs = await blogsQueryRepository.getBlogs(
       searchNameTerm,
@@ -53,9 +47,7 @@ export const blogController = {
     const createdPost = await postsService.createPostForBlog(id, body)
 
     if (!createdPost) {
-      res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json({ message: 'Blog not found', field: 'id' })
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found', field: 'id' })
       return
     }
 
@@ -67,9 +59,7 @@ export const blogController = {
 
     const blog = await blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
-      res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json({ message: 'Blog not found' })
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found' })
       return
     }
     res.status(HTTP_STATUSES.OK_200).json(blog)
@@ -80,14 +70,11 @@ export const blogController = {
 
     const blog = await blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
-      res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json({ message: 'Blog not found', field: 'blogId' })
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found', field: 'blogId' })
       return
     }
 
-    const { pageNumber, pageSize, sortBy, sortDirection } =
-      paginationQueries(req)
+    const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
 
     const posts: PaginatorPostType = await postsQueryRepository.getPostsForBlog(
       blogId,
@@ -105,9 +92,7 @@ export const blogController = {
     const body: BlogInputType = req.body
     const isUpdated = await blogsService.updateBlog(id, body)
     if (!isUpdated) {
-      res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json({ message: 'Blog not found' })
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found' })
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
@@ -118,9 +103,7 @@ export const blogController = {
 
     const isDeleted = await blogsService.deleteBlog(id)
     if (!isDeleted) {
-      res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .json({ message: 'Blog not found' })
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found' })
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
@@ -155,12 +138,7 @@ blogRouter.post(
   blogController.createPostForBlog,
 )
 
-blogRouter.get(
-  '/:id',
-  idParamValidator,
-  errorsResultMiddleware,
-  blogController.getBlogById,
-)
+blogRouter.get('/:id', idParamValidator, errorsResultMiddleware, blogController.getBlogById)
 
 blogRouter.put(
   '/:id',
