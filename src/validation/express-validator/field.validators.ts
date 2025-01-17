@@ -82,10 +82,8 @@ export const blogFieldsValidator = [
 export const commentContentValidator = body('content')
   .isString()
   .trim()
-  .notEmpty()
-  .withMessage('title is required')
   .isLength({ min: 20, max: 300 })
-  .withMessage('content should contain min-20 and max-300 symbols')
+  .withMessage('Content must be between 20 and 300 characters')
 
 /********************************************************************************************************/
 

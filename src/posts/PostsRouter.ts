@@ -3,6 +3,7 @@ import { HTTP_STATUSES } from '../settings'
 import { PostInputType } from '../types/types'
 import {
   blogIdValidator,
+  commentContentValidator,
   idParamValidator,
   postContentValidator,
   postShortDescriptionValidator,
@@ -13,6 +14,10 @@ import { authMiddleware } from '../middlewares/auth.middleware'
 import { paginationQueries } from '../helpers/paginations.values'
 import { postsService } from './PostsService'
 import { postsQueryRepository } from './PostsQueryRepository'
+import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
+import { commentsService } from '../comments/CommentsService'
+import { ResultStatus } from '../common/result/resultCode'
+import { Result } from '../common/result/result.type'
 
 export const postRouter = Router()
 
@@ -72,6 +77,34 @@ export const postController = {
       res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     }
   },
+
+  async createCommentForPost(req: Request, res: Response) {
+    const postId = req.params.postId
+    const { content } = req.body
+    const userId = req.userId
+
+    if (!userId) {
+      res
+        .status(HTTP_STATUSES.UNAUTHORIZED_401)
+        .send({ errorsMessages: [{ field: 'authorization', message: 'Unauthorized' }] })
+      return
+    }
+
+    const result = await commentsService.createCommentForPost({
+      postId,
+      content,
+      userId,
+    })
+
+    if (result.status !== ResultStatus.Success) {
+      res.status(result.status === ResultStatus.NotFound ? 404 : 400).send({
+        errorsMessages: result.extensions,
+      })
+      return
+    }
+
+    res.status(HTTP_STATUSES.CREATED_201).send(result.data)
+  },
 }
 
 postRouter.get('/', postController.getPosts)
@@ -85,6 +118,15 @@ postRouter.post(
   errorsResultMiddleware,
   postController.createPost,
 )
+
+postRouter.post(
+  '/:id/comments',
+  jwtAuthMiddleware,
+  commentContentValidator, // Проверка содержимого комментария
+  errorsResultMiddleware,
+  postController.createCommentForPost,
+)
+
 postRouter.get('/:id', idParamValidator, errorsResultMiddleware, postController.getPostById)
 postRouter.put(
   '/:id',

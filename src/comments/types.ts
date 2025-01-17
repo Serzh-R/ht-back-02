@@ -11,6 +11,8 @@ export type CommentDBType = {
   createdAt: Date
 }
 
+export type CommentDBInsertType = Omit<CommentDBType, '_id'>
+
 export type CommentType = {
   id: string
   content: string

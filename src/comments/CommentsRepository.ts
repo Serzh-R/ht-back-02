@@ -1,18 +1,30 @@
 import { commentsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
+import { CommentDBType } from './types'
 
 export const commentsRepository = {
-  /*async findById(id: string): Promise<CommentDBType | null> {
-    const comment = await commentsCollection.findOne({ _id: new ObjectId(id) })
-    return comment
-  },*/
-
   async updateCommentById(id: string, content: string): Promise<boolean> {
     const result = await commentsCollection.updateOne(
       { _id: new ObjectId(id) },
       { $set: { content } },
     )
     return result.matchedCount > 0
+  },
+
+  async createComment(commentData: {
+    content: string
+    commentatorInfo: { userId: string; userLogin: string }
+    createdAt: Date
+    postId: string
+  }): Promise<ObjectId> {
+    const result = await commentsCollection.insertOne({
+      content: commentData.content,
+      commentatorInfo: commentData.commentatorInfo,
+      createdAt: commentData.createdAt,
+      postId: new ObjectId(commentData.postId),
+    } as CommentDBType & { postId: ObjectId })
+
+    return result.insertedId
   },
 
   async deleteById(id: string): Promise<boolean> {
