@@ -59,7 +59,7 @@ export type PostDBType = {
   content: string
   blogId: string
   blogName: string
-  createdAt: string
+  createdAt: Date
 }
 
 export type PostDBInsertType = Omit<PostDBType, '_id'>

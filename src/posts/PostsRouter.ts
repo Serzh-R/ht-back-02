@@ -18,6 +18,7 @@ import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { commentsService } from '../comments/CommentsService'
 import { ResultStatus } from '../common/result/resultCode'
 import { Result } from '../common/result/result.type'
+import { ObjectId } from 'mongodb'
 
 export const postRouter = Router()
 
@@ -80,7 +81,7 @@ export const postController = {
 
   async createCommentForPost(req: Request, res: Response) {
     const postId = req.params.postId
-    const { content } = req.body
+    const content = req.body.content
     const userId = req.userId
 
     if (!userId) {
@@ -122,7 +123,7 @@ postRouter.post(
 postRouter.post(
   '/:id/comments',
   jwtAuthMiddleware,
-  commentContentValidator, // Проверка содержимого комментария
+  commentContentValidator,
   errorsResultMiddleware,
   postController.createCommentForPost,
 )

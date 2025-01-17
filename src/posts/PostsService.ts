@@ -22,12 +22,12 @@ export const postsService = {
       content: post.content,
       blogId: post.blogId,
       blogName: blog.name,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     }
 
     const createdPost = await postsRepository.createPost(newPost)
 
-    return this._getInView(createdPost)
+    return this._mapViewModel(createdPost)
   },
 
   async createPostForBlog(blogId: string, post: BlogPostInputType): Promise<PostType | null> {
@@ -42,15 +42,15 @@ export const postsService = {
       content: post.content,
       blogId: blogId,
       blogName: blog.name,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     }
 
     const createdPost = await postsRepository.createPost(newPost)
 
-    return this._getInView(createdPost)
+    return this._mapViewModel(createdPost)
   },
 
-  _getInView(post: PostDBType): PostType {
+  _mapViewModel(post: PostDBType): PostType {
     return {
       id: post._id.toString(),
       title: post.title,
@@ -58,7 +58,7 @@ export const postsService = {
       content: post.content,
       blogId: post.blogId,
       blogName: post.blogName,
-      createdAt: post.createdAt,
+      createdAt: post.createdAt.toISOString(),
     }
   },
 

@@ -9,6 +9,7 @@ export type CommentDBType = {
   content: string
   commentatorInfo: CommentatorInfoType
   createdAt: Date
+  postId: ObjectId
 }
 
 export type CommentDBInsertType = Omit<CommentDBType, '_id'>

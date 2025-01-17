@@ -1,8 +1,9 @@
 import { commentsRepository } from './CommentsRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
-import { CommentDBType, CommentType } from './types'
+import { CommentDBInsertType, CommentType } from './types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
+import { ObjectId } from 'mongodb'
 
 export const commentsService = {
   async updateCommentById(id: string, content: string): Promise<boolean> {
@@ -29,20 +30,21 @@ export const commentsService = {
       }
     }
 
-    const newComment: Omit<CommentDBType, '_id'> = {
+    const newComment: CommentDBInsertType = {
       content: postData.content,
       commentatorInfo: {
         userId: postData.userId,
         userLogin: 'UserLogin',
       },
       createdAt: new Date(),
+      postId: new ObjectId(postData.postId),
     }
 
     const commentId = await commentsRepository.createComment({
       content: newComment.content,
       commentatorInfo: newComment.commentatorInfo,
       createdAt: newComment.createdAt,
-      postId: postData.postId,
+      postId: newComment.postId,
     })
 
     return {

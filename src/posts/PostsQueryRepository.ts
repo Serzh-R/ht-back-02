@@ -23,13 +23,13 @@ export const postsQueryRepository = {
       page: pageNumber,
       pageSize,
       totalCount,
-      items: posts.map((post) => this._getInView(post)),
+      items: posts.map((post) => this._mapViewModel(post)),
     }
   },
 
   async getPostById(postId: string): Promise<PostType | null> {
     const post = await postsCollection.findOne({ _id: new ObjectId(postId) })
-    return post ? this._getInView(post) : null
+    return post ? this._mapViewModel(post) : null
   },
 
   async getPostsForBlog(
@@ -53,7 +53,7 @@ export const postsQueryRepository = {
       page: pageNumber,
       pageSize,
       totalCount: postsCount,
-      items: posts.map((post: PostDBType) => this._getInView(post)),
+      items: posts.map((post: PostDBType) => this._mapViewModel(post)),
     }
   },
 
@@ -62,7 +62,7 @@ export const postsQueryRepository = {
     return await postsCollection.countDocuments({ blogId: objectId.toString() })
   },
 
-  _getInView(post: PostDBType): PostType {
+  _mapViewModel(post: PostDBType): PostType {
     return {
       id: post._id.toString(),
       title: post.title,
@@ -70,7 +70,7 @@ export const postsQueryRepository = {
       content: post.content,
       blogId: post.blogId,
       blogName: post.blogName,
-      createdAt: post.createdAt,
+      createdAt: post.createdAt.toISOString(),
     }
   },
 

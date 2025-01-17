@@ -15,14 +15,14 @@ export const commentsRepository = {
     content: string
     commentatorInfo: { userId: string; userLogin: string }
     createdAt: Date
-    postId: string
+    postId: ObjectId
   }): Promise<ObjectId> {
     const result = await commentsCollection.insertOne({
       content: commentData.content,
       commentatorInfo: commentData.commentatorInfo,
       createdAt: commentData.createdAt,
-      postId: new ObjectId(commentData.postId),
-    } as CommentDBType & { postId: ObjectId })
+      postId: commentData.postId,
+    } as CommentDBType)
 
     return result.insertedId
   },
