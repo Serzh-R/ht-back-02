@@ -107,25 +107,23 @@ export const postController = {
   },
 
   async getCommentsForPost(req: Request, res: Response) {
-    try {
-      const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
-      const postId = req.params.postId
+    const { postId } = req.params
+    const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
 
-      const comments = await commentsQueryRepository.getCommentsForPost({
-        postId,
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection,
-      })
+    const result = await commentsQueryRepository.getCommentsForPost(
+      postId,
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection,
+    )
 
-      res.status(HTTP_STATUSES.OK_200).send(comments)
-    } catch (error) {
-      console.error(error)
-      res.status(HTTP_STATUSES.SERVER_ERROR_500).send({
-        errorsMessages: [{ field: 'postId', message: 'Invalid postId' }],
-      })
+    if (result.status === ResultStatus.NotFound) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).send(result.extensions)
+      return
     }
+
+    res.status(HTTP_STATUSES.OK_200).send(result.data)
   },
 }
 

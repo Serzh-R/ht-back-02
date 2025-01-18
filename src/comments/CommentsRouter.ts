@@ -2,7 +2,10 @@ import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
 import { commentsQueryRepository } from './CommentsQueryRepository'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
-import { idParamValidator } from '../validation/express-validator/field.validators'
+import {
+  commentContentValidator,
+  idParamValidator,
+} from '../validation/express-validator/field.validators'
 import { commentsService } from './CommentsService'
 import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
@@ -68,6 +71,7 @@ commentsRouter.put(
   '/:id',
   jwtAuthMiddleware,
   idParamValidator,
+  commentContentValidator,
   errorsResultMiddleware,
   commentsController.updateCommentById,
 )
