@@ -9,6 +9,13 @@ export const idParamValidator = param('id')
   .notEmpty()
   .withMessage('name is required')
 
+export const postIdValidator = param('postId')
+  .isString()
+  .trim()
+  .notEmpty()
+  .custom((value) => ObjectId.isValid(value))
+  .withMessage('Invalid postId')
+
 export const blogIdValidator = body('blogId')
   .isString()
   .withMessage('blogId should be a string')

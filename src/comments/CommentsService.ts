@@ -37,14 +37,14 @@ export const commentsService = {
         userLogin: 'UserLogin',
       },
       createdAt: new Date(),
-      postId: new ObjectId(postData.postId),
+      //postId: new ObjectId(postData.postId),
     }
 
     const commentId = await commentsRepository.createComment({
       content: newComment.content,
       commentatorInfo: newComment.commentatorInfo,
       createdAt: newComment.createdAt,
-      postId: newComment.postId,
+      postId: postData.postId,
     })
 
     return {

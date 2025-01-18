@@ -6,6 +6,7 @@ import {
   commentContentValidator,
   idParamValidator,
   postContentValidator,
+  postIdValidator,
   postShortDescriptionValidator,
   postTitleValidator,
 } from '../validation/express-validator/field.validators'
@@ -19,6 +20,7 @@ import { ResultStatus } from '../common/result/resultCode'
 import { commentsQueryRepository } from '../comments/CommentsQueryRepository'
 import { PaginatorCommentType } from '../comments/types'
 import { authMiddleware } from '../middlewares/auth.middleware'
+import { resultCodeToHttpException } from '../common/result/resultCodeToHttpException'
 
 export const postRouter = Router()
 
@@ -98,9 +100,7 @@ export const postController = {
     })
 
     if (result.status !== ResultStatus.Success) {
-      res.status(result.status === ResultStatus.NotFound ? 404 : 400).send({
-        errorsMessages: result.extensions,
-      })
+      res.status(resultCodeToHttpException(result.status)).send(result.extensions)
       return
     }
 
@@ -144,17 +144,17 @@ postRouter.post(
 )
 
 postRouter.post(
-  '/:id/comments',
+  '/:postId/comments',
   jwtAuthMiddleware,
-  idParamValidator,
+  postIdValidator,
   commentContentValidator,
   errorsResultMiddleware,
   postController.createCommentForPost,
 )
 
 postRouter.get(
-  '/:id/comments',
-  idParamValidator,
+  '/:postId/comments',
+  postIdValidator,
   errorsResultMiddleware,
   postController.getCommentsForPost,
 )
