@@ -1,5 +1,5 @@
 import { usersCollection } from '../db/mongoDb'
-import { PaginatorUserType, UserDBType, UserType } from '../types/types'
+import { PaginatorUserType, UserDBInsertType, UserDBType, UserType } from '../types/types'
 import { ObjectId } from 'mongodb'
 
 export const usersQueryRepository = {
@@ -39,7 +39,7 @@ export const usersQueryRepository = {
       page: pageNumber,
       pageSize,
       totalCount: usersCount,
-      items: users.map((user) => this._getInView(user)),
+      items: users.map((user) => this._mapViewModel(user)),
     }
   },
 
@@ -47,10 +47,10 @@ export const usersQueryRepository = {
     const user = await usersCollection.findOne<UserDBType>({
       _id: new ObjectId(id),
     })
-    return user ? this._getInView(user) : null
+    return user ? this._mapViewModel(user) : null
   },
 
-  _getInView(user: UserDBType): UserType {
+  _mapViewModel(user: UserDBType): UserType {
     return {
       id: user._id.toString(),
       login: user.login,

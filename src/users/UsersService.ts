@@ -1,12 +1,11 @@
-import { FieldErrorType, UserDBInsertType, UserInputType, UserType } from '../types/types'
+import { FieldErrorType, UserDBInsertType, UserInputType } from '../types/types'
 import { usersRepository } from './UsersRepository'
-import { ObjectId } from 'mongodb'
 import { bcryptService } from '../common/adapters/bcrypt.service'
 
 export const usersService = {
   async createUser(
     body: UserInputType,
-  ): Promise<{ userId: ObjectId | null; errorsMessages: FieldErrorType[] }> {
+  ): Promise<{ userId: string | null; errorsMessages: FieldErrorType[] }> {
     const userByLogin = await usersRepository.findByLoginOrEmail(body.login)
     if (userByLogin) {
       return {
@@ -45,7 +44,7 @@ export const usersService = {
     const userId = await usersRepository.createUser(userDB)
 
     return {
-      userId,
+      userId: userId.toString(),
       errorsMessages: [],
     }
   },

@@ -29,7 +29,7 @@ app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   } catch (error) {
     console.error('Error clearing data:', error)
-    res.status(HTTP_STATUSES.INTERNAL_SERVER_ERROR_500).json({ error: 'Failed to clear data' })
+    res.status(HTTP_STATUSES.SERVER_ERROR_500).json({ error: 'Failed to clear data' })
   }
 })
 

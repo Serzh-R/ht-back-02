@@ -26,6 +26,13 @@ export type CommentatorInfoType = {
   userLogin: string
 }
 
+export type PaginatorCommentType = {
+  pageNumber: number
+  pageSize: number
+  sortBy: string
+  sortDirection: string
+}
+
 export type LoginSuccessType = {
   accessToken: string // JWT access token
 }
