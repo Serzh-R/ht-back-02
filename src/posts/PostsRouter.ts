@@ -17,8 +17,6 @@ import { postsQueryRepository } from './PostsQueryRepository'
 import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { commentsService } from '../comments/CommentsService'
 import { ResultStatus } from '../common/result/resultCode'
-import { Result } from '../common/result/result.type'
-import { ObjectId } from 'mongodb'
 import { commentsQueryRepository } from '../comments/CommentsQueryRepository'
 import { PaginatorCommentType } from '../comments/types'
 
