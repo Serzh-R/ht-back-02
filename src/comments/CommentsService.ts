@@ -3,7 +3,6 @@ import { postsQueryRepository } from '../posts/PostsQueryRepository'
 import { CommentDBInsertType, CommentType } from './types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
-import { ObjectId } from 'mongodb'
 
 export const commentsService = {
   async updateCommentById(id: string, content: string): Promise<boolean> {
