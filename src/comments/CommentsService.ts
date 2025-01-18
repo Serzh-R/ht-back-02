@@ -3,6 +3,7 @@ import { postsQueryRepository } from '../posts/PostsQueryRepository'
 import { CommentDBInsertType, CommentType } from './types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
+import { ObjectId } from 'mongodb'
 
 export const commentsService = {
   async updateCommentById(id: string, content: string): Promise<boolean> {
@@ -36,14 +37,14 @@ export const commentsService = {
         userLogin: 'UserLogin',
       },
       createdAt: new Date(),
-      //postId: new ObjectId(postData.postId),
+      postId: new ObjectId(postData.postId),
     }
 
     const commentId = await commentsRepository.createComment({
       content: newComment.content,
       commentatorInfo: newComment.commentatorInfo,
       createdAt: newComment.createdAt,
-      postId: postData.postId,
+      postId: newComment.postId,
     })
 
     return {
@@ -58,22 +59,3 @@ export const commentsService = {
     }
   },
 }
-
-/*async getCommentById(id: string): Promise<CommentType | null> {
-    const comment = await commentsQueryRepository.getCommentById(id)
-    if (!comment) return null
-
-    return this._mapToViewModel(comment)
-  },*/
-
-/*_mapToViewModel(comment: CommentDBType): CommentType {
-    return {
-      id: comment._id.toString(),
-      content: comment.content,
-      commentatorInfo: {
-        userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userLogin,
-      },
-      createdAt: comment.createdAt.toISOString(),
-    }
-  },*/
