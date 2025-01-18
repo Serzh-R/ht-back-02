@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
-import { BlogInputType, BlogPostInputType, PaginatorPostType, PostInputType } from '../types/types'
+import { BlogInputType, BlogPostInputType, PaginatorPostType } from '../types/types'
 import {
   blogFieldsValidator,
   idParamValidator,
