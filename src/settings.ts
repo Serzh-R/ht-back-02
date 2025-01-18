@@ -35,5 +35,5 @@ export const HTTP_STATUSES = {
 
 export const BCRYPT_SALT = 5
 
-export const AC_TIME = process.env.JWT_TIME || '300'
-export const AC_SECRET = process.env.JWT_SECRET || 'your_secret_key'
+export const JWT_TIME = process.env.JWT_TIME || '300'
+export const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key'

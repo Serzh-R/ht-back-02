@@ -1,12 +1,22 @@
 import jwt from 'jsonwebtoken'
-import { AC_SECRET, AC_TIME } from '../../settings'
+import { JWT_SECRET, JWT_TIME } from '../../settings'
+import { ObjectId } from 'mongodb'
 
 export const jwtService = {
   async createToken(userId: string): Promise<string> {
-    return jwt.sign({ userId }, AC_SECRET, {
-      expiresIn: AC_TIME,
-    })
+    return jwt.sign({ userId }, JWT_SECRET, { expiresIn: Number(JWT_TIME) })
   },
+
+  async getUserIdByToken(token: string): Promise<ObjectId | null> {
+    try {
+      const result = jwt.verify(token, JWT_SECRET) as { userId: string }
+      return new ObjectId(result.userId)
+    } catch (error) {
+      console.error('Token verify some error')
+      return null
+    }
+  },
+
   async decodeToken(token: string): Promise<any> {
     try {
       return jwt.decode(token)
@@ -15,20 +25,4 @@ export const jwtService = {
       return null
     }
   },
-  async verifyToken(token: string): Promise<{ userId: string } | null> {
-    try {
-      return jwt.verify(token, AC_SECRET) as { userId: string }
-    } catch (error) {
-      console.error('Token verify some error')
-      return null
-    }
-  },
-
-  /*verifyToken(token: string): DecodedToken | null {
-    try {
-      return jwt.verify(token, SECRET_KEY) as DecodedToken
-    } catch (error) {
-      return null
-    }
-  },*/
 }

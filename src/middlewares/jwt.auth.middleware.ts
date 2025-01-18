@@ -14,15 +14,15 @@ export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextF
 
   const token = authHeader.split(' ')[1]
 
-  const user = (await jwtService.verifyToken(token)) as { userId: string }
+  const userId = await jwtService.getUserIdByToken(token)
 
-  if (!user) {
+  if (!userId) {
     res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
       errorsMessages: [{ field: 'authorization', message: 'Invalid token' }],
     })
     return
   }
 
-  req.userId = user.userId
+  req.userId = userId.toString()
   next()
 }
