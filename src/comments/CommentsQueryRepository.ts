@@ -1,6 +1,6 @@
 import { commentsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { CommentDBType, CommentType } from './types'
+import { CommentDBType, CommentType, PaginatorCommentType } from './types'
 
 export const commentsQueryRepository = {
   async getCommentById(id: string): Promise<CommentType | null> {
@@ -9,10 +9,35 @@ export const commentsQueryRepository = {
       return null
     }
 
-    return this._mapToCommentType(comment)
+    return this._mapViewModel(comment)
   },
 
-  _mapToCommentType(comment: CommentDBType): CommentType {
+  async getCommentsForPost(
+    postId: string,
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: 'asc' | 'desc',
+  ): Promise<PaginatorCommentType> {
+    const commentsCount = await commentsCollection.countDocuments(new ObjectId(postId))
+
+    const comments = await commentsCollection
+      .find(new ObjectId(postId))
+      .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray()
+
+    return {
+      pageCount: Math.ceil(commentsCount / pageSize),
+      page: pageNumber,
+      pageSize,
+      totalCount: commentsCount,
+      items: comments.map((comment: CommentDBType) => this._mapViewModel(comment)),
+    }
+  },
+
+  _mapViewModel(comment: CommentDBType): CommentType {
     return {
       id: comment._id.toString(),
       content: comment.content,

@@ -27,10 +27,11 @@ export type CommentatorInfoType = {
 }
 
 export type PaginatorCommentType = {
-  pageNumber: number
+  pageCount: number
+  page: number
   pageSize: number
-  sortBy: string
-  sortDirection: string
+  totalCount: number
+  items: CommentType[]
 }
 
 export type LoginSuccessType = {

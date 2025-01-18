@@ -19,6 +19,8 @@ import { commentsService } from '../comments/CommentsService'
 import { ResultStatus } from '../common/result/resultCode'
 import { Result } from '../common/result/result.type'
 import { ObjectId } from 'mongodb'
+import { commentsQueryRepository } from '../comments/CommentsQueryRepository'
+import { PaginatorCommentType } from '../comments/types'
 
 export const postRouter = Router()
 
@@ -106,6 +108,29 @@ export const postController = {
 
     res.status(HTTP_STATUSES.CREATED_201).send(result.data)
   },
+
+  async getCommentsForPost(req: Request, res: Response) {
+    const postId = req.params.postId
+
+    const post = await postsQueryRepository.getPostById(postId)
+
+    if (!post) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Post not found', field: 'postId' })
+      return
+    }
+
+    const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
+
+    const comments: PaginatorCommentType = await commentsQueryRepository.getCommentsForPost(
+      postId,
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection,
+    )
+
+    res.status(HTTP_STATUSES.OK_200).json(comments)
+  },
 }
 
 postRouter.get('/', postController.getPosts)
@@ -126,6 +151,13 @@ postRouter.post(
   commentContentValidator,
   errorsResultMiddleware,
   postController.createCommentForPost,
+)
+
+postRouter.get(
+  '/:id/comments',
+  idParamValidator,
+  errorsResultMiddleware,
+  postController.getCommentsForPost,
 )
 
 postRouter.get('/:id', idParamValidator, errorsResultMiddleware, postController.getPostById)
