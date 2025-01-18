@@ -10,7 +10,6 @@ import {
   postTitleValidator,
 } from '../validation/express-validator/field.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
-import { authMiddleware } from '../middlewares/auth.middleware'
 import { paginationQueries } from '../helpers/paginations.values'
 import { postsService } from './PostsService'
 import { postsQueryRepository } from './PostsQueryRepository'
@@ -134,7 +133,7 @@ export const postController = {
 postRouter.get('/', postController.getPosts)
 postRouter.post(
   '/',
-  authMiddleware,
+  jwtAuthMiddleware,
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
@@ -146,6 +145,7 @@ postRouter.post(
 postRouter.post(
   '/:id/comments',
   jwtAuthMiddleware,
+  idParamValidator,
   commentContentValidator,
   errorsResultMiddleware,
   postController.createCommentForPost,
@@ -161,7 +161,7 @@ postRouter.get(
 postRouter.get('/:id', idParamValidator, errorsResultMiddleware, postController.getPostById)
 postRouter.put(
   '/:id',
-  authMiddleware,
+  jwtAuthMiddleware,
   idParamValidator,
   postTitleValidator,
   postShortDescriptionValidator,
@@ -172,7 +172,7 @@ postRouter.put(
 )
 postRouter.delete(
   '/:id',
-  authMiddleware,
+  jwtAuthMiddleware,
   idParamValidator,
   errorsResultMiddleware,
   postController.deletePost,

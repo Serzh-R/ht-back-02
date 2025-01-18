@@ -1,13 +1,13 @@
 import { Router, Request, Response } from 'express'
 import { paginationQueries } from '../helpers/paginations.values'
 import { HTTP_STATUSES } from '../settings'
-import { authMiddleware } from '../middlewares/auth.middleware'
 import { usersQueryRepository } from './UsersQueryRepository'
 import { UserInputType } from '../types/types'
 import { userInputValidators } from './middlewares/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { usersService } from './UsersService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
+import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 
 export const usersRouter = Router()
 
@@ -52,17 +52,17 @@ export const usersController = {
   },
 }
 
-usersRouter.get('/', authMiddleware, usersController.getUsers)
+usersRouter.get('/', jwtAuthMiddleware, usersController.getUsers)
 usersRouter.post(
   '/',
-  authMiddleware,
+  jwtAuthMiddleware,
   userInputValidators,
   errorsResultMiddleware,
   usersController.createUser,
 )
 usersRouter.delete(
   '/:id',
-  authMiddleware,
+  jwtAuthMiddleware,
   idParamValidator,
   errorsResultMiddleware,
   usersController.deleteUser,
