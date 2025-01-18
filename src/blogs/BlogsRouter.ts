@@ -14,7 +14,7 @@ import { paginationQueries } from '../helpers/paginations.values'
 import { postsService } from '../posts/PostsService'
 import { blogsQueryRepository } from './BlogsQueryRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
-import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
+import { authMiddleware } from '../middlewares/auth.middleware'
 
 export const blogRouter = Router()
 
@@ -121,7 +121,7 @@ blogRouter.get(
 
 blogRouter.post(
   '/',
-  jwtAuthMiddleware,
+  authMiddleware,
   blogFieldsValidator,
   errorsResultMiddleware,
   blogController.createBlog,
@@ -129,7 +129,7 @@ blogRouter.post(
 
 blogRouter.post(
   '/:id/posts',
-  jwtAuthMiddleware,
+  authMiddleware,
   idParamValidator,
   postTitleValidator,
   postShortDescriptionValidator,
@@ -142,7 +142,7 @@ blogRouter.get('/:id', idParamValidator, errorsResultMiddleware, blogController.
 
 blogRouter.put(
   '/:id',
-  jwtAuthMiddleware,
+  authMiddleware,
   idParamValidator,
   blogFieldsValidator,
   errorsResultMiddleware,
@@ -151,7 +151,7 @@ blogRouter.put(
 
 blogRouter.delete(
   '/:id',
-  jwtAuthMiddleware,
+  authMiddleware,
   idParamValidator,
   errorsResultMiddleware,
   blogController.deleteBlog,

@@ -7,7 +7,7 @@ import { userInputValidators } from './middlewares/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { usersService } from './UsersService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
-import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
+import { authMiddleware } from '../middlewares/auth.middleware'
 
 export const usersRouter = Router()
 
@@ -52,17 +52,17 @@ export const usersController = {
   },
 }
 
-usersRouter.get('/', jwtAuthMiddleware, usersController.getUsers)
+usersRouter.get('/', authMiddleware, usersController.getUsers)
 usersRouter.post(
   '/',
-  jwtAuthMiddleware,
+  authMiddleware,
   userInputValidators,
   errorsResultMiddleware,
   usersController.createUser,
 )
 usersRouter.delete(
   '/:id',
-  jwtAuthMiddleware,
+  authMiddleware,
   idParamValidator,
   errorsResultMiddleware,
   usersController.deleteUser,

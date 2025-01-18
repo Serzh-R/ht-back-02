@@ -18,6 +18,7 @@ import { commentsService } from '../comments/CommentsService'
 import { ResultStatus } from '../common/result/resultCode'
 import { commentsQueryRepository } from '../comments/CommentsQueryRepository'
 import { PaginatorCommentType } from '../comments/types'
+import { authMiddleware } from '../middlewares/auth.middleware'
 
 export const postRouter = Router()
 
@@ -133,7 +134,7 @@ export const postController = {
 postRouter.get('/', postController.getPosts)
 postRouter.post(
   '/',
-  jwtAuthMiddleware,
+  authMiddleware,
   postTitleValidator,
   postShortDescriptionValidator,
   postContentValidator,
@@ -161,7 +162,7 @@ postRouter.get(
 postRouter.get('/:id', idParamValidator, errorsResultMiddleware, postController.getPostById)
 postRouter.put(
   '/:id',
-  jwtAuthMiddleware,
+  authMiddleware,
   idParamValidator,
   postTitleValidator,
   postShortDescriptionValidator,
@@ -172,7 +173,7 @@ postRouter.put(
 )
 postRouter.delete(
   '/:id',
-  jwtAuthMiddleware,
+  authMiddleware,
   idParamValidator,
   errorsResultMiddleware,
   postController.deletePost,
