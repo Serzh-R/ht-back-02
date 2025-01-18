@@ -4,16 +4,72 @@ import { CommentDBInsertType, CommentType } from './types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'
+import { commentsQueryRepository } from './CommentsQueryRepository'
 
 export const commentsService = {
-  async updateCommentById(id: string, content: string): Promise<boolean> {
-    return await commentsRepository.updateCommentById(id, content)
+  async updateCommentById(
+    id: string,
+    userId: string | null | undefined,
+    content: string,
+  ): Promise<Result<boolean>> {
+    const comment = await commentsQueryRepository.getCommentById(id)
+
+    if (!comment) {
+      return {
+        status: ResultStatus.NotFound,
+        errorMessage: 'Comment not found',
+        extensions: [{ field: 'id', message: 'Invalid comment id' }],
+        data: false,
+      }
+    }
+
+    if (comment.commentatorInfo.userId !== userId) {
+      return {
+        status: ResultStatus.Forbidden,
+        errorMessage: 'Access denied',
+        extensions: [{ field: 'userId', message: 'You are not the owner of this comment' }],
+        data: false,
+      }
+    }
+
+    const success = await commentsRepository.updateCommentById(id, content)
+
+    return {
+      status: ResultStatus.Success,
+      data: success,
+      extensions: [],
+    }
   },
 
-  async deleteComment(id: string): Promise<boolean> {
-    return await commentsRepository.deleteById(id)
-  },
+  async deleteComment(id: string, userId: string | null | undefined): Promise<Result<boolean>> {
+    const comment = await commentsQueryRepository.getCommentById(id)
 
+    if (!comment) {
+      return {
+        status: ResultStatus.NotFound,
+        errorMessage: 'Comment not found',
+        extensions: [{ field: 'id', message: 'Invalid comment id' }],
+        data: false,
+      }
+    }
+
+    if (comment.commentatorInfo.userId !== userId) {
+      return {
+        status: ResultStatus.Forbidden,
+        errorMessage: 'Access denied',
+        extensions: [{ field: 'userId', message: 'You are not the owner of this comment' }],
+        data: false,
+      }
+    }
+
+    const success = await commentsRepository.deleteById(id)
+
+    return {
+      status: ResultStatus.Success,
+      data: success,
+      extensions: [],
+    }
+  },
   async createCommentForPost(postData: {
     postId: string
     content: string

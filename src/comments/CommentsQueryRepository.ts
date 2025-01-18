@@ -12,24 +12,36 @@ export const commentsQueryRepository = {
     return this._mapViewModel(comment)
   },
 
-  async getCommentsForPost(
-    postId: string,
-    pageNumber: number,
-    pageSize: number,
-    sortBy: string,
-    sortDirection: 'asc' | 'desc',
-  ): Promise<PaginatorCommentType> {
-    const commentsCount = await commentsCollection.countDocuments(new ObjectId(postId))
+  async getCommentsForPost({
+    postId,
+    pageNumber,
+    pageSize,
+    sortBy,
+    sortDirection,
+  }: {
+    postId: string
+    pageNumber: number
+    pageSize: number
+    sortBy: string
+    sortDirection: 'asc' | 'desc'
+  }): Promise<PaginatorCommentType> {
+    if (!ObjectId.isValid(postId)) {
+      throw new Error('Invalid postId')
+    }
 
-    const comments = await commentsCollection
-      .find(new ObjectId(postId))
+    const filter = { postId: new ObjectId(postId) }
+
+    const commentsCount = await commentsCollection.countDocuments(filter)
+
+    const comments: CommentDBType[] = await commentsCollection
+      .find(filter)
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .toArray()
 
     return {
-      pageCount: Math.ceil(commentsCount / pageSize),
+      pagesCount: Math.ceil(commentsCount / pageSize),
       page: pageNumber,
       pageSize,
       totalCount: commentsCount,
@@ -41,10 +53,7 @@ export const commentsQueryRepository = {
     return {
       id: comment._id.toString(),
       content: comment.content,
-      commentatorInfo: {
-        userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userLogin,
-      },
+      commentatorInfo: comment.commentatorInfo,
       createdAt: comment.createdAt.toISOString(),
     }
   },

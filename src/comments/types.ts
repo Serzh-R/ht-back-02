@@ -27,7 +27,7 @@ export type CommentatorInfoType = {
 }
 
 export type PaginatorCommentType = {
-  pageCount: number
+  pagesCount: number
   page: number
   pageSize: number
   totalCount: number

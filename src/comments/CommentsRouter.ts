@@ -5,6 +5,7 @@ import { errorsResultMiddleware } from '../validation/express-validator/errors.r
 import { idParamValidator } from '../validation/express-validator/field.validators'
 import { commentsService } from './CommentsService'
 import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
+import { ResultStatus } from '../common/result/resultCode'
 
 export const commentsRouter = Router()
 
@@ -22,23 +23,19 @@ export const commentsController = {
   },
 
   async updateCommentById(req: Request, res: Response) {
-    const id = req.params.id
+    const { id } = req.params
     const { content } = req.body
+    const userId = req.userId
 
-    if (!content || content.length < 20 || content.length > 300) {
-      res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: [
-          { field: 'content', message: 'Content must be between 20 and 300 characters' },
-        ],
-      })
+    const result = await commentsService.updateCommentById(id, userId, content)
+
+    if (result.status === ResultStatus.NotFound) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).send(result.extensions)
       return
     }
 
-    const isUpdated = await commentsService.updateCommentById(id, content)
-    if (!isUpdated) {
-      res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .send({ errorsMessages: [{ field: 'id', message: 'Comment not found' }] })
+    if (result.status === ResultStatus.Forbidden) {
+      res.status(HTTP_STATUSES.FORBIDDEN_403).send(result.extensions)
       return
     }
 
@@ -46,13 +43,18 @@ export const commentsController = {
   },
 
   async deleteCommentById(req: Request, res: Response) {
-    const id = req.params.id
+    const { id } = req.params
+    const userId = req.userId
 
-    const isDeleted = await commentsService.deleteComment(id)
-    if (!isDeleted) {
-      res
-        .status(HTTP_STATUSES.NOT_FOUND_404)
-        .send({ errorsMessages: [{ field: 'id', message: 'Comment not found' }] })
+    const result = await commentsService.deleteComment(id, userId)
+
+    if (result.status === ResultStatus.NotFound) {
+      res.status(HTTP_STATUSES.NOT_FOUND_404).send(result.extensions)
+      return
+    }
+
+    if (result.status === ResultStatus.Forbidden) {
+      res.status(HTTP_STATUSES.FORBIDDEN_403).send(result.extensions)
       return
     }
 

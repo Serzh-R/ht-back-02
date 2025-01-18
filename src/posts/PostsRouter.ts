@@ -18,7 +18,6 @@ import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { commentsService } from '../comments/CommentsService'
 import { ResultStatus } from '../common/result/resultCode'
 import { commentsQueryRepository } from '../comments/CommentsQueryRepository'
-import { PaginatorCommentType } from '../comments/types'
 import { authMiddleware } from '../middlewares/auth.middleware'
 import { resultCodeToHttpException } from '../common/result/resultCodeToHttpException'
 
@@ -108,26 +107,25 @@ export const postController = {
   },
 
   async getCommentsForPost(req: Request, res: Response) {
-    const postId = req.params.postId
+    try {
+      const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
+      const postId = req.params.postId
 
-    const post = await postsQueryRepository.getPostById(postId)
+      const comments = await commentsQueryRepository.getCommentsForPost({
+        postId,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+      })
 
-    if (!post) {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Post not found', field: 'postId' })
-      return
+      res.status(HTTP_STATUSES.OK_200).send(comments)
+    } catch (error) {
+      console.error(error)
+      res.status(HTTP_STATUSES.SERVER_ERROR_500).send({
+        errorsMessages: [{ field: 'postId', message: 'Invalid postId' }],
+      })
     }
-
-    const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
-
-    const comments: PaginatorCommentType = await commentsQueryRepository.getCommentsForPost(
-      postId,
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortDirection,
-    )
-
-    res.status(HTTP_STATUSES.OK_200).json(comments)
   },
 }
 
