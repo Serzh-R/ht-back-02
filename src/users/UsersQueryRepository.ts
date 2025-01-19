@@ -1,6 +1,6 @@
 import { usersCollection } from '../db/mongoDb'
-import { PaginatorUserType, UserDBInsertType, UserDBType, UserType } from '../types/types'
 import { ObjectId } from 'mongodb'
+import { PaginatorUserType, UserDBType, UserType } from '../auth/types/types'
 
 export const usersQueryRepository = {
   async getUsers(

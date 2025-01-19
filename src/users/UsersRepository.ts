@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
-import { UserDBInsertType, UserDBType } from '../types/types'
 import { usersCollection } from '../db/mongoDb'
+import { UserDBInsertType, UserDBType } from '../auth/types/types'
 
 export const usersRepository = {
   async createUser(user: UserDBInsertType): Promise<ObjectId> {

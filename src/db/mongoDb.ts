@@ -1,7 +1,8 @@
 import { SETTINGS } from '../settings'
 import { MongoClient, Collection, Db } from 'mongodb'
-import { BlogDBType, PostDBType, UserDBType } from '../types/types'
+import { BlogDBType, PostDBType } from '../types/types'
 import { CommentDBType } from '../comments/types'
+import { UserDBType } from '../auth/types/types'
 
 export let blogsCollection: Collection<BlogDBType>
 export let postsCollection: Collection<PostDBType>

@@ -97,7 +97,7 @@ export type PostInputType = {
 
 //****** User ******************//
 
-export type UserType = {
+/*export type UserType = {
   id: string
   login: string
   email: string
@@ -131,4 +131,4 @@ export type UserInputType = {
 export type LoginOrEmailInputType = {
   loginOrEmail: string
   password: string
-}
+}*/
