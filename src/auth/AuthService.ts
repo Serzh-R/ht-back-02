@@ -3,7 +3,10 @@ import { ResultStatus } from '../common/result/resultCode'
 import { bcryptService } from '../common/adapters/bcrypt.service'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'
-import { UserDBType } from './types/types'
+import { UserDBType, UserRegisterDBType } from './types/types'
+import { randomUUID } from 'node:crypto'
+import { add } from 'date-fns/add'
+import { emailService } from '../email/EmailService'
 
 export const authService = {
   async loginUser(
@@ -64,11 +67,11 @@ export const authService = {
     pass: string,
     email: string,
   ): Promise<UserRegisterDBType | null> {
-    const user = await usersRepository.findByLoginOrEmail(login, email)
+    const user = await usersRepository.findByLoginOrEmail(login)
     if (user) return null
     //проверить существует ли уже юзер с таким логином или почтой и если да - не регистрировать
 
-    const passwordHash = await bcryptService.generateHash(pass) //создать хэш пароля
+    const passwordHash = await bcryptService.generateHash(pass)
 
     const newUser: UserRegisterDBType = {
       // сформировать dto юзера
@@ -86,11 +89,11 @@ export const authService = {
         isConfirmed: false,
       },
     }
-    await usersRepository.create(newUser) // сохранить юзера в базе данных
+    await usersRepository.createUser(newUser)
 
     //отправку сообщения лучше обернуть в try-catch, чтобы при ошибке(например отвалиться отправка) приложение не падало
     try {
-      await nodemailerService.sendEmail(
+      await emailService.sendEmail(
         //отправить сообщение на почту юзера с кодом подтверждения
         newUser.email,
         newUser.emailConfirmation.confirmationCode,
