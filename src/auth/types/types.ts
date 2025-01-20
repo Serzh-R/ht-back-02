@@ -17,7 +17,7 @@ export type UserDBType = {
 
 export type UserDBInsertType = Omit<UserDBType, '_id'>
 
-export type UserRegisterDBType = UserDBInsertType & EmailConfirmationType
+export type UserRegisterDBType = UserDBInsertType & { emailConfirmation: EmailConfirmationType }
 
 export type EmailConfirmationType = {
   confirmationCode: string

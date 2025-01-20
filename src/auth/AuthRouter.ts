@@ -11,6 +11,12 @@ import { resultCodeToHttpException } from '../common/result/resultCodeToHttpExce
 export const authRouter = Router()
 
 export const authController = {
+  async registerUser(req: Request, res: Response): Promise<void> {
+    const user = await authService.createUser(req.body.login, req.body.email, req.body.password)
+
+    res.status(HTTP_STATUSES.CREATED_201).send()
+  },
+
   async login(req: Request, res: Response) {
     const { loginOrEmail, password } = req.body
 

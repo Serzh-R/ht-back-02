@@ -6,9 +6,30 @@ import { jwtService } from '../common/adapters/jwt.service'
 import { UserDBType, UserRegisterDBType } from './types/types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
-import { emailService } from '../email/EmailService'
 
 export const authService = {
+  async createUser(
+    login: string,
+    email: string,
+    password: string,
+  ): Promise<UserRegisterDBType | null> {
+    const passwordHash = await bcryptService.generateHash(password)
+    const user: UserRegisterDBType = {
+      login,
+      email,
+      passwordHash,
+      createdAt: new Date(),
+      emailConfirmation: {
+        confirmationCode: randomUUID(),
+        expirationDate: add(new Date(), { hours: 1 }),
+        isConfirmed: false,
+      },
+    }
+    const createResult = usersRepository.createUser(user)
+    await emailsManager.sendEmailConfirmationMessage(user)
+    return createResult
+  },
+
   async loginUser(
     loginOrEmail: string,
     password: string,
