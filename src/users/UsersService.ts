@@ -1,9 +1,9 @@
 import { usersRepository } from './UsersRepository'
 import { bcryptService } from '../common/adapters/bcrypt.service'
-import { UserInputType, UserRegDBType, UserRegInsertDBType } from '../auth/types/types'
+import { UserInputType, UserRegInsertDBType } from '../auth/types/types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
-import any = jasmine.any
+import { ObjectId } from 'mongodb'
 
 export const usersService = {
   /*async createUser(
@@ -98,6 +98,10 @@ export const usersService = {
   },
 
   async deleteUser(id: string): Promise<boolean> {
+    if (!ObjectId.isValid(id)) {
+      console.error('Incorrect id passed:', id)
+      return false
+    }
     return await usersRepository.deleteUser(id)
   },
 }

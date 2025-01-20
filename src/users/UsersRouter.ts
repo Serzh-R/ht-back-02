@@ -47,8 +47,8 @@ export const usersController = {
 
   async deleteUser(req: Request, res: Response) {
     const id = req.params.id
-    const user = await usersService.deleteUser(id)
-    if (!user) {
+    const isDeleted = await usersService.deleteUser(id)
+    if (!isDeleted) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).send()
       return
     }

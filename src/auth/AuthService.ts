@@ -3,7 +3,7 @@ import { ResultStatus } from '../common/result/resultCode'
 import { bcryptService } from '../common/adapters/bcrypt.service'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'
-import { UserDBType, UserRegDBType, UserRegInsertDBType } from './types/types'
+import { UserDBType, UserRegInsertDBType } from './types/types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
 import { emailManager } from '../managers/EmailManager'
@@ -13,7 +13,7 @@ export const authService = {
     login: string,
     email: string,
     password: string,
-  ): Promise<UserRegDBType | null> {
+  ): Promise<Result<{ userId: string } | null>> {
     const passwordHash = await bcryptService.generateHash(password)
     const user: UserRegInsertDBType = {
       login,
@@ -26,9 +26,30 @@ export const authService = {
         isConfirmed: false,
       },
     }
-    const createResult = usersRepository.createUser(user)
-    await emailManager.sendEmailConfirmationMessage(user)
-    return createResult
+    const userId = await usersRepository.createUser(user)
+    try {
+      await emailManager.sendEmailConfirmationMessage(user)
+    } catch (error) {
+      console.error('Ошибка при отправке email:', error)
+
+      const isDeleted = await usersRepository.deleteUser(userId.toString())
+      if (!isDeleted) {
+        console.error('Failed to delete user after email sending error')
+      }
+
+      return {
+        status: ResultStatus.ServerError,
+        data: null,
+        errorMessage: 'Failed to send confirmation email',
+        extensions: [{ field: 'email', message: 'Email sending failed' }],
+      }
+    }
+
+    return {
+      status: ResultStatus.Success,
+      data: { userId: userId.toString() },
+      extensions: [],
+    }
   },
 
   async loginUser(
