@@ -8,6 +8,7 @@ import { usersService } from './UsersService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
 import { authMiddleware } from '../middlewares/auth.middleware'
 import { UserInputType } from '../auth/types/types'
+import { ResultStatus } from '../common/result/resultCode'
 
 export const usersRouter = Router()
 
@@ -32,12 +33,15 @@ export const usersController = {
 
     const result = await usersService.createUser(body)
 
-    if (result.errorsMessages.length > 0) {
-      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ errorsMessages: result.errorsMessages })
+    if (result.status !== ResultStatus.Success || !result.data) {
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({ errorsMessages: result.extensions })
       return
     }
 
-    const newUser = await usersQueryRepository.findUserById(result.userId!)
+    const userId = result.data.userId
+
+    const newUser = await usersQueryRepository.findUserById(userId)
+
     res.status(HTTP_STATUSES.CREATED_201).send(newUser)
   },
 

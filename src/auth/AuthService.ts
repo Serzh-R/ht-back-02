@@ -3,18 +3,19 @@ import { ResultStatus } from '../common/result/resultCode'
 import { bcryptService } from '../common/adapters/bcrypt.service'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'
-import { UserDBType, UserRegisterDBType } from './types/types'
+import { UserDBType, UserRegDBType, UserRegInsertDBType } from './types/types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
+import { emailManager } from '../managers/EmailManager'
 
 export const authService = {
-  async createUser(
+  async registerUser(
     login: string,
     email: string,
     password: string,
-  ): Promise<UserRegisterDBType | null> {
+  ): Promise<UserRegDBType | null> {
     const passwordHash = await bcryptService.generateHash(password)
-    const user: UserRegisterDBType = {
+    const user: UserRegInsertDBType = {
       login,
       email,
       passwordHash,
@@ -26,7 +27,7 @@ export const authService = {
       },
     }
     const createResult = usersRepository.createUser(user)
-    await emailsManager.sendEmailConfirmationMessage(user)
+    await emailManager.sendEmailConfirmationMessage(user)
     return createResult
   },
 

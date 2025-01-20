@@ -1,7 +1,9 @@
 import { usersRepository } from './UsersRepository'
 import { bcryptService } from '../common/adapters/bcrypt.service'
-import { UserDBInsertType, UserInputType } from '../auth/types/types'
-import { FieldErrorType } from '../types/types'
+import { UserInputType, UserRegDBType, UserRegInsertDBType } from '../auth/types/types'
+import { Result } from '../common/result/result.type'
+import { ResultStatus } from '../common/result/resultCode'
+import any = jasmine.any
 
 export const usersService = {
   /*async createUser(
@@ -50,7 +52,7 @@ export const usersService = {
     }
   },*/
 
-  async createUser(body: UserInputType): Promise<Result<UserType | null>> {
+  async createUser(body: UserInputType): Promise<Result<{ userId: string } | null>> {
     const userByLogin = await usersRepository.findByLoginOrEmail(body.login)
     if (userByLogin) {
       return {
@@ -71,20 +73,26 @@ export const usersService = {
       }
     }
 
-    const { passwordHash } = await bcryptService.generateHash(body.password)
+    const passwordHash = await bcryptService.generateHash(body.password)
 
-    const userDB: UserDBInsertType = {
+    const userDB: UserRegInsertDBType = {
       login: body.login,
       email: body.email,
       passwordHash,
       createdAt: new Date(),
+      emailConfirmation: {
+        confirmationCode: 'ddsdsdsdsd',
+        expirationDate: new Date(),
+        isConfirmed: false,
+      },
     }
 
-    const user = await usersRepository.createUser(userDB)
+    const userId = await usersRepository.createUser(userDB)
 
+    debugger
     return {
       status: ResultStatus.Success,
-      data: user,
+      data: { userId: userId.toString() },
       extensions: [],
     }
   },

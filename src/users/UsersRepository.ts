@@ -1,16 +1,11 @@
 import { ObjectId } from 'mongodb'
 import { usersCollection } from '../db/mongoDb'
-import { UserDBInsertType, UserDBType, UserRegisterDBType } from '../auth/types/types'
+import { UserDBInsertType, UserRegDBType, UserRegInsertDBType } from '../auth/types/types'
 
 export const usersRepository = {
-  /*async createUser(user: UserDBInsertType): Promise<ObjectId> {
-    const result = await usersCollection.insertOne(user as UserDBType)
+  async createUser(user: UserRegInsertDBType): Promise<ObjectId> {
+    const result = await usersCollection.insertOne(user as UserRegDBType)
     return result.insertedId
-  },*/
-
-  async createUser(user: UserRegisterDBType): Promise<UserRegisterDBType> {
-    const result = await usersCollection.insertOne(user)
-    return user
   },
 
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDBInsertType | null> {

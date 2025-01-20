@@ -12,7 +12,7 @@ export const authRouter = Router()
 
 export const authController = {
   async registerUser(req: Request, res: Response): Promise<void> {
-    const user = await authService.createUser(req.body.login, req.body.email, req.body.password)
+    const user = await authService.registerUser(req.body.login, req.body.email, req.body.password)
 
     res.status(HTTP_STATUSES.CREATED_201).send()
   },
@@ -63,5 +63,7 @@ authRouter.post(
   errorsResultMiddleware,
   authController.login,
 )
+
+authRouter.post('/send', authController.registerUser)
 
 authRouter.get('/me', jwtAuthMiddleware, authController.me)
