@@ -4,7 +4,7 @@ import { UserDBInsertType, UserInputType } from '../auth/types/types'
 import { FieldErrorType } from '../types/types'
 
 export const usersService = {
-  async createUser(
+  /*async createUser(
     body: UserInputType,
   ): Promise<{ userId: string | null; errorsMessages: FieldErrorType[] }> {
     const userByLogin = await usersRepository.findByLoginOrEmail(body.login)
@@ -48,9 +48,9 @@ export const usersService = {
       userId: userId.toString(),
       errorsMessages: [],
     }
-  },
+  },*/
 
-  /*async createUser(body: UserInputType): Promise<Result<UserType | null>> {
+  async createUser(body: UserInputType): Promise<Result<UserType | null>> {
     const userByLogin = await usersRepository.findByLoginOrEmail(body.login)
     if (userByLogin) {
       return {
@@ -87,7 +87,7 @@ export const usersService = {
       data: user,
       extensions: [],
     }
-  },*/
+  },
 
   async deleteUser(id: string): Promise<boolean> {
     return await usersRepository.deleteUser(id)

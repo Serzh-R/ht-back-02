@@ -13,7 +13,7 @@ export const usersRepository = {
     return user
   },
 
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDBType | null> {
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDBInsertType | null> {
     return await usersCollection.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     })
