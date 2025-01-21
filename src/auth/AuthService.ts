@@ -52,6 +52,21 @@ export const authService = {
     }
   },
 
+  async registerConfirm(code: string): Promise<boolean> {
+    let user = await usersRepository.findUserByConfirmationCode(code)
+    if (!user) {
+      return false
+    }
+    if (
+      user.emailConfirmation.confirmationCode === code &&
+      user.emailConfirmation.expirationDate > new Date()
+    ) {
+      let result = await usersRepository.updateConfirmation(user._id)
+      return result
+    }
+    return false
+  },
+
   async loginUser(
     loginOrEmail: string,
     password: string,

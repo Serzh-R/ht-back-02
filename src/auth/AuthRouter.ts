@@ -21,6 +21,16 @@ export const authController = {
     res.status(HTTP_STATUSES.CREATED_201).send()
   },
 
+  async registerConfirm(req: Request, res: Response): Promise<void> {
+    const result = await authService.registerConfirm(req.body.code)
+
+    if (!result) {
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).send()
+      return
+    }
+    res.status(HTTP_STATUSES.CREATED_201).send()
+  },
+
   async login(req: Request, res: Response) {
     const { loginOrEmail, password } = req.body
     const result = await authService.loginUser(loginOrEmail, password)

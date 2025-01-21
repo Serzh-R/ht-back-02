@@ -14,6 +14,13 @@ export const usersRepository = {
     })
   },
 
+  async findUserByConfirmationCode(emailConfirmationCode: string): Promise<UserRegDBType | null> {
+    const user = await usersCollection.findOne({
+      'emailConfirmation.confirmationCode': emailConfirmationCode,
+    })
+    return user
+  },
+
   async updateConfirmation(_id: ObjectId) {
     let result = await usersCollection.updateOne(
       { _id },
