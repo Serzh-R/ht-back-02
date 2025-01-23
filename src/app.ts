@@ -3,7 +3,7 @@ import cors from 'cors'
 import { HTTP_STATUSES, SETTINGS } from './settings'
 import { blogRouter } from './blogs/BlogsRouter'
 import { postRouter } from './posts/PostsRouter'
-import { blogsCollection, postsCollection, usersCollection } from './db/mongoDb'
+import { blogsCollection, commentsCollection, postsCollection, usersCollection } from './db/mongoDb'
 import { usersRouter } from './users/UsersRouter'
 import { authRouter } from './auth/AuthRouter'
 import { commentsRouter } from './comments/CommentsRouter'
@@ -25,6 +25,7 @@ app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
     await blogsCollection.deleteMany({})
     await postsCollection.deleteMany({})
     await usersCollection.deleteMany({})
+    await commentsCollection.deleteMany({})
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   } catch (error) {

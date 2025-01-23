@@ -13,7 +13,9 @@ export let client: MongoClient
 export let mongoDb: Db
 
 export async function runDb(url: string): Promise<boolean> {
+  console.log(url, 'url')
   client = new MongoClient(url)
+  console.log(SETTINGS.DB_NAME, 'db_name')
   mongoDb = client.db(SETTINGS.DB_NAME)
 
   blogsCollection = mongoDb.collection<BlogDBType>('blogs')
@@ -22,11 +24,14 @@ export async function runDb(url: string): Promise<boolean> {
   commentsCollection = mongoDb.collection<CommentDBType>('comments')
 
   try {
+    console.log('before connect')
     await client.connect()
+    console.log(' client connected')
     await mongoDb.command({ ping: 1 })
     console.log('Connected to MongoDB')
     return true
   } catch (err) {
+    console.log(err, 'error')
     console.error('Error connecting to MongoDB:', err)
     await client.close()
     return false

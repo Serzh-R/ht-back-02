@@ -28,6 +28,7 @@ export const authService = {
     }
     const userId = await usersRepository.createUser(user)
     try {
+      //отправить сообщение на почту юзера с кодом подтверждения
       await emailManager.sendEmailConfirmationMessage(user)
     } catch (error) {
       console.error('Ошибка при отправке email:', error)
