@@ -6,7 +6,7 @@ export const emailManager = {
     const subject = 'Подтверждение регистрации'
     const message = `<h1>Добро пожаловать!</h1>
       <p>Для завершения регистрации перейдите по ссылке ниже:</p>
-      <a href="http://localhost:3000/confirm?code=${user.emailConfirmation.confirmationCode}">Подтвердить email</a>`
+      <a href="http://localhost:3004/confirm?code=${user.emailConfirmation.confirmationCode}">Подтвердить email</a>`
     await emailAdapter.sendEmail(user.email, subject, message)
   },
 }
