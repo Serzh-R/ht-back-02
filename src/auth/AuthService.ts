@@ -56,7 +56,10 @@ export const authService = {
     let user = await usersRepository.findUserByConfirmationCode(code)
     if (!user) return false
     if (user.emailConfirmation.confirmationCode !== code) return false
-    if (user.emailConfirmation.expirationDate < new Date()) return false
+    if (user.emailConfirmation.expirationDate < new Date()) {
+      await authService.registerEmailResending(user.email)
+      throw new Error('Confirmation code expired. A new code has been sent.')
+    }
 
     let result = await usersRepository.updateConfirmation(user._id)
     return result
