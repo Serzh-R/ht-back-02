@@ -28,7 +28,6 @@ export const authService = {
     }
     const userId = await usersRepository.createUser(user)
     try {
-      //отправить сообщение на почту юзера с кодом подтверждения
       await emailManager.sendEmailConfirmationMessage(user)
     } catch (error) {
       console.error('Ошибка при отправке email:', error)
@@ -55,17 +54,12 @@ export const authService = {
 
   async registerConfirm(code: string): Promise<boolean> {
     let user = await usersRepository.findUserByConfirmationCode(code)
-    if (!user) {
-      return false
-    }
-    if (
-      user.emailConfirmation.confirmationCode === code &&
-      user.emailConfirmation.expirationDate > new Date()
-    ) {
-      let result = await usersRepository.updateConfirmation(user._id)
-      return result
-    }
-    return false
+    if (!user) return false
+    if (user.emailConfirmation.confirmationCode !== code) return false
+    if (user.emailConfirmation.expirationDate < new Date()) return false
+
+    let result = await usersRepository.updateConfirmation(user._id)
+    return result
   },
 
   async loginUser(
@@ -82,7 +76,7 @@ export const authService = {
         data: null,
       }
     }
-
+    debugger
     const accessToken = await jwtService.createToken(result.data!._id.toString())
 
     return {
@@ -104,6 +98,15 @@ export const authService = {
         errorMessage: 'Not Found',
         extensions: [{ field: 'loginOrEmail', message: 'Not Found' }],
       }
+
+    if (!user.emailConfirmation.isConfirmed) {
+      return {
+        status: ResultStatus.Forbidden,
+        data: null,
+        errorMessage: 'Forbidden',
+        extensions: [{ field: 'email', message: 'Email not confirmed' }],
+      }
+    }
 
     const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
     if (!isPassCorrect)

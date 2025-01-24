@@ -14,7 +14,10 @@ export let mongoDb: Db
 
 export async function runDb(url: string): Promise<boolean> {
   console.log(url, 'url')
-  client = new MongoClient(url)
+  client = new MongoClient(url, {
+    ssl: true, // Включение SSL
+    tls: true, // Включение TLS
+  })
   console.log(SETTINGS.DB_NAME, 'db_name')
   mongoDb = client.db(SETTINGS.DB_NAME)
 
