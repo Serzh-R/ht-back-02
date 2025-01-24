@@ -4,6 +4,7 @@ import { UserInputType, UserRegInsertDBType } from '../auth/types/types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'
+import { randomUUID } from 'node:crypto'
 
 export const usersService = {
   /*async createUser(
@@ -81,7 +82,7 @@ export const usersService = {
       passwordHash,
       createdAt: new Date(),
       emailConfirmation: {
-        confirmationCode: 'ddsdsdsdsd',
+        confirmationCode: randomUUID(),
         expirationDate: new Date(),
         isConfirmed: false,
       },
