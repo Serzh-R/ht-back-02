@@ -21,6 +21,18 @@ export const usersRepository = {
     return user
   },
 
+  async updateConfirmationCode(
+    _id: ObjectId,
+    emailConfirmation: {
+      confirmationCode: string
+      expirationDate: Date
+      isConfirmed: boolean
+    },
+  ): Promise<boolean> {
+    const result = await usersCollection.updateOne({ _id }, { $set: { emailConfirmation } })
+    return result.modifiedCount === 1
+  },
+
   async updateConfirmation(_id: ObjectId) {
     let result = await usersCollection.updateOne(
       { _id },
