@@ -1,7 +1,12 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
 import { authService } from './AuthService'
-import { loginOrEmailValidation, passwordValidation } from '../users/middlewares/user.validators'
+import {
+  emailValidation,
+  loginOrEmailValidation,
+  loginValidation,
+  passwordValidation,
+} from '../users/middlewares/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { usersQueryRepository } from '../users/UsersQueryRepository'
@@ -18,7 +23,7 @@ export const authController = {
       res.status(HTTP_STATUSES.BAD_REQUEST_400).send()
       return
     }
-    res.status(HTTP_STATUSES.CREATED_201).send()
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 
   async registerConfirm(req: Request, res: Response): Promise<void> {
@@ -28,10 +33,18 @@ export const authController = {
       res.status(HTTP_STATUSES.BAD_REQUEST_400).send()
       return
     }
-    res.status(HTTP_STATUSES.CREATED_201).send()
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 
-  async registerEmailResending(req: Request, res: Response): Promise<void> {},
+  async registerEmailResending(req: Request, res: Response): Promise<void> {
+    const result = await authService.registerEmailResending(req.body.email)
+
+    if (!result) {
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).send()
+      return
+    }
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+  },
 
   async login(req: Request, res: Response) {
     const { loginOrEmail, password } = req.body
@@ -81,18 +94,24 @@ authRouter.post(
 
 authRouter.post(
   '/registration',
-  loginOrEmailValidation,
+  loginValidation,
   passwordValidation,
+  emailValidation,
   errorsResultMiddleware,
   authController.registerUser,
 )
 
 authRouter.post(
   '/registration-confirmation',
-  loginOrEmailValidation,
-  passwordValidation,
   errorsResultMiddleware,
   authController.registerConfirm,
+)
+
+authRouter.post(
+  '/registration-email-resending',
+  emailValidation,
+  errorsResultMiddleware,
+  authController.registerEmailResending,
 )
 
 authRouter.get('/me', jwtAuthMiddleware, authController.me)

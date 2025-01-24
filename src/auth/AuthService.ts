@@ -62,6 +62,13 @@ export const authService = {
     return result
   },
 
+  async registerEmailResending(email: string): Promise<boolean> {
+    const user = await usersRepository.findByLoginOrEmail(email)
+    if (!user) return false
+    await emailManager.sendEmailConfirmationMessage(user)
+    return true
+  },
+
   async loginUser(
     loginOrEmail: string,
     password: string,
@@ -123,47 +130,4 @@ export const authService = {
       extensions: [],
     }
   },
-
-  /*async registerUser(
-    login: string,
-    pass: string,
-    email: string,
-  ): Promise<UserRegisterDBType | null> {
-    const user = await usersRepository.findByLoginOrEmail(login)
-    if (user) return null
-    //проверить существует ли уже юзер с таким логином или почтой и если да - не регистрировать
-
-    const passwordHash = await bcryptService.generateHash(pass)
-
-    const newUser: UserRegisterDBType = {
-      // сформировать dto юзера
-      login,
-      email,
-      passwordHash,
-      createdAt: new Date(),
-      emailConfirmation: {
-        // доп поля необходимые для подтверждения
-        confirmationCode: randomUUID(),
-        expirationDate: add(new Date(), {
-          hours: 1,
-          minutes: 30,
-        }),
-        isConfirmed: false,
-      },
-    }
-    await usersRepository.createUser(newUser)
-
-    //отправку сообщения лучше обернуть в try-catch, чтобы при ошибке(например отвалиться отправка) приложение не падало
-    try {
-      await emailService.sendEmail(
-        //отправить сообщение на почту юзера с кодом подтверждения
-        newUser.email,
-        newUser.emailConfirmation.confirmationCode,
-        emailExamples.registrationEmail,
-      )
-    } catch (e: unknown) {
-      console.error('Send email error', e) //залогировать ошибку при отправке сообщения
-    }
-    return newUser
-  },*/
 }
