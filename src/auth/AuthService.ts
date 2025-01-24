@@ -98,7 +98,15 @@ export const authService = {
   async registerEmailResending(email: string): Promise<boolean> {
     const user = await usersRepository.findByLoginOrEmail(email)
     if (!user) return false
+
+    user.emailConfirmation.confirmationCode = randomUUID()
+
+    user.emailConfirmation.expirationDate = add(new Date(), { hours: 1 })
+
+    await usersRepository.updateConfirmationCode(user._id, user.emailConfirmation)
+
     await emailManager.sendEmailConfirmationMessage(user)
+
     return true
   },
 
