@@ -121,22 +121,52 @@ export const authService = {
 
   async registerEmailResending(email: string): Promise<Result<boolean>> {
     const user = await usersRepository.findByLoginOrEmail(email)
-    if (!user)
+
+    if (!user) {
       return {
         status: ResultStatus.NotFound,
         data: false,
         errorMessage: 'User not found',
         extensions: [{ field: 'email', message: 'User not found' }],
       }
+    }
 
-    user.emailConfirmation.confirmationCode = randomUUID()
+    if (user.emailConfirmation.isConfirmed) {
+      return {
+        status: ResultStatus.NotFound,
+        data: false,
+        errorMessage: 'email already confirmed',
+        extensions: [{ field: 'email', message: 'email already confirmed' }],
+      }
+    }
 
-    user.emailConfirmation.expirationDate = add(new Date(), { hours: 1 })
+    const newConfirmationCode = randomUUID()
+    const newExpirationDate = add(new Date(), { hours: 1 })
 
-    await usersRepository.updateConfirmationCode(user._id, user.emailConfirmation)
+    const isUpdated = await usersRepository.updateConfirmationCode(user._id, {
+      confirmationCode: newConfirmationCode,
+      expirationDate: newExpirationDate,
+      isConfirmed: false,
+    })
 
-    await emailManager.sendEmailConfirmationMessage(user)
+    if (!isUpdated)
+      return {
+        status: ResultStatus.ServerError,
+        data: false,
+        errorMessage: 'Failed to update confirmation code',
+        extensions: [{ field: 'email', message: 'Failed to update confirmation code' }],
+      }
 
+    await emailManager.sendEmailConfirmationMessage({
+      ...user,
+      emailConfirmation: {
+        confirmationCode: newConfirmationCode,
+        expirationDate: newExpirationDate,
+        isConfirmed: false,
+      },
+    })
+
+    console.log(`New confirmation code sent to email: ${email}`)
     return {
       status: ResultStatus.Success,
       data: true,
