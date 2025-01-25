@@ -40,7 +40,14 @@ export const authController = {
     const result = await authService.registerEmailResending(req.body.email)
 
     if (!result) {
-      res.status(HTTP_STATUSES.BAD_REQUEST_400).send()
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+        errorsMessages: [
+          {
+            message: 'Email not found or already confirmed',
+            field: 'email',
+          },
+        ],
+      })
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
