@@ -60,7 +60,6 @@ export const authService = {
     if (user.emailConfirmation.confirmationCode !== code) return false
 
     if (user.emailConfirmation.expirationDate < new Date()) {
-      // Генерируем новый код подтверждения и обновляем запись в базе
       const newConfirmationCode = randomUUID()
       const newExpirationDate = add(new Date(), { hours: 1 })
 
@@ -75,7 +74,6 @@ export const authService = {
         return false
       }
 
-      // Отправляем новый код подтверждения
       await emailManager.sendEmailConfirmationMessage({
         ...user,
         emailConfirmation: {
@@ -86,10 +84,9 @@ export const authService = {
       })
 
       console.log(`Confirmation code expired. New code sent to email: ${user.email}`)
-      return false // Возвращаем false, чтобы клиент знал о необходимости повторной проверки.
+      return false
     }
 
-    // Обновляем статус подтверждения email
     const result = await usersRepository.updateConfirmation(user._id)
 
     return result
