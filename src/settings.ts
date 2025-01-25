@@ -16,6 +16,10 @@ export const SETTINGS = {
     COMMENTS: '/comments',
     DELETE_ALL: '/testing/all-data',
   },
+  EMAIL: {
+    USER: process.env.EMAIL_USER,
+    PASS: process.env.EMAIL_PASS,
+  },
   MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017',
   DB_NAME: process.env.DB_NAME || 'test',
 }
