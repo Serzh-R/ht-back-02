@@ -46,17 +46,27 @@ export const authController = {
   async registerEmailResending(req: Request, res: Response): Promise<void> {
     const result = await authService.registerEmailResending(req.body.email)
 
-    if (!result) {
-      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          {
-            message: 'Email not found or already confirmed',
-            field: 'email',
-          },
-        ],
+    if (result.status === ResultStatus.NotFound) {
+      res.status(404).json({
+        errorsMessages: result.extensions,
       })
       return
     }
+
+    if (result.status === ResultStatus.BadRequest) {
+      res.status(400).json({
+        errorsMessages: result.extensions,
+      })
+      return
+    }
+
+    if (result.status === ResultStatus.ServerError) {
+      res.status(500).json({
+        errorsMessages: result.extensions,
+      })
+      return
+    }
+
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 
