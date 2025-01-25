@@ -52,12 +52,24 @@ export const authService = {
     }
   },
 
-  async registerConfirm(code: string): Promise<boolean> {
+  async registerConfirm(code: string): Promise<Result<boolean>> {
     let user = await usersRepository.findUserByConfirmationCode(code)
 
-    if (!user) return false
+    if (!user)
+      return {
+        status: ResultStatus.NotFound,
+        data: false,
+        errorMessage: 'User not found',
+        extensions: [{ field: 'code', message: 'Invalid confirmation code' }],
+      }
 
-    if (user.emailConfirmation.confirmationCode !== code) return false
+    if (user.emailConfirmation.confirmationCode !== code)
+      return {
+        status: ResultStatus.BadRequest,
+        data: false,
+        errorMessage: 'Invalid confirmation code',
+        extensions: [{ field: 'code', message: 'Invalid confirmation code' }],
+      }
 
     if (user.emailConfirmation.expirationDate < new Date()) {
       const newConfirmationCode = randomUUID()
@@ -71,7 +83,12 @@ export const authService = {
 
       if (!isUpdated) {
         console.error(`Failed to update confirmation code for user with ID: ${user._id}`)
-        return false
+        return {
+          status: ResultStatus.ServerError,
+          data: false,
+          errorMessage: 'Failed to update confirmation code',
+          extensions: [{ field: 'code', message: 'Failed to update confirmation code' }],
+        }
       }
 
       await emailManager.sendEmailConfirmationMessage({
@@ -84,12 +101,22 @@ export const authService = {
       })
 
       console.log(`Confirmation code expired. New code sent to email: ${user.email}`)
-      return false
+
+      return {
+        status: ResultStatus.BadRequest,
+        data: false,
+        errorMessage: 'Confirmation code expired',
+        extensions: [{ field: 'code', message: 'Confirmation code expired' }],
+      }
     }
 
     const result = await usersRepository.updateConfirmation(user._id)
 
-    return result
+    return {
+      status: ResultStatus.Success,
+      data: result,
+      extensions: [],
+    }
   },
 
   async registerEmailResending(email: string): Promise<boolean> {
