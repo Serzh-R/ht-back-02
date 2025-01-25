@@ -1,4 +1,4 @@
-import { emailAdapter } from '../email/EmailAdapter'
+import { emailAdapter } from './EmailAdapter'
 import { UserRegInsertDBType } from '../auth/types/types'
 
 export const emailManager = {

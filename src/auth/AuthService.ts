@@ -6,7 +6,7 @@ import { jwtService } from '../common/adapters/jwt.service'
 import { UserDBType, UserRegInsertDBType } from './types/types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
-import { emailManager } from '../managers/EmailManager'
+import { emailManager } from '../email/EmailManager'
 
 export const authService = {
   async registerUser(

@@ -19,7 +19,7 @@ export const authController = {
   async registerUser(req: Request, res: Response): Promise<void> {
     const user = await authService.registerUser(req.body.login, req.body.email, req.body.password)
 
-    if (!user) {
+    if (!user || user.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.BAD_REQUEST_400).send()
       return
     }
