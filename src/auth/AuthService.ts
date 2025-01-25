@@ -146,7 +146,7 @@ export const authService = {
 
     if (user.emailConfirmation.isConfirmed) {
       return {
-        status: ResultStatus.NotFound,
+        status: ResultStatus.BadRequest,
         data: false,
         errorMessage: 'email already confirmed',
         extensions: [{ field: 'email', message: 'email already confirmed' }],
