@@ -10,7 +10,7 @@ export const emailAdapter = {
       },
     })
 
-    let info = await transport.sendMail({
+    let info = transport.sendMail({
       from: 'Serzh <sr.ti@yandex.kz>',
       to: email,
       subject: subject,
