@@ -30,7 +30,14 @@ export const authController = {
     const result = await authService.registerConfirm(req.body.code)
 
     if (!result) {
-      res.status(HTTP_STATUSES.BAD_REQUEST_400).send()
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+        errorsMessages: [
+          {
+            message: 'Invalid or expired confirmation code',
+            field: 'code',
+          },
+        ],
+      })
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()

@@ -53,69 +53,82 @@ export const authService = {
   },
 
   async registerConfirm(code: string): Promise<Result<boolean>> {
-    let user = await usersRepository.findUserByConfirmationCode(code)
+    try {
+      const user = await usersRepository.findUserByConfirmationCode(code)
 
-    if (!user)
-      return {
-        status: ResultStatus.NotFound,
-        data: false,
-        errorMessage: 'User not found',
-        extensions: [{ field: 'code', message: 'Invalid confirmation code' }],
-      }
-
-    if (user.emailConfirmation.confirmationCode !== code)
-      return {
-        status: ResultStatus.BadRequest,
-        data: false,
-        errorMessage: 'Invalid confirmation code',
-        extensions: [{ field: 'code', message: 'Invalid confirmation code' }],
-      }
-
-    if (user.emailConfirmation.expirationDate < new Date()) {
-      const newConfirmationCode = randomUUID()
-      const newExpirationDate = add(new Date(), { hours: 1 })
-
-      const isUpdated = await usersRepository.updateConfirmationCode(user._id, {
-        confirmationCode: newConfirmationCode,
-        expirationDate: newExpirationDate,
-        isConfirmed: false,
-      })
-
-      if (!isUpdated) {
-        console.error(`Failed to update confirmation code for user with ID: ${user._id}`)
+      if (!user) {
+        console.warn(`Confirmation code ${code} not found`)
         return {
-          status: ResultStatus.ServerError,
+          status: ResultStatus.NotFound,
           data: false,
-          errorMessage: 'Failed to update confirmation code',
-          extensions: [{ field: 'code', message: 'Failed to update confirmation code' }],
+          errorMessage: 'User not found',
+          extensions: [{ field: 'code', message: 'Invalid confirmation code' }],
         }
       }
 
-      await emailManager.sendEmailConfirmationMessage({
-        ...user,
-        emailConfirmation: {
+      if (user.emailConfirmation.confirmationCode !== code) {
+        console.warn(`Confirmation code ${code} does not match`)
+        return {
+          status: ResultStatus.BadRequest,
+          data: false,
+          errorMessage: 'Invalid confirmation code',
+          extensions: [{ field: 'code', message: 'Invalid confirmation code' }],
+        }
+      }
+
+      if (user.emailConfirmation.expirationDate < new Date()) {
+        const newConfirmationCode = randomUUID()
+        const newExpirationDate = add(new Date(), { hours: 1 })
+
+        const isUpdated = await usersRepository.updateConfirmationCode(user._id, {
           confirmationCode: newConfirmationCode,
           expirationDate: newExpirationDate,
           isConfirmed: false,
-        },
-      })
+        })
 
-      console.log(`Confirmation code expired. New code sent to email: ${user.email}`)
+        if (!isUpdated) {
+          return {
+            status: ResultStatus.ServerError,
+            data: false,
+            errorMessage: 'Failed to update confirmation code',
+            extensions: [{ field: 'code', message: 'Failed to update confirmation code' }],
+          }
+        }
+
+        await emailManager.sendEmailConfirmationMessage({
+          ...user,
+          emailConfirmation: {
+            confirmationCode: newConfirmationCode,
+            expirationDate: newExpirationDate,
+            isConfirmed: false,
+          },
+        })
+
+        console.log(`Confirmation code expired. New code sent to email: ${user.email}`)
+
+        return {
+          status: ResultStatus.BadRequest,
+          data: false,
+          errorMessage: 'Confirmation code expired',
+          extensions: [{ field: 'code', message: 'Confirmation code expired' }],
+        }
+      }
+
+      const result = await usersRepository.updateConfirmation(user._id)
 
       return {
-        status: ResultStatus.BadRequest,
-        data: false,
-        errorMessage: 'Confirmation code expired',
-        extensions: [{ field: 'code', message: 'Confirmation code expired' }],
+        status: ResultStatus.Success,
+        data: result,
+        extensions: [],
       }
-    }
-
-    const result = await usersRepository.updateConfirmation(user._id)
-
-    return {
-      status: ResultStatus.Success,
-      data: result,
-      extensions: [],
+    } catch (error) {
+      console.error('Error during registerConfirm:', error)
+      return {
+        status: ResultStatus.ServerError,
+        data: false,
+        errorMessage: 'Internal server error',
+        extensions: [],
+      }
     }
   },
 
