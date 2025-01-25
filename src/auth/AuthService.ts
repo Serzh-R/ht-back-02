@@ -119,9 +119,15 @@ export const authService = {
     }
   },
 
-  async registerEmailResending(email: string): Promise<boolean> {
+  async registerEmailResending(email: string): Promise<Result<boolean>> {
     const user = await usersRepository.findByLoginOrEmail(email)
-    if (!user) return false
+    if (!user)
+      return {
+        status: ResultStatus.NotFound,
+        data: false,
+        errorMessage: 'User not found',
+        extensions: [{ field: 'email', message: 'User not found' }],
+      }
 
     user.emailConfirmation.confirmationCode = randomUUID()
 
@@ -131,7 +137,11 @@ export const authService = {
 
     await emailManager.sendEmailConfirmationMessage(user)
 
-    return true
+    return {
+      status: ResultStatus.Success,
+      data: true,
+      extensions: [],
+    }
   },
 
   async loginUser(
