@@ -44,7 +44,6 @@ export const usersService = {
 
     const userId = await usersRepository.createUser(userDB)
 
-    debugger
     return {
       status: ResultStatus.Success,
       data: { userId: userId.toString() },
