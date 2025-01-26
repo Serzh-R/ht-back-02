@@ -29,6 +29,7 @@ export const emailAdapter = {
 }*/
 
 import nodemailer from 'nodemailer'
+import { SETTINGS } from '../settings'
 
 export const emailAdapter = {
   async sendEmail(email: string, subject: string, message: string) {
@@ -36,7 +37,7 @@ export const emailAdapter = {
       service: 'yandex',
       auth: {
         user: 'sr.ti@yandex.kz',
-        pass: 'ttqcetfecpwpxbub',
+        pass: SETTINGS.EMAIL.PASS,
       },
     })
 
