@@ -1,4 +1,4 @@
-/*import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer'
 import { SETTINGS } from '../settings'
 
 export const emailAdapter = {
@@ -13,7 +13,7 @@ export const emailAdapter = {
       })
 
       const info = await transport.sendMail({
-        from: `"Serzh" <${SETTINGS.EMAIL.USER}>`,
+        from: 'Serzh <sr.ti@yandex.kz>',
         to: email,
         subject: subject,
         html: message,
@@ -26,9 +26,9 @@ export const emailAdapter = {
       return { success: false, error: 'Email sending failed' }
     }
   },
-}*/
+}
 
-import nodemailer from 'nodemailer'
+/*import nodemailer from 'nodemailer'
 import { SETTINGS } from '../settings'
 
 export const emailAdapter = {
@@ -36,7 +36,7 @@ export const emailAdapter = {
     let transport = nodemailer.createTransport({
       service: 'yandex',
       auth: {
-        user: 'sr.ti@yandex.kz',
+        user: SETTINGS.EMAIL.USER,
         pass: SETTINGS.EMAIL.PASS,
       },
     })
@@ -54,4 +54,4 @@ export const emailAdapter = {
       throw new Error('Email sending failed')
     }
   },
-}
+}*/
