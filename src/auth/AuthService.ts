@@ -223,14 +223,14 @@ export const authService = {
         extensions: [{ field: 'loginOrEmail', message: 'Not Found' }],
       }
 
-    /*if (!user.emailConfirmation.isConfirmed) {
+    if (!user.emailConfirmation.isConfirmed) {
       return {
         status: ResultStatus.Forbidden,
         data: null,
         errorMessage: 'Forbidden',
         extensions: [{ field: 'email', message: 'Email not confirmed' }],
       }
-    }*/
+    }
 
     const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
     if (!isPassCorrect)

@@ -27,9 +27,11 @@ export const authController = {
   },
 
   async registerConfirm(req: Request, res: Response): Promise<void> {
-    const result = await authService.registerConfirm(req.body.code)
+    const { code } = req.body
 
-    if (!result) {
+    const result = await authService.registerConfirm(code)
+
+    if (!result.data) {
       res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
         errorsMessages: [
           {
