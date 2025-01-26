@@ -10,7 +10,7 @@ import {
 } from '../validation/express-validator/field.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { blogsService } from './BlogsService'
-import { paginationQueries } from '../helpers/paginations.values'
+import { paginationQueries } from '../common/helpers/paginations.values'
 import { postsService } from '../posts/PostsService'
 import { blogsQueryRepository } from './BlogsQueryRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'

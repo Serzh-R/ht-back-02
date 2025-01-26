@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { paginationQueries } from '../helpers/paginations.values'
+import { paginationQueries } from '../common/helpers/paginations.values'
 import { HTTP_STATUSES } from '../settings'
 import { usersQueryRepository } from './UsersQueryRepository'
 import { userInputValidators } from './middlewares/user.validators'

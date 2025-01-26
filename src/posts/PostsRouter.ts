@@ -11,7 +11,7 @@ import {
   postTitleValidator,
 } from '../validation/express-validator/field.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
-import { paginationQueries } from '../helpers/paginations.values'
+import { paginationQueries } from '../common/helpers/paginations.values'
 import { postsService } from './PostsService'
 import { postsQueryRepository } from './PostsQueryRepository'
 import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'

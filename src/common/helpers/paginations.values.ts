@@ -1,5 +1,7 @@
 import { Request } from 'express'
 
+// TODO: unit tests
+
 export const paginationQueries = (req: Request) => {
   let searchNameTerm: string | null = req.query.searchNameTerm
     ? String(req.query.searchNameTerm)

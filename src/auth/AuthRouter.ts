@@ -69,6 +69,7 @@ export const authController = {
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
   },
 
+  // TODO: Remove
   async me(req: Request, res: Response) {
     const userId = req.userId
 
