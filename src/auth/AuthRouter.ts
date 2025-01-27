@@ -55,19 +55,12 @@ export const authController = {
       return
     }
 
-    if (result.status === ResultStatus.NotFound) {
+    /*if (result.status === ResultStatus.NotFound) {
       res.status(404).json({
         errorsMessages: result.extensions,
       })
       return
-    }
-
-    if (result.status === ResultStatus.ServerError) {
-      res.status(500).json({
-        errorsMessages: result.extensions,
-      })
-      return
-    }
+    }*/
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
