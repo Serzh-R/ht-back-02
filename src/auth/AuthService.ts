@@ -219,6 +219,36 @@ export const authService = {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
     if (!user)
       return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        errorMessage: 'Not Found',
+        extensions: [{ field: 'loginOrEmail', message: 'Wrong credentials' }],
+      }
+
+    const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
+    if (!isPassCorrect)
+      return {
+        status: ResultStatus.BadRequest,
+        data: null,
+        errorMessage: 'Bad Request',
+        extensions: [{ field: 'password', message: 'Wrong password' }],
+      }
+
+    return {
+      status: ResultStatus.Success,
+      data: user,
+      extensions: [],
+    }
+  },
+}
+
+/*async checkUserCredentials(
+    loginOrEmail: string,
+    password: string,
+  ): Promise<Result<UserDBType | null>> {
+    const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
+    if (!user)
+      return {
         status: ResultStatus.NotFound,
         data: null,
         errorMessage: 'Not Found',
@@ -248,5 +278,4 @@ export const authService = {
       data: user,
       extensions: [],
     }
-  },
-}
+  },*/
