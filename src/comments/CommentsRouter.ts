@@ -9,6 +9,7 @@ import {
 import { commentsService } from './CommentsService'
 import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
+import { checkCommentOwnership } from '../middlewares/checkCommentOwnership'
 
 export const commentsRouter = Router()
 
@@ -70,6 +71,7 @@ commentsRouter.get('/:id', idParamValidator, commentsController.getCommentById)
 commentsRouter.put(
   '/:id',
   jwtAuthMiddleware,
+  checkCommentOwnership,
   idParamValidator,
   commentContentValidator,
   errorsResultMiddleware,
@@ -79,6 +81,7 @@ commentsRouter.put(
 commentsRouter.delete(
   '/:id',
   jwtAuthMiddleware,
+  checkCommentOwnership,
   idParamValidator,
   commentsController.deleteCommentById,
 )
