@@ -9,17 +9,17 @@ import { usersQueryRepository } from '../users/UsersQueryRepository'
 
 export const commentsService = {
   async updateCommentById(
-    id: string,
+    commentId: string,
     userId: string | null | undefined,
     content: string,
   ): Promise<Result<boolean>> {
-    const comment = await commentsQueryRepository.getCommentById(id)
+    const comment = await commentsQueryRepository.getCommentById(commentId)
 
     if (!comment) {
       return {
         status: ResultStatus.NotFound,
         errorMessage: 'Comment not found',
-        extensions: [{ field: 'id', message: 'Invalid comment id' }],
+        extensions: [{ field: 'commentId', message: 'Invalid commentId' }],
         data: false,
       }
     }
@@ -33,7 +33,7 @@ export const commentsService = {
       }
     }
 
-    const success = await commentsRepository.updateCommentById(id, content)
+    const success = await commentsRepository.updateCommentById(commentId, content)
 
     return {
       status: ResultStatus.Success,
@@ -42,14 +42,17 @@ export const commentsService = {
     }
   },
 
-  async deleteComment(id: string, userId: string | null | undefined): Promise<Result<boolean>> {
-    const comment = await commentsQueryRepository.getCommentById(id)
+  async deleteComment(
+    commentId: string,
+    userId: string | null | undefined,
+  ): Promise<Result<boolean>> {
+    const comment = await commentsQueryRepository.getCommentById(commentId)
 
     if (!comment) {
       return {
         status: ResultStatus.NotFound,
         errorMessage: 'Comment not found',
-        extensions: [{ field: 'id', message: 'Invalid comment id' }],
+        extensions: [{ field: 'commentId', message: 'Invalid commentId' }],
         data: false,
       }
     }
@@ -63,7 +66,7 @@ export const commentsService = {
       }
     }
 
-    const success = await commentsRepository.deleteById(id)
+    const success = await commentsRepository.deleteById(commentId)
 
     return {
       status: ResultStatus.Success,
