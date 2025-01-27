@@ -94,7 +94,7 @@ export const authController = {
       return
     }
 
-    const user = await usersQueryRepository.findUserById(userId)
+    const user = await usersQueryRepository.getUserById(userId)
 
     if (!user) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({

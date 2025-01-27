@@ -5,6 +5,7 @@ import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'
 import { commentsQueryRepository } from './CommentsQueryRepository'
+import { usersQueryRepository } from '../users/UsersQueryRepository'
 
 export const commentsService = {
   async updateCommentById(
@@ -86,11 +87,22 @@ export const commentsService = {
       }
     }
 
+    const user = await usersQueryRepository.getUserById(postData.userId)
+
+    if (!user) {
+      return {
+        status: ResultStatus.NotFound,
+        errorMessage: 'User not found',
+        extensions: [{ field: 'userId', message: 'Invalid userId' }],
+        data: null,
+      }
+    }
+
     const newComment: CommentDBInsertType = {
       content: postData.content,
       commentatorInfo: {
         userId: postData.userId,
-        userLogin: 'UserLogin',
+        userLogin: user.login,
       },
       createdAt: new Date(),
       postId: new ObjectId(postData.postId),

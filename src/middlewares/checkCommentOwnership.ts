@@ -7,7 +7,7 @@ export const checkCommentOwnership = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  const userId = req.userId // ID пользователя из токена
+  const userId = req.userId
   const commentId = req.params.id
 
   if (!userId) {

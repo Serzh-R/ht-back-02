@@ -40,7 +40,7 @@ export const usersController = {
 
     const userId = result.data.userId
 
-    const newUser = await usersQueryRepository.findUserById(userId)
+    const newUser = await usersQueryRepository.getUserById(userId)
 
     res.status(HTTP_STATUSES.CREATED_201).send(newUser)
   },
