@@ -70,9 +70,12 @@ export const authController = {
     const result = await authService.loginUser(loginOrEmail, password)
 
     if (result.status !== ResultStatus.Success) {
-      res.status(resultCodeToHttpException(result.status)).send(result.extensions)
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
+        errorsMessages: result.extensions,
+      })
       return
     }
+
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
   },
 
@@ -135,3 +138,14 @@ authRouter.post(
 )
 
 authRouter.get('/me', jwtAuthMiddleware, authController.me)
+
+/*async login(req: Request, res: Response) {
+  const { loginOrEmail, password } = req.body
+  const result = await authService.loginUser(loginOrEmail, password)
+
+  if (result.status !== ResultStatus.Success) {
+    res.status(resultCodeToHttpException(result.status)).send(result.extensions)
+    return
+  }
+  res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
+},*/
