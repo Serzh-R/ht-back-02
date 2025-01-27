@@ -46,17 +46,18 @@ export const authController = {
   },
 
   async registerEmailResending(req: Request, res: Response): Promise<void> {
-    const result = await authService.registerEmailResending(req.body.email)
+    const { email } = req.body
+    const result = await authService.registerEmailResending(email)
 
-    if (result.status === ResultStatus.BadRequest) {
-      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+    if (result.status === ResultStatus.NotFound) {
+      res.status(404).send({
         errorsMessages: result.extensions,
       })
       return
     }
 
-    if (result.status === ResultStatus.NotFound) {
-      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+    if (result.status === ResultStatus.BadRequest) {
+      res.status(400).send({
         errorsMessages: result.extensions,
       })
       return
