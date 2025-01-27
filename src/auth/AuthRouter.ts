@@ -49,13 +49,6 @@ export const authController = {
     const { email } = req.body
     const result = await authService.registerEmailResending(email)
 
-    if (result.status === ResultStatus.NotFound) {
-      res.status(404).send({
-        errorsMessages: result.extensions,
-      })
-      return
-    }
-
     if (result.status === ResultStatus.BadRequest) {
       res.status(400).send({
         errorsMessages: result.extensions,
@@ -139,6 +132,27 @@ authRouter.post(
 )
 
 authRouter.get('/me', jwtAuthMiddleware, authController.me)
+
+/*async registerEmailResending(req: Request, res: Response): Promise<void> {
+  const { email } = req.body
+  const result = await authService.registerEmailResending(email)
+
+  if (result.status === ResultStatus.NotFound) {
+  res.status(404).send({
+    errorsMessages: result.extensions,
+  })
+  return
+}
+
+if (result.status === ResultStatus.BadRequest) {
+  res.status(400).send({
+    errorsMessages: result.extensions,
+  })
+  return
+}
+
+res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+},*/
 
 /*async login(req: Request, res: Response) {
   const { loginOrEmail, password } = req.body
