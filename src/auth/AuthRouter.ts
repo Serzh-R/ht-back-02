@@ -3,6 +3,7 @@ import { HTTP_STATUSES } from '../settings'
 import { authService } from './AuthService'
 import {
   emailValidation,
+  isUserConfirmedByEmailValidation,
   loginOrEmailValidation,
   loginValidation,
   passwordValidation,
@@ -126,7 +127,7 @@ authRouter.post(
 
 authRouter.post(
   '/registration-email-resending',
-  emailValidation,
+  isUserConfirmedByEmailValidation,
   errorsResultMiddleware,
   authController.registerEmailResending,
 )

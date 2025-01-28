@@ -155,7 +155,7 @@ export const authService = {
 
     const newConfirmationCode = randomUUID()
     const newExpirationDate = add(new Date(), { hours: 1 })
-
+    user.emailConfirmation.confirmationCode = newConfirmationCode
     const isUpdated = await usersRepository.updateConfirmationCode(user._id, {
       confirmationCode: newConfirmationCode,
       expirationDate: newExpirationDate,
