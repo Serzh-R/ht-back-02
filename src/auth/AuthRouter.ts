@@ -50,7 +50,7 @@ export const authController = {
     const result = await authService.registerEmailResending(email)
 
     if (result.status === ResultStatus.BadRequest) {
-      res.status(400).send({
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
         errorsMessages: result.extensions,
       })
       return

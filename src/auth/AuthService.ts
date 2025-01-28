@@ -135,12 +135,21 @@ export const authService = {
   async registerEmailResending(email: string): Promise<Result<boolean>> {
     const user = await usersRepository.findByLoginOrEmail(email)
 
-    if (!user || user.emailConfirmation.isConfirmed) {
+    if (!user) {
+      return {
+        status: ResultStatus.NotFound,
+        data: false,
+        errorMessage: 'User with this email does not exist',
+        extensions: [{ field: 'email', message: 'User with this email does not exist' }],
+      }
+    }
+
+    if (user.emailConfirmation.isConfirmed) {
       return {
         status: ResultStatus.BadRequest,
         data: false,
-        errorMessage: 'email already confirmed',
-        extensions: [{ field: 'email', message: 'email already confirmed' }],
+        errorMessage: 'Email already confirmed',
+        extensions: [{ field: 'email', message: 'Email already confirmed' }],
       }
     }
 
@@ -162,14 +171,7 @@ export const authService = {
       }
     }
 
-    await emailManager.sendEmailConfirmationMessage({
-      ...user,
-      emailConfirmation: {
-        confirmationCode: newConfirmationCode,
-        expirationDate: newExpirationDate,
-        isConfirmed: false,
-      },
-    })
+    await emailManager.sendEmailConfirmationMessage(user)
 
     console.log(`New confirmation code sent to email: ${email}`)
 
