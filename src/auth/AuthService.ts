@@ -135,16 +135,7 @@ export const authService = {
   async registerEmailResending(email: string): Promise<Result<boolean>> {
     const user = await usersRepository.findByLoginOrEmail(email)
 
-    if (!user) {
-      return {
-        status: ResultStatus.NotFound,
-        data: false,
-        errorMessage: 'User not found',
-        extensions: [{ field: 'email', message: 'User with this email does not exist' }],
-      }
-    }
-
-    if (user.emailConfirmation.isConfirmed) {
+    if (!user || user.emailConfirmation.isConfirmed) {
       return {
         status: ResultStatus.BadRequest,
         data: false,
