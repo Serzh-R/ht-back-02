@@ -7,8 +7,10 @@ import { blogsCollection, commentsCollection, postsCollection, usersCollection }
 import { usersRouter } from './users/UsersRouter'
 import { authRouter } from './auth/AuthRouter'
 import { commentsRouter } from './comments/CommentsRouter'
+import cookieParser from 'cookie-parser'
 
 export const app = express()
+app.use(cookieParser())
 
 const jsonBodyMiddleware = express.json()
 

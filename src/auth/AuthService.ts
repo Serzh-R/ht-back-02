@@ -171,7 +171,18 @@ export const authService = {
       }
     }
 
-    await emailManager.sendEmailConfirmationMessage(user)
+    const updatedUser = await usersRepository.findByLoginOrEmail(email)
+
+    if (!updatedUser) {
+      return {
+        status: ResultStatus.ServerError,
+        data: false,
+        errorMessage: 'Failed to retrieve updated user',
+        extensions: [],
+      }
+    }
+
+    await emailManager.sendEmailConfirmationMessage(updatedUser)
 
     console.log(`New confirmation code sent to email: ${email}`)
 
