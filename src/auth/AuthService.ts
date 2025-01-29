@@ -217,9 +217,9 @@ export const authService = {
     }
   },
 
-  async refreshToken(oldRefreshToken: string): Promise<Result<{ accessToken: string | null }>> {
-    //const userId = await jwtService.verifyRefreshToken(oldRefreshToken)
-
+  async refreshToken(
+    oldRefreshToken: string,
+  ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     // Проверяем, есть ли токен в чёрном списке
     const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
     if (isBlacklisted) {
@@ -227,8 +227,45 @@ export const authService = {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid refresh token (blacklisted)',
         data: null,
-        extensions: [],
+        extensions: [{ field: null, message: 'Refresh token is blacklisted' }],
       }
+    }
+
+    // Проверяем refresh-токен
+    const decoded = await jwtService.verifyRefreshToken(oldRefreshToken)
+    if (!decoded) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Invalid refresh token',
+        data: null,
+        extensions: [{ field: null, message: 'Invalid refresh token' }],
+      }
+    }
+
+    const user = await usersRepository.findById(decoded.userId)
+    if (!user) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'User not found',
+        data: null,
+        extensions: [{ field: 'userId', message: 'User not found' }],
+      }
+    }
+
+    // Генерируем новые токены
+    const newAccessToken = await jwtService.createAccessToken(user._id.toString())
+    const newRefreshToken = await jwtService.createRefreshToken(user._id.toString())
+
+    // Добавляем старый refresh-токен в чёрный список
+    await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
+
+    // Обновляем refresh-токен в базе данных
+    await usersRepository.updateRefreshToken(user._id.toString(), newRefreshToken)
+
+    return {
+      status: ResultStatus.Success,
+      data: { accessToken: newAccessToken, refreshToken: newRefreshToken },
+      extensions: [],
     }
   },
 

@@ -111,36 +111,25 @@ export const authController = {
       return
     }
 
-    // Проверяем refresh-токен
-    const decoded = await jwtService.verifyRefreshToken(refreshToken)
-    if (!decoded) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Invalid refresh token' })
+    const result = await authService.refreshToken(refreshToken)
+
+    if (result.status !== ResultStatus.Success) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
+        message: result.errorMessage,
+        extensions: result.extensions,
+      })
       return
     }
-
-    const user = await jwtService.getUserIdByRefreshToken(decoded.userId)
-    if (!user) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'User not found' })
-      return
-    }
-
-    // Генерируем новые токены
-    const newAccessToken = await jwtService.createAccessToken(user.id)
-    const newRefreshToken = await jwtService.createRefreshToken(user.id)
-
-    // Обновляем refresh-токен в базе данных (если используется хранение refresh-токенов)
-    await usersRepository.updateRefreshToken(user.id, newRefreshToken)
 
     // Устанавливаем новый refresh-токен в httpOnly cookie
-    res.cookie('refreshToken', newRefreshToken, {
+    res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
       secure: true,
       maxAge: 20 * 1000, // 20 секунд
       sameSite: 'strict',
     })
 
-    // Отправляем новый access-токен в теле ответа
-    res.status(HTTP_STATUSES.OK_200).json({ accessToken: newAccessToken })
+    res.status(HTTP_STATUSES.OK_200).json({ accessToken: result.data!.accessToken })
   },
 }
 

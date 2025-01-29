@@ -8,6 +8,10 @@ export const usersRepository = {
     return result.insertedId
   },
 
+  async findById(userId: string) {
+    return usersCollection.findOne({ _id: new ObjectId(userId) })
+  },
+
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserRegDBType | null> {
     return await usersCollection.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],

@@ -1,9 +1,9 @@
 import { blacklistCollection } from '../db/mongoDb'
 
 export const blacklistRepository = {
-  async addTokenToBlacklist(token: string) {
+  async addTokenToBlacklist(refreshToken: string) {
     return await blacklistCollection.insertOne({
-      token,
+      refreshToken: refreshToken,
       createdAt: new Date(),
     })
   },
