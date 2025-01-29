@@ -7,6 +7,7 @@ import { UserDBType, UserRegInsertDBType } from './types/types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
+import { blacklistRepository } from './BlacklistRepository'
 
 export const authService = {
   async registerUser(
@@ -207,12 +208,27 @@ export const authService = {
         data: null,
       }
     }
-    const accessToken = await jwtService.createToken(result.data!._id.toString())
+    const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
 
     return {
       status: ResultStatus.Success,
       data: { accessToken },
       extensions: [],
+    }
+  },
+
+  async refreshToken(oldRefreshToken: string): Promise<Result<{ accessToken: string | null }>> {
+    //const userId = await jwtService.verifyRefreshToken(oldRefreshToken)
+
+    // Проверяем, есть ли токен в чёрном списке
+    const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
+    if (isBlacklisted) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Invalid refresh token (blacklisted)',
+        data: null,
+        extensions: [],
+      }
     }
   },
 
@@ -245,41 +261,3 @@ export const authService = {
     }
   },
 }
-
-/*async checkUserCredentials(
-    loginOrEmail: string,
-    password: string,
-  ): Promise<Result<UserDBType | null>> {
-    const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
-    if (!user)
-      return {
-        status: ResultStatus.NotFound,
-        data: null,
-        errorMessage: 'Not Found',
-        extensions: [{ field: 'loginOrEmail', message: 'Not Found' }],
-      }
-
-    if (!user.emailConfirmation.isConfirmed) {
-      return {
-        status: ResultStatus.Forbidden,
-        data: null,
-        errorMessage: 'Forbidden',
-        extensions: [{ field: 'email', message: 'Email not confirmed' }],
-      }
-    }
-
-    const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
-    if (!isPassCorrect)
-      return {
-        status: ResultStatus.BadRequest,
-        data: null,
-        errorMessage: 'Bad Request',
-        extensions: [{ field: 'password', message: 'Wrong password' }],
-      }
-
-    return {
-      status: ResultStatus.Success,
-      data: user,
-      extensions: [],
-    }
-  },*/

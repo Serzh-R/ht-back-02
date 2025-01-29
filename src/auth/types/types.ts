@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 export type UserType = {
   id: string
@@ -56,4 +56,16 @@ export type UserInputType = {
 export type LoginOrEmailInputType = {
   loginOrEmail: string
   password: string
+}
+
+export type BlacklistType = {
+  id: string
+  refreshToken: string
+  createdAt: string
+}
+
+export type BlacklistDBType = {
+  _id: ObjectId
+  refreshToken: string
+  createdAt: Date
 }

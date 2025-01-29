@@ -1,18 +1,48 @@
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET, JWT_TIME } from '../../settings'
+import { ACCESS_SECRET, REFRESH_SECRET, ACCESS_TIME, REFRESH_TIME } from '../../settings'
 import { ObjectId } from 'mongodb'
 
 export const jwtService = {
-  async createToken(userId: string): Promise<string> {
-    return jwt.sign({ userId }, JWT_SECRET, { expiresIn: Number(JWT_TIME) })
+  async createAccessToken(userId: string): Promise<string> {
+    return jwt.sign({ userId }, ACCESS_SECRET, { expiresIn: Number(ACCESS_TIME) })
   },
 
-  async getUserIdByToken(token: string): Promise<ObjectId | null> {
+  async createRefreshToken(userId: string): Promise<string> {
+    return jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: Number(REFRESH_TIME) })
+  },
+
+  async getUserIdByAccessToken(token: string): Promise<ObjectId | null> {
     try {
-      const result = jwt.verify(token, JWT_SECRET) as { userId: string }
+      const result = jwt.verify(token, ACCESS_SECRET) as { userId: string }
       return new ObjectId(result.userId)
     } catch (error) {
-      console.error('Token verify some error')
+      console.error('AccessToken verify some error')
+      return null
+    }
+  },
+
+  async getUserIdByRefreshToken(token: string): Promise<ObjectId | null> {
+    try {
+      const result = jwt.verify(token, REFRESH_SECRET) as { userId: string }
+      return new ObjectId(result.userId)
+    } catch (error) {
+      console.error('RefreshToken verify some error')
+      return null
+    }
+  },
+
+  async verifyAccessToken(token: string) {
+    try {
+      return jwt.verify(token, ACCESS_SECRET) as { userId: string }
+    } catch {
+      return null
+    }
+  },
+
+  async verifyRefreshToken(refreshToken: string) {
+    try {
+      return jwt.verify(refreshToken, REFRESH_SECRET) as { userId: string }
+    } catch {
       return null
     }
   },

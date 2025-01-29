@@ -41,6 +41,13 @@ export const usersRepository = {
     return result.modifiedCount === 1
   },
 
+  async updateRefreshToken(userId: string, newRefreshToken: string) {
+    return usersCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $set: { refreshToken: newRefreshToken } },
+    )
+  },
+
   async deleteUser(id: string): Promise<boolean> {
     try {
       const result = await usersCollection.deleteOne({ _id: new ObjectId(id) })

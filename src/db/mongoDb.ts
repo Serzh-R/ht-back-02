@@ -2,12 +2,13 @@ import { SETTINGS } from '../settings'
 import { MongoClient, Collection, Db } from 'mongodb'
 import { BlogDBType, PostDBType } from '../types/types'
 import { CommentDBType } from '../comments/types'
-import { UserRegDBType } from '../auth/types/types'
+import { BlacklistDBType, UserRegDBType } from '../auth/types/types'
 
 export let blogsCollection: Collection<BlogDBType>
 export let postsCollection: Collection<PostDBType>
 export let usersCollection: Collection<UserRegDBType>
 export let commentsCollection: Collection<CommentDBType>
+export let blacklistCollection: Collection<BlacklistDBType>
 
 export let client: MongoClient
 export let mongoDb: Db
@@ -25,6 +26,7 @@ export async function runDb(url: string): Promise<boolean> {
   postsCollection = mongoDb.collection<PostDBType>('posts')
   usersCollection = mongoDb.collection<UserRegDBType>('users')
   commentsCollection = mongoDb.collection<CommentDBType>('comments')
+  blacklistCollection = mongoDb.collection<BlacklistDBType>('blacklist')
 
   try {
     console.log('before connect')

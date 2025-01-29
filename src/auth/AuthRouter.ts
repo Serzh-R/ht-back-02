@@ -13,6 +13,8 @@ import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { usersQueryRepository } from '../users/UsersQueryRepository'
 import { ResultStatus } from '../common/result/resultCode'
 import { resultCodeToHttpException } from '../common/result/resultCodeToHttpException'
+import { jwtService } from '../common/adapters/jwt.service'
+import { usersRepository } from '../users/UsersRepository'
 
 export const authRouter = Router()
 
@@ -100,6 +102,46 @@ export const authController = {
       userId: user.id,
     })
   },
+
+  async refreshToken(req: Request, res: Response): Promise<void> {
+    const refreshToken = req.cookies?.refreshToken
+
+    if (!refreshToken) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Refresh token missing' })
+      return
+    }
+
+    // Проверяем refresh-токен
+    const decoded = await jwtService.verifyRefreshToken(refreshToken)
+    if (!decoded) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Invalid refresh token' })
+      return
+    }
+
+    const user = await jwtService.getUserIdByRefreshToken(decoded.userId)
+    if (!user) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'User not found' })
+      return
+    }
+
+    // Генерируем новые токены
+    const newAccessToken = await jwtService.createAccessToken(user.id)
+    const newRefreshToken = await jwtService.createRefreshToken(user.id)
+
+    // Обновляем refresh-токен в базе данных (если используется хранение refresh-токенов)
+    await usersRepository.updateRefreshToken(user.id, newRefreshToken)
+
+    // Устанавливаем новый refresh-токен в httpOnly cookie
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 20 * 1000, // 20 секунд
+      sameSite: 'strict',
+    })
+
+    // Отправляем новый access-токен в теле ответа
+    res.status(HTTP_STATUSES.OK_200).json({ accessToken: newAccessToken })
+  },
 }
 
 authRouter.post(
@@ -134,34 +176,4 @@ authRouter.post(
 
 authRouter.get('/me', jwtAuthMiddleware, authController.me)
 
-/*async registerEmailResending(req: Request, res: Response): Promise<void> {
-  const { email } = req.body
-  const result = await authService.registerEmailResending(email)
-
-  if (result.status === ResultStatus.NotFound) {
-  res.status(404).send({
-    errorsMessages: result.extensions,
-  })
-  return
-}
-
-if (result.status === ResultStatus.BadRequest) {
-  res.status(400).send({
-    errorsMessages: result.extensions,
-  })
-  return
-}
-
-res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-},*/
-
-/*async login(req: Request, res: Response) {
-  const { loginOrEmail, password } = req.body
-  const result = await authService.loginUser(loginOrEmail, password)
-
-  if (result.status !== ResultStatus.Success) {
-    res.status(resultCodeToHttpException(result.status)).send(result.extensions)
-    return
-  }
-  res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
-},*/
+authRouter.post('/refresh-token', jwtAuthMiddleware, authController.refreshToken)
