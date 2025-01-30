@@ -266,6 +266,49 @@ export const authService = {
     }
   },
 
+  async logout(refreshToken: string): Promise<Result<null>> {
+    if (!refreshToken) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'No refresh token provided',
+        data: null,
+        extensions: [{ field: null, message: 'Refresh token is missing' }],
+      };
+    }
+
+    // Проверяем, есть ли токен в базе (если используем хранение в `usersRepository`)
+    const decoded = await jwtService.verifyRefreshToken(refreshToken);
+    if (!decoded) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Invalid refresh token',
+        data: null,
+        extensions: [{ field: null, message: 'Refresh token is invalid' }],
+      };
+    }
+
+    const user = await usersRepository.findById(decoded.userId);
+    if (!user) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'User not found',
+        data: null,
+        extensions: [{ field: 'userId', message: 'User not found' }],
+      };
+    }
+
+    await blacklistRepository.addTokenToBlacklist(refreshToken);
+
+    // Удаляем refresh-токен из базы (если храним его у пользователя)
+    await usersRepository.updateRefreshToken(user._id.toString(), null);
+
+    return {
+      status: ResultStatus.Success,
+      data: null,
+      extensions: [],
+    };
+  },
+
   async checkUserCredentials(
     loginOrEmail: string,
     password: string,

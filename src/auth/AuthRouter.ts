@@ -12,9 +12,6 @@ import { errorsResultMiddleware } from '../validation/express-validator/errors.r
 import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { usersQueryRepository } from '../users/UsersQueryRepository'
 import { ResultStatus } from '../common/result/resultCode'
-import { resultCodeToHttpException } from '../common/result/resultCodeToHttpException'
-import { jwtService } from '../common/adapters/jwt.service'
-import { usersRepository } from '../users/UsersRepository'
 
 export const authRouter = Router()
 
@@ -125,12 +122,41 @@ export const authController = {
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
       secure: true,
-      maxAge: 20 * 1000, // 20 секунд
+      maxAge: 20 * 1000,
       sameSite: 'strict',
     })
 
     res.status(HTTP_STATUSES.OK_200).json({ accessToken: result.data!.accessToken })
   },
+
+  async logout(req: Request, res: Response): Promise<void> {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Refresh token missing' });
+      return
+    }
+
+    const result = await authService.logout(refreshToken);
+
+    if (result.status !== ResultStatus.Success) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
+        message: result.errorMessage,
+        extensions: result.extensions,
+      })
+      return
+    }
+
+    // Очистка refresh-токена в cookie
+    res.cookie('refreshToken', '', {
+      httpOnly: true,
+      secure: true,
+      maxAge: 0,
+      sameSite: 'strict',
+    });
+
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+  }
 }
 
 authRouter.post(
@@ -166,3 +192,5 @@ authRouter.post(
 authRouter.get('/me', jwtAuthMiddleware, authController.me)
 
 authRouter.post('/refresh-token', jwtAuthMiddleware, authController.refreshToken)
+
+authRouter.post('/logout', jwtAuthMiddleware, authController.logout)
