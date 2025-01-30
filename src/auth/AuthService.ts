@@ -220,7 +220,7 @@ export const authService = {
   async refreshToken(
     oldRefreshToken: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
-    // Проверяем, есть ли токен в чёрном списке
+
     const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
     if (isBlacklisted) {
       return {
@@ -252,14 +252,11 @@ export const authService = {
       }
     }
 
-    // Генерируем новые токены
     const newAccessToken = await jwtService.createAccessToken(user._id.toString())
     const newRefreshToken = await jwtService.createRefreshToken(user._id.toString())
 
-    // Добавляем старый refresh-токен в чёрный список
     await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
 
-    // Обновляем refresh-токен в базе данных
     await usersRepository.updateRefreshToken(user._id.toString(), newRefreshToken)
 
     return {

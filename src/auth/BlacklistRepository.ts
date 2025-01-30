@@ -1,15 +1,15 @@
 import { blacklistCollection } from '../db/mongoDb'
+import { ObjectId } from 'mongodb'
+
 
 export const blacklistRepository = {
-  async addTokenToBlacklist(refreshToken: string) {
-    return await blacklistCollection.insertOne({
-      refreshToken: refreshToken,
-      createdAt: new Date(),
-    })
+  async addTokenToBlacklist(token: string): Promise<boolean> {
+    const result = await blacklistCollection.insertOne({ refreshToken: token, _id: new ObjectId(), createdAt: new Date() })
+     return !!result
   },
 
-  async isTokenBlacklisted(token: string) {
-    const result = await blacklistCollection.findOne({ token })
+  async isTokenBlacklisted(refreshToken: string) {
+    const result = await blacklistCollection.findOne({ refreshToken })
     return !!result
   },
 }
