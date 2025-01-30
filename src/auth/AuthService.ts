@@ -222,7 +222,6 @@ export const authService = {
   async refreshToken(
     oldRefreshToken: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
-
     const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
     if (isBlacklisted) {
       return {
@@ -274,41 +273,52 @@ export const authService = {
         status: ResultStatus.Unauthorized,
         errorMessage: 'No refresh token provided',
         data: null,
-        extensions: [{ field: null, message: 'Refresh token is missing' }],
-      };
+        extensions: [{ field: 'refreshToken', message: 'Refresh token is missing' }],
+      }
+    }
+
+    // Проверяем, есть ли токен в чёрном списке
+    const isBlacklisted = await blacklistRepository.isTokenBlacklisted(refreshToken)
+    if (isBlacklisted) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Refresh token is invalid (blacklisted)',
+        data: null,
+        extensions: [{ field: 'refreshToken', message: 'Refresh token already used' }],
+      }
     }
 
     // Проверяем, есть ли токен в базе (если используем хранение в `usersRepository`)
-    const decoded = await jwtService.verifyRefreshToken(refreshToken);
+    const decoded = await jwtService.verifyRefreshToken(refreshToken)
     if (!decoded) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid refresh token',
         data: null,
-        extensions: [{ field: null, message: 'Refresh token is invalid' }],
-      };
+        extensions: [{ field: 'refreshToken', message: 'Refresh token is invalid' }],
+      }
     }
 
-    const user = await usersRepository.findById(decoded.userId);
+    const user = await usersRepository.findById(decoded.userId)
     if (!user) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'User not found',
         data: null,
         extensions: [{ field: 'userId', message: 'User not found' }],
-      };
+      }
     }
 
-    await blacklistRepository.addTokenToBlacklist(refreshToken);
+    await blacklistRepository.addTokenToBlacklist(refreshToken)
 
     // Удаляем refresh-токен из базы (если храним его у пользователя)
-    await usersRepository.updateRefreshToken(user._id.toString(), null);
+    await usersRepository.updateRefreshToken(user._id.toString(), null)
 
     return {
       status: ResultStatus.Success,
       data: null,
       extensions: [],
-    };
+    }
   },
 
   async checkUserCredentials(
