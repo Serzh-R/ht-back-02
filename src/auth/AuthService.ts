@@ -194,10 +194,10 @@ export const authService = {
     }
   },
 
-  async loginUser(
+  async login(
     loginOrEmail: string,
     password: string,
-  ): Promise<Result<{ accessToken: string | null }>> {
+  ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     const result = await this.checkUserCredentials(loginOrEmail, password)
 
     if (result.status !== ResultStatus.Success) {
@@ -210,9 +210,11 @@ export const authService = {
     }
     const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
 
+    const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString())
+
     return {
       status: ResultStatus.Success,
-      data: { accessToken },
+      data: { accessToken, refreshToken },
       extensions: [],
     }
   },

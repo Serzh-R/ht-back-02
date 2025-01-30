@@ -10,8 +10,9 @@ import {
 } from '../users/middlewares/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
-import { usersQueryRepository } from '../users/UsersQueryRepository'
 import { ResultStatus } from '../common/result/resultCode'
+import { usersRepository } from '../users/UsersRepository'
+import { jwtService } from '../common/adapters/jwt.service'
 
 export const authRouter = Router()
 
@@ -61,7 +62,7 @@ export const authController = {
 
   async login(req: Request, res: Response) {
     const { loginOrEmail, password } = req.body
-    const result = await authService.loginUser(loginOrEmail, password)
+    const result = await authService.login(loginOrEmail, password)
 
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
@@ -70,34 +71,14 @@ export const authController = {
       return
     }
 
+    res.cookie('refreshToken', result.data!.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 20 * 1000, // 20 секунд (пример)
+      sameSite: 'strict',
+    });
+
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
-  },
-
-  // TODO: Remove
-  async me(req: Request, res: Response) {
-    const userId = req.userId
-
-    if (!userId) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
-        errorsMessages: [{ field: 'authorization', message: 'Unauthorized' }],
-      })
-      return
-    }
-
-    const user = await usersQueryRepository.getUserById(userId)
-
-    if (!user) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
-        errorsMessages: [{ field: 'authorization', message: 'User not found' }],
-      })
-      return
-    }
-
-    res.status(HTTP_STATUSES.OK_200).send({
-      email: user.email,
-      login: user.login,
-      userId: user.id,
-    })
   },
 
   async refreshToken(req: Request, res: Response): Promise<void> {
@@ -156,7 +137,39 @@ export const authController = {
     });
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  }
+  },
+
+  // TODO: Remove
+  async me(req: Request, res: Response) {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Access token missing' });
+      return
+    }
+
+    const accessToken = authHeader.split(' ')[1];
+    const decoded = await jwtService.verifyAccessToken(accessToken);
+
+    if (!decoded) {
+      res.status(401).json({ message: 'Invalid or expired access token' });
+      return
+    }
+
+    const user = await usersRepository.findById(decoded.userId);
+    if (!user) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'User not found' });
+      return
+    }
+
+    res.status(200).json({
+      id: user._id.toString(),
+      email: user.email,
+      login: user.login,
+    });
+
+  },
+
 }
 
 authRouter.post(
@@ -191,6 +204,34 @@ authRouter.post(
 
 authRouter.get('/me', jwtAuthMiddleware, authController.me)
 
-authRouter.post('/refresh-token', jwtAuthMiddleware, authController.refreshToken)
+authRouter.post('/refresh-token', authController.refreshToken)
 
-authRouter.post('/logout', jwtAuthMiddleware, authController.logout)
+authRouter.post('/logout', authController.logout)
+
+//////////  *******************  /////////////////////////////////////
+
+/*async me(req: Request, res: Response) {
+  const userId = req.userId
+
+  if (!userId) {
+    res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
+      errorsMessages: [{ field: 'authorization', message: 'Unauthorized' }],
+    })
+    return
+  }
+
+  const user = await usersQueryRepository.getUserById(userId)
+
+  if (!user) {
+    res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
+      errorsMessages: [{ field: 'authorization', message: 'User not found' }],
+    })
+    return
+  }
+
+  res.status(HTTP_STATUSES.OK_200).send({
+    email: user.email,
+    login: user.login,
+    userId: user.id,
+  })
+},*/
