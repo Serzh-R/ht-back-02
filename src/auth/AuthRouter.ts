@@ -13,6 +13,7 @@ import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'
+import { MeType } from './types/types'
 
 export const authRouter = Router()
 
@@ -74,9 +75,9 @@ export const authController = {
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
       secure: true,
-      maxAge: 20 * 1000, // 20 секунд (пример)
+      maxAge: 20 * 1000,
       sameSite: 'strict',
-    });
+    })
 
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
   },
@@ -111,14 +112,14 @@ export const authController = {
   },
 
   async logout(req: Request, res: Response): Promise<void> {
-    const refreshToken = req.cookies?.refreshToken;
+    const refreshToken = req.cookies?.refreshToken
 
     if (!refreshToken) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Refresh token missing' });
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Refresh token missing' })
       return
     }
 
-    const result = await authService.logout(refreshToken);
+    const result = await authService.logout(refreshToken)
 
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
@@ -134,42 +135,42 @@ export const authController = {
       secure: true,
       maxAge: 0,
       sameSite: 'strict',
-    });
+    })
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 
   // TODO: Remove
   async me(req: Request, res: Response) {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Access token missing' });
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Access token missing' })
       return
     }
 
-    const accessToken = authHeader.split(' ')[1];
-    const decoded = await jwtService.verifyAccessToken(accessToken);
+    const accessToken = authHeader.split(' ')[1]
+    const decoded = await jwtService.verifyAccessToken(accessToken)
 
     if (!decoded) {
-      res.status(401).json({ message: 'Invalid or expired access token' });
+      res
+        .status(HTTP_STATUSES.UNAUTHORIZED_401)
+        .json({ message: 'Invalid or expired access token' })
       return
     }
 
-    const user = await usersRepository.findById(decoded.userId);
+    const user = await usersRepository.findById(decoded.userId)
     if (!user) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'User not found' });
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'User not found' })
       return
     }
 
-    res.status(200).json({
-      id: user._id.toString(),
+    res.status(HTTP_STATUSES.OK_200).json({
+      userId: user._id.toString(),
       email: user.email,
       login: user.login,
-    });
-
+    } as MeType)
   },
-
 }
 
 authRouter.post(

@@ -1,4 +1,4 @@
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 export type UserType = {
   id: string
@@ -68,4 +68,10 @@ export type BlacklistDBType = {
   _id: ObjectId
   refreshToken: string
   createdAt: Date
+}
+
+export type MeType = {
+  email: string
+  login: string
+  userId: string
 }
