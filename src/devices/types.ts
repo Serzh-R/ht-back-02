@@ -1,8 +1,15 @@
 export type DevicesDBType = {
   _id: ObjectId
-  userId: string
-  deviceId: string
   ip: string
+  title: string // Информация о браузере/устройстве
   lastActiveDate: Date
-  userAgent: string // Информация о браузере/устройстве
+  deviceId: string
+  userId: string
+}
+
+export type DeviceType = {
+  ip: string
+  title: string // Название устройства (User-Agent)
+  lastActiveDate: string // Дата последней генерации refresh/access токенов (ISO строка)
+  deviceId: string
 }

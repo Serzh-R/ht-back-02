@@ -44,4 +44,4 @@ devicesRouter.get('/', jwtAuthMiddleware, devicesController.getDevices)
 
 devicesRouter.delete('/', jwtAuthMiddleware, devicesController.deleteDevices)
 
-devicesRouter.delete('/:deviceId', jwtAuthMiddleware, devicesController.deleteDeviceById)
+devicesRouter.delete('/:id', jwtAuthMiddleware, devicesController.deleteDeviceById)
