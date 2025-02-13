@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { HTTP_STATUSES } from '../settings'
-import { jwtService } from '../common/adapters/jwt.service'
+import { HTTP_STATUSES } from '../../settings'
+import { jwtService } from '../../common/adapters/jwt.service'
 
 export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {

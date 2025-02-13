@@ -14,11 +14,11 @@ import { errorsResultMiddleware } from '../validation/express-validator/errors.r
 import { paginationQueries } from '../common/helpers/paginations.values'
 import { postsService } from './PostsService'
 import { postsQueryRepository } from './PostsQueryRepository'
-import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
+import { jwtAuthMiddleware } from '../auth/middlewares/jwt.auth.middleware'
 import { commentsService } from '../comments/CommentsService'
 import { ResultStatus } from '../common/result/resultCode'
 import { commentsQueryRepository } from '../comments/CommentsQueryRepository'
-import { authMiddleware } from '../middlewares/auth.middleware'
+import { authMiddleware } from '../auth/middlewares/auth.middleware'
 import { resultCodeToHttpException } from '../common/result/resultCodeToHttpException'
 
 export const postRouter = Router()

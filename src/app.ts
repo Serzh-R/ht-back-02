@@ -13,6 +13,7 @@ import {
 import { usersRouter } from './users/UsersRouter'
 import { authRouter } from './auth/AuthRouter'
 import { commentsRouter } from './comments/CommentsRouter'
+import { devicesRouter } from './devices/DevicesRouter'
 import cookieParser from 'cookie-parser'
 
 export const app = express()
@@ -27,6 +28,8 @@ app.use(SETTINGS.PATH.POSTS, postRouter)
 app.use(SETTINGS.PATH.AUTH, authRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
 app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
+app.use(SETTINGS.PATH.DEVICES, devicesRouter)
+//app.use(rateLimitMiddleware)
 
 app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
   try {
@@ -35,6 +38,7 @@ app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
     await usersCollection.deleteMany({})
     await commentsCollection.deleteMany({})
     await blacklistCollection.deleteMany({})
+    await devicesCollection.deleteMany({})
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   } catch (error) {

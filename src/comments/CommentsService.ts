@@ -74,6 +74,7 @@ export const commentsService = {
       extensions: [],
     }
   },
+
   async createCommentForPost(postData: {
     postId: string
     content: string

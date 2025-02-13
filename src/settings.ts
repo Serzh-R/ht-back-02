@@ -14,6 +14,7 @@ export const SETTINGS = {
     AUTH: '/auth',
     USERS: '/users',
     COMMENTS: '/comments',
+    DEVICES: '/security/devices',
     DELETE_ALL: '/testing/all-data',
   },
   EMAIL: {
@@ -38,6 +39,8 @@ export const HTTP_STATUSES = {
 }
 
 export const BCRYPT_SALT = 5
+
+export const REQUEST_LIMIT = 5 // Максимальное количество запросов за 10 секунд
 
 export const ACCESS_TIME = process.env.JWT_ACCESS_TIME || '10'
 export const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'your_secret_key'

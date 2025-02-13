@@ -6,7 +6,7 @@ import { userInputValidators } from './middlewares/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { usersService } from './UsersService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
-import { authMiddleware } from '../middlewares/auth.middleware'
+import { authMiddleware } from '../auth/middlewares/auth.middleware'
 import { UserInputType } from '../auth/types/types'
 import { ResultStatus } from '../common/result/resultCode'
 

@@ -9,7 +9,7 @@ import {
   passwordValidation,
 } from '../users/middlewares/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
-import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
+import { jwtAuthMiddleware } from './middlewares/jwt.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'

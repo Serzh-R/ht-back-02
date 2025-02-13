@@ -14,7 +14,7 @@ import { paginationQueries } from '../common/helpers/paginations.values'
 import { postsService } from '../posts/PostsService'
 import { blogsQueryRepository } from './BlogsQueryRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
-import { authMiddleware } from '../middlewares/auth.middleware'
+import { authMiddleware } from '../auth/middlewares/auth.middleware'
 
 export const blogRouter = Router()
 

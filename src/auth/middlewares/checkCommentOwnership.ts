@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { commentsQueryRepository } from '../comments/CommentsQueryRepository'
-import { HTTP_STATUSES } from '../settings'
+import { commentsQueryRepository } from '../../comments/CommentsQueryRepository'
+import { HTTP_STATUSES } from '../../settings'
 
 export const checkCommentOwnership = async (
   req: Request,

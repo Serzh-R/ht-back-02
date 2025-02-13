@@ -7,9 +7,9 @@ import {
   idParamValidator,
 } from '../validation/express-validator/field.validators'
 import { commentsService } from './CommentsService'
-import { jwtAuthMiddleware } from '../middlewares/jwt.auth.middleware'
+import { jwtAuthMiddleware } from '../auth/middlewares/jwt.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
-import { checkCommentOwnership } from '../middlewares/checkCommentOwnership'
+import { checkCommentOwnership } from '../auth/middlewares/checkCommentOwnership'
 
 export const commentsRouter = Router()
 
