@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
 import { jwtAuthMiddleware } from '../auth/middlewares/jwt.auth.middleware'
+import { devicesService } from './DevicesService'
 
 export const devicesRouter = Router()
 

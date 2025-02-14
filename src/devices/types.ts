@@ -1,15 +1,19 @@
+import { ObjectId } from 'mongodb'
+
 export type DevicesDBType = {
   _id: ObjectId
   ip: string
-  title: string // Информация о браузере/устройстве
+  title: string
   lastActiveDate: Date
+  expirationDate: Date
   deviceId: string
   userId: string
 }
 
 export type DeviceType = {
   ip: string
-  title: string // Название устройства (User-Agent)
+  title: string // Название устройства (User-Agent или значение по умолчанию)
   lastActiveDate: string // Дата последней генерации refresh/access токенов (ISO строка)
-  deviceId: string
+  expirationDate: string // Дата окончания действия refreshToken (ISO строка)
+  deviceId: string // ID сессии устройства, хранится в refreshToken
 }

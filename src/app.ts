@@ -7,6 +7,7 @@ import {
   blacklistCollection,
   blogsCollection,
   commentsCollection,
+  devicesCollection,
   postsCollection,
   usersCollection,
 } from './db/mongoDb'
@@ -29,6 +30,11 @@ app.use(SETTINGS.PATH.AUTH, authRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
 app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
 app.use(SETTINGS.PATH.DEVICES, devicesRouter)
+/*app.use((req, res, next) => {
+  console.log('Client IP:', req.ip) // Должен выводить реальный IP
+  next()
+})*/
+
 //app.use(rateLimitMiddleware)
 
 app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {

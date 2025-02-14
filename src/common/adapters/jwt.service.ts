@@ -7,8 +7,8 @@ export const jwtService = {
     return jwt.sign({ userId }, ACCESS_SECRET, { expiresIn: Number(ACCESS_TIME) })
   },
 
-  async createRefreshToken(userId: string): Promise<string> {
-    return jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: Number(REFRESH_TIME) })
+  async createRefreshToken(userId: string, deviceId: string): Promise<string> {
+    return jwt.sign({ userId, deviceId }, REFRESH_SECRET, { expiresIn: Number(REFRESH_TIME) })
   },
 
   async getUserIdByAccessToken(token: string): Promise<ObjectId | null> {
@@ -41,7 +41,7 @@ export const jwtService = {
 
   async verifyRefreshToken(refreshToken: string) {
     try {
-      return jwt.verify(refreshToken, REFRESH_SECRET) as { userId: string }
+      return jwt.verify(refreshToken, REFRESH_SECRET) as { userId: string; deviceId: string }
     } catch {
       return null
     }
