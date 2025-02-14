@@ -1,5 +1,6 @@
+/*
 import { Request, Response, NextFunction } from 'express'
-import { REQUEST_LIMIT } from '../settings'
+import { HTTP_STATUSES, REQUEST_LIMIT } from '../settings'
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
@@ -19,3 +20,4 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
 
   next()
 }
+*/

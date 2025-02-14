@@ -8,6 +8,7 @@ import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
 import { blacklistRepository } from './BlacklistRepository'
+import { REFRESH_TIME } from '../settings'
 
 export const authService = {
   async registerUser(
@@ -197,6 +198,8 @@ export const authService = {
   async login(
     loginOrEmail: string,
     password: string,
+    userAgent: string | undefined,
+    ip: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     const result = await this.checkUserCredentials(loginOrEmail, password)
 
@@ -208,9 +211,12 @@ export const authService = {
         data: null,
       }
     }
-    const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
 
-    const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString())
+    const deviceId = randomUUID()
+    const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
+    const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(), deviceId)
+    const expirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000).toISOString()
+    const title = userAgent || 'Unknown Device'
 
     return {
       status: ResultStatus.Success,
@@ -254,7 +260,13 @@ export const authService = {
     }
 
     const newAccessToken = await jwtService.createAccessToken(user._id.toString())
-    const newRefreshToken = await jwtService.createRefreshToken(user._id.toString())
+    const newRefreshToken = await jwtService.createRefreshToken(
+      user._id.toString(),
+      decoded.deviceId,
+    )
+    const newExpirationDate = new Date(
+      Date.now() + Number(process.env.JWT_REFRESH_TIME) * 1000,
+    ).toISOString()
 
     await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
 

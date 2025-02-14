@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { HTTP_STATUSES } from '../settings'
+import { HTTP_STATUSES, REFRESH_TIME } from '../settings'
 import { authService } from './AuthService'
 import {
   emailValidation,
@@ -62,8 +62,10 @@ export const authController = {
   },
 
   async login(req: Request, res: Response) {
+    const userAgent = req.headers['user-agent'] || 'Unknown Device'
+    const ip = req.ip || req.socket.remoteAddress || 'Unknown IP'
     const { loginOrEmail, password } = req.body
-    const result = await authService.login(loginOrEmail, password)
+    const result = await authService.login(loginOrEmail, password, userAgent, ip)
 
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
@@ -75,7 +77,7 @@ export const authController = {
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
       secure: true,
-      maxAge: 20 * 1000,
+      maxAge: Number(REFRESH_TIME) * 1000,
       sameSite: 'strict',
     })
 

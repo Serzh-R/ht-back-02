@@ -7,7 +7,7 @@ export type DevicesDBType = {
   lastActiveDate: Date
   expirationDate: Date
   deviceId: string
-  userId: string
+  userId: ObjectId
 }
 
 export type DeviceType = {

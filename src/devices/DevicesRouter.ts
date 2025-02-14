@@ -8,14 +8,14 @@ export const devicesRouter = Router()
 export const devicesController = {
   // Получение всех устройств пользователя
   async getDevices(req: Request, res: Response) {
-    const userId = req.user!.id
+    const userId = req.userId
     const devices = await devicesService.getDevicesByUserId(userId)
     res.status(HTTP_STATUSES.OK_200).json(devices)
   },
 
   // Удаление всех устройств пользователя (кроме текущего)
   async deleteDevices(req: Request, res: Response) {
-    const userId = req.user!.id
+    const userId = req.userId
     const isDeleted = await devicesService.deleteAllDevicesExceptCurrent(
       userId,
       req.cookies.refreshToken,
@@ -28,7 +28,7 @@ export const devicesController = {
 
   // Удаление конкретного устройства
   async deleteDeviceById(req: Request, res: Response) {
-    const userId = req.user!.id
+    const userId = req.userId
     const { deviceId } = req.params
 
     const isDeleted = await devicesService.deleteDeviceById(userId, deviceId)
