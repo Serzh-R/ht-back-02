@@ -9,6 +9,7 @@ import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
 import { blacklistRepository } from './BlacklistRepository'
 import { REFRESH_TIME } from '../settings'
+import { devicesCollection } from '../db/mongoDb'
 
 export const authService = {
   async registerUser(
@@ -215,8 +216,17 @@ export const authService = {
     const deviceId = randomUUID()
     const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
     const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(), deviceId)
-    const expirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000).toISOString()
+    const expirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)
     const title = userAgent || 'Unknown Device'
+
+    await devicesCollection.insertOne({
+      ip,
+      title,
+      lastActiveDate: new Date(),
+      expirationDate,
+      deviceId,
+      userId: result.data!._id,
+    })
 
     return {
       status: ResultStatus.Success,
@@ -264,13 +274,16 @@ export const authService = {
       user._id.toString(),
       decoded.deviceId,
     )
-    const newExpirationDate = new Date(
-      Date.now() + Number(process.env.JWT_REFRESH_TIME) * 1000,
-    ).toISOString()
+    const newExpirationDate = new Date(Date.now() + Number(process.env.JWT_REFRESH_TIME) * 1000)
 
     await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
 
     await usersRepository.updateRefreshToken(user._id.toString(), newRefreshToken)
+
+    await devicesCollection.updateOne(
+      { deviceId: decoded.deviceId },
+      { $set: { lastActiveDate: new Date(), expirationDate: newExpirationDate } },
+    )
 
     return {
       status: ResultStatus.Success,

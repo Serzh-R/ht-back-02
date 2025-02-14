@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 
 export type DevicesDBType = {
-  _id: ObjectId
+  _id?: ObjectId
   ip: string
   title: string
   lastActiveDate: Date
