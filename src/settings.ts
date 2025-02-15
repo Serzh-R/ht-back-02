@@ -14,6 +14,7 @@ export const SETTINGS = {
     AUTH: '/auth',
     USERS: '/users',
     COMMENTS: '/comments',
+    COUNT_REQUESTS: '/count-requests',
     DEVICES: '/security/devices',
     DELETE_ALL: '/testing/all-data',
   },

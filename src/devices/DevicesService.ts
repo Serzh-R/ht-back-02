@@ -1,6 +1,5 @@
 import { devicesCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { devicesQueryRepository } from './DevicesQueryRepository'
 
 export const devicesService = {
   async deleteDevicesByUserIdExceptCurrent(

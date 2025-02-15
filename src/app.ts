@@ -18,6 +18,7 @@ import { commentsRouter } from './comments/CommentsRouter'
 import { devicesRouter } from './devices/DevicesRouter'
 import cookieParser from 'cookie-parser'
 import { recordRequest } from './middlewares/recordRequest.middleware'
+import { countRequestsMiddleware } from './middlewares/countRequests.middleware'
 
 export const app = express()
 app.use(cookieParser())
@@ -26,6 +27,7 @@ const jsonBodyMiddleware = express.json()
 app.use(jsonBodyMiddleware)
 app.use(cors())
 app.use(recordRequest)
+app.use(countRequestsMiddleware)
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
 app.use(SETTINGS.PATH.POSTS, postRouter)
 app.use(SETTINGS.PATH.AUTH, authRouter)
