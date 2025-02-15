@@ -3,7 +3,7 @@ import { MongoClient, Collection, Db } from 'mongodb'
 import { BlogDBType, PostDBType } from '../types/types'
 import { CommentDBType } from '../comments/types'
 import { BlacklistDBType, UserRegDBType } from '../auth/types/types'
-import { DevicesDBType } from '../devices/types'
+import { AppealToApi, DevicesDBType } from '../devices/types'
 
 export let blogsCollection: Collection<BlogDBType>
 export let postsCollection: Collection<PostDBType>
@@ -11,6 +11,7 @@ export let usersCollection: Collection<UserRegDBType>
 export let commentsCollection: Collection<CommentDBType>
 export let blacklistCollection: Collection<BlacklistDBType>
 export let devicesCollection: Collection<DevicesDBType>
+export let requestsCollection: Collection<AppealToApi>
 
 export let client: MongoClient
 export let mongoDb: Db
@@ -30,6 +31,7 @@ export async function runDb(url: string): Promise<boolean> {
   commentsCollection = mongoDb.collection<CommentDBType>('comments')
   blacklistCollection = mongoDb.collection<BlacklistDBType>('blacklist')
   devicesCollection = mongoDb.collection<DevicesDBType>('devices')
+  requestsCollection = mongoDb.collection<AppealToApi>('requests')
 
   try {
     console.log('before connect')

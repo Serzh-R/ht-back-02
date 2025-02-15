@@ -17,3 +17,9 @@ export type DeviceType = {
   expirationDate: string // Дата окончания действия refreshToken (ISO строка)
   deviceId: string // ID сессии устройства, хранится в refreshToken
 }
+
+export type AppealToApi = {
+  IP: string
+  URL: string
+  date: Date
+}

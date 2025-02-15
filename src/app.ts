@@ -9,6 +9,7 @@ import {
   commentsCollection,
   devicesCollection,
   postsCollection,
+  requestsCollection,
   usersCollection,
 } from './db/mongoDb'
 import { usersRouter } from './users/UsersRouter'
@@ -16,12 +17,13 @@ import { authRouter } from './auth/AuthRouter'
 import { commentsRouter } from './comments/CommentsRouter'
 import { devicesRouter } from './devices/DevicesRouter'
 import cookieParser from 'cookie-parser'
+import { recordRequest } from './middlewares/recordRequest.middleware'
 
 export const app = express()
 app.use(cookieParser())
 
 const jsonBodyMiddleware = express.json()
-
+app.use(recordRequest)
 app.use(jsonBodyMiddleware)
 app.use(cors())
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
@@ -30,10 +32,6 @@ app.use(SETTINGS.PATH.AUTH, authRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
 app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
 app.use(SETTINGS.PATH.DEVICES, devicesRouter)
-/*app.use((req, res, next) => {
-  console.log('Client IP:', req.ip) // Должен выводить реальный IP
-  next()
-})*/
 
 //app.use(rateLimitMiddleware)
 
@@ -45,6 +43,7 @@ app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
     await commentsCollection.deleteMany({})
     await blacklistCollection.deleteMany({})
     await devicesCollection.deleteMany({})
+    await requestsCollection.deleteMany({})
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   } catch (error) {
