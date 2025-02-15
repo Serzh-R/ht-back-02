@@ -1,12 +1,12 @@
 import { devicesCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
+import { devicesQueryRepository } from './DevicesQueryRepository'
 
 export const devicesService = {
-  async getDevicesByUserId(userId: string) {
-    return await devicesCollection.find({ userId: new ObjectId(userId) }).toArray()
-  },
-
-  async deleteAllDevicesExceptCurrent(userId: string, currentRefreshToken: string) {
+  async deleteDevicesByUserIdExceptCurrent(
+    userId: string,
+    currentRefreshToken: string,
+  ): Promise<boolean> {
     const currentDevice = await devicesCollection.findOne({
       userId: new ObjectId(userId),
       refreshToken: currentRefreshToken,
