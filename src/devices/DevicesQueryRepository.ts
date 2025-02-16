@@ -1,13 +1,13 @@
-import { DevicesDBType, DeviceType } from './types'
-import { devicesCollection } from '../db/mongoDb'
+import { SessionDBType, SessionType } from './types'
+import { sessionCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
 
 export const devicesQueryRepository = {
-  async getDevicesByUserId(userId: string): Promise<DeviceType[]> {
-    const devices = await devicesCollection.find({ userId: new ObjectId(userId) }).toArray()
+  async getDevicesByUserId(userId: string): Promise<SessionType[]> {
+    const devices = await sessionCollection.find({ userId: new ObjectId(userId) }).toArray()
 
     return devices.map(
-      (device: DevicesDBType): DeviceType => ({
+      (device: SessionDBType): SessionType => ({
         ip: device.ip,
         title: device.title,
         lastActiveDate: device.lastActiveDate.toISOString(),

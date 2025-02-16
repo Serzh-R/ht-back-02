@@ -41,7 +41,11 @@ export const jwtService = {
 
   async verifyRefreshToken(refreshToken: string) {
     try {
-      return jwt.verify(refreshToken, REFRESH_SECRET) as { userId: string; deviceId: string }
+      return jwt.verify(refreshToken, REFRESH_SECRET) as {
+        userId: string
+        deviceId: string
+        lastActiveDate: Date
+      }
     } catch {
       return null
     }

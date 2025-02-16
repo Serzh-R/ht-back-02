@@ -210,31 +210,3 @@ authRouter.get('/me', jwtAuthMiddleware, authController.me)
 authRouter.post('/refresh-token', authController.refreshToken)
 
 authRouter.post('/logout', authController.logout)
-
-//////////  *******************  /////////////////////////////////////
-
-/*async me(req: Request, res: Response) {
-  const userId = req.userId
-
-  if (!userId) {
-    res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
-      errorsMessages: [{ field: 'authorization', message: 'Unauthorized' }],
-    })
-    return
-  }
-
-  const user = await usersQueryRepository.getUserById(userId)
-
-  if (!user) {
-    res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({
-      errorsMessages: [{ field: 'authorization', message: 'User not found' }],
-    })
-    return
-  }
-
-  res.status(HTTP_STATUSES.OK_200).send({
-    email: user.email,
-    login: user.login,
-    userId: user.id,
-  })
-},*/

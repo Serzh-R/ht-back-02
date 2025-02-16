@@ -9,7 +9,7 @@ import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
 import { blacklistRepository } from './BlacklistRepository'
 import { REFRESH_TIME } from '../settings'
-import { devicesCollection } from '../db/mongoDb'
+import { sessionCollection } from '../db/mongoDb'
 
 export const authService = {
   async registerUser(
@@ -219,13 +219,13 @@ export const authService = {
     const expirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)
     const title = userAgent || 'Unknown Device'
 
-    await devicesCollection.insertOne({
+    await sessionCollection.insertOne({
       ip,
       title,
       lastActiveDate: new Date(),
       expirationDate,
       deviceId,
-      userId: result.data!._id,
+      userId: result.data!._id.toString(),
     })
 
     return {
@@ -237,6 +237,7 @@ export const authService = {
 
   async refreshToken(
     oldRefreshToken: string,
+    deviceId: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
     if (isBlacklisted) {
@@ -269,21 +270,47 @@ export const authService = {
       }
     }
 
-    const newAccessToken = await jwtService.createAccessToken(user._id.toString())
-    const newRefreshToken = await jwtService.createRefreshToken(
-      user._id.toString(),
-      decoded.deviceId,
-    )
-    const newExpirationDate = new Date(Date.now() + Number(process.env.JWT_REFRESH_TIME) * 1000)
+    // Находим сессию по deviceId
+    const session = await sessionCollection.findOne({
+      deviceId: decoded.deviceId, // Проверяем совпадение deviceId из refreshToken
+      userId: decoded.userId, // Проверяем совпадение userId
+    })
 
-    await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
+    if (!session) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Invalid device or session not found',
+        data: null,
+        extensions: [{ field: 'deviceId', message: 'Session not found' }],
+      }
+    }
 
-    await usersRepository.updateRefreshToken(user._id.toString(), newRefreshToken)
+    // Проверяем, что переданная lastActiveDate соответствует записи в базе данных
+    if (session.lastActiveDate.getTime() !== decoded.lastActiveDate.getTime()) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Invalid last active date',
+        data: null,
+        extensions: [{ field: 'lastActiveDate', message: 'Last active date mismatch' }],
+      }
+    }
 
-    await devicesCollection.updateOne(
+    // Обновляем lastActiveDate в sessionCollection
+    const newExpirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)
+    await sessionCollection.updateOne(
       { deviceId: decoded.deviceId },
       { $set: { lastActiveDate: new Date(), expirationDate: newExpirationDate } },
     )
+
+    const newAccessToken = await jwtService.createAccessToken(decoded.userId.toString())
+    const newRefreshToken = await jwtService.createRefreshToken(
+      decoded.userId.toString(),
+      decoded.deviceId,
+    )
+
+    await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
+
+    await usersRepository.updateRefreshToken(decoded.userId.toString(), newRefreshToken)
 
     return {
       status: ResultStatus.Success,
@@ -375,3 +402,12 @@ export const authService = {
     }
   },
 }
+
+/*
+const newExpirationDate = new Date(Date.now() + Number(process.env.JWT_REFRESH_TIME) * 1000)
+
+await sessionCollection.updateOne(
+  { deviceId: decoded.deviceId },
+  { $set: { lastActiveDate: new Date(), expirationDate: newExpirationDate } },
+)
+*/
