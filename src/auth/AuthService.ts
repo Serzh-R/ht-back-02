@@ -9,7 +9,7 @@ import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
 import { blacklistRepository } from './BlacklistRepository'
 import { REFRESH_TIME } from '../settings'
-import { sessionCollection } from '../db/mongoDb'
+import { deviceSessionsCollection } from '../db/mongoDb'
 
 export const authService = {
   async registerUser(
@@ -219,7 +219,7 @@ export const authService = {
     const expirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)
     const title = userAgent || 'Unknown Device'
 
-    await sessionCollection.insertOne({
+    await deviceSessionsCollection.insertOne({
       ip,
       title,
       lastActiveDate: new Date(),
@@ -260,6 +260,16 @@ export const authService = {
       }
     }
 
+    // Проверяем, что deviceId, переданный в запросе, совпадает с тем, что есть в decoded
+    if (decoded.deviceId !== deviceId) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Device mismatch',
+        data: null,
+        extensions: [{ field: 'deviceId', message: 'Device mismatch' }],
+      }
+    }
+
     const user = await usersRepository.findById(decoded.userId)
     if (!user) {
       return {
@@ -271,7 +281,7 @@ export const authService = {
     }
 
     // Находим сессию по deviceId
-    const session = await sessionCollection.findOne({
+    const session = await deviceSessionsCollection.findOne({
       deviceId: decoded.deviceId, // Проверяем совпадение deviceId из refreshToken
       userId: decoded.userId, // Проверяем совпадение userId
     })
@@ -297,7 +307,7 @@ export const authService = {
 
     // Обновляем lastActiveDate в sessionCollection
     const newExpirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)
-    await sessionCollection.updateOne(
+    await deviceSessionsCollection.updateOne(
       { deviceId: decoded.deviceId },
       { $set: { lastActiveDate: new Date(), expirationDate: newExpirationDate } },
     )

@@ -3,14 +3,14 @@ import { MongoClient, Collection, Db } from 'mongodb'
 import { BlogDBType, PostDBType } from '../types/types'
 import { CommentDBType } from '../comments/types'
 import { BlacklistDBType, UserRegDBType } from '../auth/types/types'
-import { AppealToApi, SessionDBType } from '../devices/types'
+import { AppealToApi, DeviceSessionDBType } from '../devices/types'
 
 export let blogsCollection: Collection<BlogDBType>
 export let postsCollection: Collection<PostDBType>
 export let usersCollection: Collection<UserRegDBType>
 export let commentsCollection: Collection<CommentDBType>
 export let blacklistCollection: Collection<BlacklistDBType>
-export let sessionCollection: Collection<SessionDBType>
+export let deviceSessionsCollection: Collection<DeviceSessionDBType>
 export let requestsCollection: Collection<AppealToApi>
 
 export let client: MongoClient
@@ -30,7 +30,7 @@ export async function runDb(url: string): Promise<boolean> {
   usersCollection = mongoDb.collection<UserRegDBType>('users')
   commentsCollection = mongoDb.collection<CommentDBType>('comments')
   blacklistCollection = mongoDb.collection<BlacklistDBType>('blacklist')
-  sessionCollection = mongoDb.collection<SessionDBType>('sessions')
+  deviceSessionsCollection = mongoDb.collection<DeviceSessionDBType>('sessions')
   requestsCollection = mongoDb.collection<AppealToApi>('requests')
 
   try {

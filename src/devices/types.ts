@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-export type SessionDBType = {
+export type DeviceSessionDBType = {
   _id?: ObjectId
   ip: string
   title: string
@@ -10,7 +10,7 @@ export type SessionDBType = {
   userId: string
 }
 
-export type SessionType = {
+export type DeviceSessionType = {
   ip: string
   title: string // Название устройства (User-Agent или значение по умолчанию)
   lastActiveDate: string // Дата последней генерации refresh/access токенов (ISO строка)

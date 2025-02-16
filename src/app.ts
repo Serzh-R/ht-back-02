@@ -7,7 +7,7 @@ import {
   blacklistCollection,
   blogsCollection,
   commentsCollection,
-  sessionCollection,
+  deviceSessionsCollection,
   postsCollection,
   requestsCollection,
   usersCollection,
@@ -44,7 +44,7 @@ app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
     await usersCollection.deleteMany({})
     await commentsCollection.deleteMany({})
     await blacklistCollection.deleteMany({})
-    await sessionCollection.deleteMany({})
+    await deviceSessionsCollection.deleteMany({})
     await requestsCollection.deleteMany({})
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
