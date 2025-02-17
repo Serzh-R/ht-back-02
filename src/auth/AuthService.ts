@@ -412,12 +412,3 @@ export const authService = {
     }
   },
 }
-
-/*
-const newExpirationDate = new Date(Date.now() + Number(process.env.JWT_REFRESH_TIME) * 1000)
-
-await sessionCollection.updateOne(
-  { deviceId: decoded.deviceId },
-  { $set: { lastActiveDate: new Date(), expirationDate: newExpirationDate } },
-)
-*/
