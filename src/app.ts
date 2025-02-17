@@ -35,8 +35,6 @@ app.use(SETTINGS.PATH.USERS, usersRouter)
 app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
 app.use(SETTINGS.PATH.DEVICES, devicesRouter)
 
-//app.use(rateLimitMiddleware)
-
 app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
   try {
     await blogsCollection.deleteMany({})
