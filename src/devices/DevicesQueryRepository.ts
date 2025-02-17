@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb'
 
 export const devicesQueryRepository = {
   async getDevicesByUserId(userId: string): Promise<DeviceSessionType[]> {
-    const devices = await deviceSessionsCollection.find({ userId: new ObjectId(userId) }).toArray()
+    const devices = await deviceSessionsCollection.find({ userId }).toArray()
 
     return devices.map(
       (device: DeviceSessionDBType): DeviceSessionType => ({

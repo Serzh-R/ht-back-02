@@ -7,13 +7,13 @@ export const devicesService = {
     currentRefreshToken: string,
   ): Promise<boolean> {
     const currentDevice = await deviceSessionsCollection.findOne({
-      userId: new ObjectId(userId),
+      userId,
       refreshToken: currentRefreshToken,
     })
     if (!currentDevice) return false
 
     await deviceSessionsCollection.deleteMany({
-      userId: new ObjectId(userId),
+      userId,
       _id: { $ne: new ObjectId(currentDevice._id) },
     })
 
@@ -22,7 +22,7 @@ export const devicesService = {
 
   async deleteDeviceById(userId: string, deviceId: string) {
     const result = await deviceSessionsCollection.deleteOne({
-      userId: new ObjectId(userId),
+      userId,
       deviceId,
     })
     return result.deletedCount > 0
