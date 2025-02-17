@@ -31,11 +31,11 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
     res.locals.count = count
 
     // Сохраняем запрос в базе данных (IP, URL, дата запроса)
-    await requestsCollection.insertOne({
+    /*await requestsCollection.insertOne({
       IP: req.ip ?? '',
       URL: req.originalUrl,
       date: new Date(), // Сохраняем текущую дату
-    })
+    })*/
 
     next()
   } catch (error) {
