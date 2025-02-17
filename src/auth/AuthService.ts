@@ -201,6 +201,7 @@ export const authService = {
     password: string,
     userAgent: string | undefined,
     ip: string,
+    deviceId: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     const result = await this.checkUserCredentials(loginOrEmail, password)
 
@@ -213,7 +214,6 @@ export const authService = {
       }
     }
 
-    const deviceId = randomUUID()
     const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
     const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(), deviceId)
     const expirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)

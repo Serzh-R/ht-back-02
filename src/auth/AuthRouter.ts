@@ -14,6 +14,7 @@ import { ResultStatus } from '../common/result/resultCode'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'
 import { MeType } from './types/types'
+import { randomUUID } from 'node:crypto'
 
 export const authRouter = Router()
 
@@ -65,7 +66,10 @@ export const authController = {
     const userAgent = req.headers['user-agent'] || 'Unknown Device'
     const ip = req.ip || req.socket.remoteAddress || 'Unknown IP'
     const { loginOrEmail, password } = req.body
-    const result = await authService.login(loginOrEmail, password, userAgent, ip)
+
+    const deviceId = randomUUID()
+
+    const result = await authService.login(loginOrEmail, password, userAgent, ip, deviceId)
 
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
@@ -73,6 +77,13 @@ export const authController = {
       })
       return
     }
+
+    // Сохраняем deviceId в cookies
+    res.cookie('deviceId', deviceId, {
+      httpOnly: true,
+      secure: true, // если используете HTTPS
+      sameSite: 'strict',
+    })
 
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
@@ -92,7 +103,9 @@ export const authController = {
       return
     }
 
-    const result = await authService.refreshToken(refreshToken)
+    const deviceId = req.cookies.deviceId
+
+    const result = await authService.refreshToken(refreshToken, deviceId)
 
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
