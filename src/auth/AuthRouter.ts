@@ -210,19 +210,21 @@ authRouter.post(
 
 authRouter.post(
   '/registration-confirmation',
+  countRequestsMiddleware,
   errorsResultMiddleware,
   authController.registerConfirm,
 )
 
 authRouter.post(
   '/registration-email-resending',
+  countRequestsMiddleware,
   isUserConfirmedByEmailValidation,
   errorsResultMiddleware,
   authController.registerEmailResending,
 )
 
-authRouter.get('/me', jwtAuthMiddleware, authController.me)
+authRouter.get('/me', countRequestsMiddleware, jwtAuthMiddleware, authController.me)
 
-authRouter.post('/refresh-token', authController.refreshToken)
+authRouter.post('/refresh-token', countRequestsMiddleware, authController.refreshToken)
 
-authRouter.post('/logout', authController.logout)
+authRouter.post('/logout', countRequestsMiddleware, authController.logout)
