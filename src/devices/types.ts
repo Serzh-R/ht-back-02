@@ -18,7 +18,7 @@ export type DeviceSessionType = {
 }
 
 export type AppealToApi = {
-  IP: string
-  URL: string
+  ip: string
+  url: string
   date: Date
 }

@@ -3,8 +3,8 @@ import { requestsCollection } from '../db/mongoDb'
 
 export const recordRequest = async (req: Request, res: Response, next: NextFunction) => {
   const requestData = {
-    IP: req.ip ?? '',
-    URL: req.originalUrl,
+    ip: req.ip ?? '',
+    url: req.originalUrl,
     date: new Date(),
   }
   try {

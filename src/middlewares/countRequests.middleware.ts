@@ -4,23 +4,14 @@ import { HTTP_STATUSES } from '../settings'
 
 export const countRequestsMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { IP } = req.query
+    const { ip, originalUrl } = req
     const tenSecondsAgo = new Date(Date.now() - 10 * 1000)
 
     const filter: any = {
       date: { $gte: tenSecondsAgo },
+      ip,
+      url: originalUrl,
     }
-
-    if (IP) {
-      filter.IP = String(IP)
-    } else {
-      filter.IP = req.ip
-    }
-
-    if (URL) {
-      filter.URL = String(URL)
-    }
-
     const count = await requestsCollection.countDocuments(filter)
 
     if (count >= 5) {
@@ -35,8 +26,8 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
     res.locals.count = count
 
     await requestsCollection.insertOne({
-      IP: req.ip ?? '',
-      URL: req.originalUrl,
+      ip: ip ?? 'default',
+      url: originalUrl,
       date: new Date(),
     })
 

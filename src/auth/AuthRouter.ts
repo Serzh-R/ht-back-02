@@ -79,10 +79,9 @@ export const authController = {
       return
     }
 
-    // Сохраняем deviceId в cookies
     res.cookie('deviceId', deviceId, {
       httpOnly: true,
-      secure: true, // если используете HTTPS
+      secure: true,
       sameSite: 'strict',
     })
 
@@ -223,8 +222,8 @@ authRouter.post(
   authController.registerEmailResending,
 )
 
-authRouter.get('/me', countRequestsMiddleware, jwtAuthMiddleware, authController.me)
+authRouter.get('/me', jwtAuthMiddleware, authController.me)
 
-authRouter.post('/refresh-token', countRequestsMiddleware, authController.refreshToken)
+authRouter.post('/refresh-token', authController.refreshToken)
 
-authRouter.post('/logout', countRequestsMiddleware, authController.logout)
+authRouter.post('/logout', authController.logout)

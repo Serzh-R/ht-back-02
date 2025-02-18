@@ -34,11 +34,11 @@ export async function runDb(url: string): Promise<boolean> {
   requestsCollection = mongoDb.collection<AppealToApi>('requests')
 
   try {
-    console.log('before connect')
+    //console.log('before connect')
     await client.connect()
-    console.log(' client connected')
+    //console.log(' client connected')
     await mongoDb.command({ ping: 1 })
-    console.log('Connected to MongoDB')
+    //console.log('Connected to MongoDB')
     return true
   } catch (err) {
     console.log(err, 'error')
