@@ -78,12 +78,7 @@ export const authController = {
       })
       return
     }
-
-    res.cookie('deviceId', deviceId, {
-      httpOnly: true,
-      secure: true,
-      // sameSite: 'strict',
-    })
+    console.log(result, ' result')
 
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
