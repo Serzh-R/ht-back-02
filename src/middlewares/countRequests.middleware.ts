@@ -5,16 +5,16 @@ import { HTTP_STATUSES } from '../settings'
 export const countRequestsMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { IP } = req.query
-    const tenSecondsAgo = new Date(Date.now() - 10 * 1000) // 10 секунд назад
+    const tenSecondsAgo = new Date(Date.now() - 10 * 1000)
 
     const filter: any = {
-      date: { $gte: tenSecondsAgo }, // Дата больше или равна 10 секунд назад
+      date: { $gte: tenSecondsAgo },
     }
 
     if (IP) {
       filter.IP = String(IP)
     } else {
-      filter.IP = req.ip // Используем IP запроса, если IP не передан в query
+      filter.IP = req.ip
     }
 
     if (URL) {
@@ -33,6 +33,12 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
     }
 
     res.locals.count = count
+
+    await requestsCollection.insertOne({
+      IP: req.ip ?? '',
+      URL: req.originalUrl,
+      date: new Date(),
+    })
 
     next()
   } catch (error) {

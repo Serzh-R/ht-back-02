@@ -15,6 +15,7 @@ import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'
 import { MeType } from './types/types'
 import { randomUUID } from 'node:crypto'
+import { countRequestsMiddleware } from '../middlewares/countRequests.middleware'
 
 export const authRouter = Router()
 
@@ -190,7 +191,7 @@ export const authController = {
 
 authRouter.post(
   '/login',
-  //countRequestsMiddleware,
+  countRequestsMiddleware,
   loginOrEmailValidation,
   passwordValidation,
   errorsResultMiddleware,
@@ -199,7 +200,7 @@ authRouter.post(
 
 authRouter.post(
   '/registration',
-  //countRequestsMiddleware,
+  countRequestsMiddleware,
   loginValidation,
   passwordValidation,
   emailValidation,
