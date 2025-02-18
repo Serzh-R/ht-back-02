@@ -17,8 +17,6 @@ import { authRouter } from './auth/AuthRouter'
 import { commentsRouter } from './comments/CommentsRouter'
 import { devicesRouter } from './devices/DevicesRouter'
 import cookieParser from 'cookie-parser'
-import { recordRequest } from './middlewares/recordRequest.middleware'
-import { countRequestsMiddleware } from './middlewares/countRequests.middleware'
 
 export const app = express()
 app.use(cookieParser())
