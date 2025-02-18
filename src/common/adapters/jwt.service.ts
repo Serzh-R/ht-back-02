@@ -11,9 +11,9 @@ export const jwtService = {
     return jwt.sign({ userId, deviceId }, REFRESH_SECRET, { expiresIn: Number(REFRESH_TIME) })
   },
 
-  async getUserIdByAccessToken(token: string): Promise<ObjectId | null> {
+  async getUserIdByAccessToken(accessToken: string): Promise<ObjectId | null> {
     try {
-      const result = jwt.verify(token, ACCESS_SECRET) as { userId: string }
+      const result = jwt.verify(accessToken, ACCESS_SECRET) as { userId: string }
       return new ObjectId(result.userId)
     } catch (error) {
       console.error('AccessToken verify some error')
@@ -21,9 +21,9 @@ export const jwtService = {
     }
   },
 
-  async getUserIdByRefreshToken(token: string): Promise<ObjectId | null> {
+  async getUserIdByRefreshToken(refreshToken: string): Promise<ObjectId | null> {
     try {
-      const result = jwt.verify(token, REFRESH_SECRET) as { userId: string }
+      const result = jwt.verify(refreshToken, REFRESH_SECRET) as { userId: string }
       return new ObjectId(result.userId)
     } catch (error) {
       console.error('RefreshToken verify some error')
@@ -31,9 +31,9 @@ export const jwtService = {
     }
   },
 
-  async verifyAccessToken(token: string) {
+  async verifyAccessToken(accessToken: string) {
     try {
-      return jwt.verify(token, ACCESS_SECRET) as { userId: string }
+      return jwt.verify(accessToken, ACCESS_SECRET) as { userId: string }
     } catch {
       return null
     }
