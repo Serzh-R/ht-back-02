@@ -191,7 +191,7 @@ export const authController = {
 
 authRouter.post(
   '/login',
-  countRequestsMiddleware,
+  //countRequestsMiddleware,
   loginOrEmailValidation,
   passwordValidation,
   errorsResultMiddleware,
@@ -200,7 +200,7 @@ authRouter.post(
 
 authRouter.post(
   '/registration',
-  countRequestsMiddleware,
+  //countRequestsMiddleware,
   loginValidation,
   passwordValidation,
   emailValidation,
