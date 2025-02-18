@@ -4,6 +4,7 @@ import { devicesService } from './DevicesService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
 import { devicesQueryRepository } from './DevicesQueryRepository'
 import { jwtRefreshTokenMiddleware } from '../auth/middlewares/jwtRefreshToken.middleware'
+import { deviceSessionsCollection } from '../db/mongoDb'
 
 export const devicesRouter = Router()
 
@@ -48,9 +49,21 @@ export const devicesController = {
       return
     }
 
+    const device = await deviceSessionsCollection.findOne({ deviceId, userId })
+
+    if (!device) {
+      res.status(HTTP_STATUSES.FORBIDDEN_403).json({
+        errorsMessages: [
+          { field: 'authorization', message: 'You do not have permission to delete this device' },
+        ],
+      })
+      return
+    }
+
     const isDeleted = await devicesService.deleteDeviceById(userId, deviceId)
     if (!isDeleted) {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Device not found or access denied' })
+      /*res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Device not found or access denied' })*/
+      res.status(HTTP_STATUSES.FORBIDDEN_403).json({ message: 'Device not found or access denied' })
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
