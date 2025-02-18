@@ -20,7 +20,7 @@ export const devicesService = {
     return true
   },
 
-  async deleteDeviceById(userId: string, deviceId: string) {
+  async deleteDeviceById(userId: string, deviceId: string): Promise<boolean> {
     const result = await deviceSessionsCollection.deleteOne({
       userId,
       deviceId,
