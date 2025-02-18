@@ -49,10 +49,10 @@ export const devicesController = {
       return
     }
 
-    const device = await deviceSessionsCollection.findOne({ deviceId, userId })
+    const device = await devicesService.deviceByDeviceId(userId, deviceId)
 
     if (!device) {
-      res.status(HTTP_STATUSES.FORBIDDEN_403).json({
+      res.status(HTTP_STATUSES.NOT_FOUND_404).json({
         errorsMessages: [
           { field: 'authorization', message: 'You do not have permission to delete this device' },
         ],
