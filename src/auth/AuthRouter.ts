@@ -82,14 +82,14 @@ export const authController = {
     res.cookie('deviceId', deviceId, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      // sameSite: 'strict',
     })
 
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
       secure: true,
       maxAge: Number(REFRESH_TIME) * 1000,
-      sameSite: 'strict',
+      // sameSite: 'strict',
     })
 
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })

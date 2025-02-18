@@ -399,7 +399,7 @@ export const authService = {
     const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
     if (!isPassCorrect)
       return {
-        status: ResultStatus.BadRequest,
+        status: ResultStatus.Unauthorized,
         data: null,
         errorMessage: 'Bad Request',
         extensions: [{ field: 'password', message: 'Wrong password' }],
