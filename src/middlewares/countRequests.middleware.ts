@@ -17,6 +17,10 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
       filter.IP = req.ip // Используем IP запроса, если IP не передан в query
     }
 
+    if (URL) {
+      filter.URL = String(URL)
+    }
+
     const count = await requestsCollection.countDocuments(filter)
 
     if (count >= 5) {
@@ -30,20 +34,9 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
 
     res.locals.count = count
 
-    // Сохраняем запрос в базе данных (IP, URL, дата запроса)
-    /*await requestsCollection.insertOne({
-      IP: req.ip ?? '',
-      URL: req.originalUrl,
-      date: new Date(), // Сохраняем текущую дату
-    })*/
-
     next()
   } catch (error) {
     console.error('Error counting requests:', error)
     res.status(500).json({ error: 'Internal Server Error' })
   }
 }
-
-/*if (URL) {
-      filter.URL = String(URL)
-    }*/
