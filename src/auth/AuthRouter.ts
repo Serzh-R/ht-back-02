@@ -112,7 +112,7 @@ export const authController = {
       httpOnly: true,
       secure: true,
       maxAge: Number(REFRESH_TIME) * 1000,
-      sameSite: 'strict',
+      //sameSite: 'strict',
     })
 
     res.status(HTTP_STATUSES.OK_200).json({ accessToken: result.data!.accessToken })
