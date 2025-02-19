@@ -16,6 +16,7 @@ import { jwtService } from '../common/adapters/jwt.service'
 import { MeType } from './types/types'
 import { randomUUID } from 'node:crypto'
 import { countRequestsMiddleware } from '../middlewares/countRequests.middleware'
+import { jwtRefreshTokenMiddleware } from './middlewares/jwtRefreshToken.middleware'
 
 export const authRouter = Router()
 
@@ -216,6 +217,6 @@ authRouter.post(
 
 authRouter.get('/me', jwtAuthMiddleware, authController.me)
 
-authRouter.post('/refresh-token', authController.refreshToken)
+authRouter.post('/refresh-token', jwtRefreshTokenMiddleware, authController.refreshToken)
 
-authRouter.post('/logout', authController.logout)
+authRouter.post('/logout', jwtRefreshTokenMiddleware, authController.logout)
