@@ -256,7 +256,7 @@ export const authService = {
     //}
 
     const decoded = jwtService.verifyRefreshToken(oldRefreshToken)
-    if (!decoded) {
+    if (!decoded || !decoded.exp) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid refresh token',
@@ -266,8 +266,8 @@ export const authService = {
     }
 
     // Проверка expirationDate токена
-    const currentTime = Date.now()
-    if (decoded.expirationDate < currentTime) {
+    const currentTime = Date.now() / 1000
+    if (decoded.exp < currentTime) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Refresh token has expired',
