@@ -10,6 +10,7 @@ import { emailManager } from '../email/EmailManager'
 import { blacklistRepository } from './BlacklistRepository'
 import { REFRESH_TIME } from '../settings'
 import { deviceSessionsCollection } from '../db/mongoDb'
+import { isTokenExpired } from './middlewares/isTokenExpired.middleware'
 
 export const authService = {
   async registerUser(
@@ -265,7 +266,6 @@ export const authService = {
       }
     }
 
-    // Проверка expirationDate токена
     const currentTime = Date.now() / 1000
     if (decoded.exp < currentTime) {
       return {
@@ -343,7 +343,7 @@ export const authService = {
       }
     }
 
-    const isBlacklisted = await blacklistRepository.isTokenBlacklisted(refreshToken)
+    /* const isBlacklisted = await blacklistRepository.isTokenBlacklisted(refreshToken)
     if (isBlacklisted) {
       return {
         status: ResultStatus.Unauthorized,
@@ -351,16 +351,26 @@ export const authService = {
         data: null,
         extensions: [{ field: 'refreshToken', message: 'Refresh token already used' }],
       }
-    }
+    }*/
 
     // Проверяем, есть ли токен в базе (если используем хранение в `usersRepository`)
-    const decoded = await jwtService.verifyRefreshToken(refreshToken)
-    if (!decoded) {
+    const decoded = jwtService.verifyRefreshToken(refreshToken)
+    if (!decoded || !decoded.exp) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid refresh token',
         data: null,
         extensions: [{ field: 'refreshToken', message: 'Refresh token is invalid' }],
+      }
+    }
+
+    const currentTime = Date.now() / 1000
+    if (isTokenExpired(decoded.exp, currentTime)) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Refresh token has expired',
+        data: null,
+        extensions: [{ field: 'expirationDate', message: 'Token has expired' }],
       }
     }
 
@@ -374,7 +384,7 @@ export const authService = {
       }
     }
 
-    await blacklistRepository.addTokenToBlacklist(refreshToken)
+    //await blacklistRepository.addTokenToBlacklist(refreshToken)
 
     // Удаляем refresh-токен из базы (если храним его у пользователя)
     await usersRepository.updateRefreshToken(user._id.toString(), null)
