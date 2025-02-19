@@ -353,7 +353,6 @@ export const authService = {
       }
     }*/
 
-    // Проверяем, есть ли токен в базе (если используем хранение в `usersRepository`)
     const decoded = jwtService.verifyRefreshToken(refreshToken)
     if (!decoded || !decoded.exp) {
       return {
