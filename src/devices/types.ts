@@ -4,8 +4,8 @@ export type DeviceSessionDBType = {
   _id?: ObjectId
   ip: string
   title: string
-  lastActiveDate: Date
-  expirationDate: Date
+  lastActiveDate: number
+  expirationDate: number
   deviceId: string
   userId: string
 }

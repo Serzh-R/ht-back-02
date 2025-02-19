@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb'
 export interface RefreshTokenPayload extends JwtPayload {
   userId: string
   deviceId: string
-  lastActiveDate: Date
+  lastActiveDate: number
 }
 
 export const jwtService = {
@@ -16,7 +16,7 @@ export const jwtService = {
   async createRefreshToken(
     userId: string,
     deviceId: string,
-    lastActiveDate: Date,
+    lastActiveDate: number,
   ): Promise<string> {
     return jwt.sign({ userId, deviceId, lastActiveDate } as RefreshTokenPayload, REFRESH_SECRET, {
       expiresIn: Number(REFRESH_TIME),

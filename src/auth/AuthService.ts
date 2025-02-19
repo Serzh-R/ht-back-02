@@ -214,14 +214,14 @@ export const authService = {
       }
     }
 
-    const lastActiveDateStamp = Date.now()
-    const expirationDate = new Date(lastActiveDateStamp + Number(REFRESH_TIME) * 1000)
+    const lastActiveDate = Date.now()
+    const expirationDate = lastActiveDate + Number(REFRESH_TIME) * 1000
 
     const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
     const refreshToken = await jwtService.createRefreshToken(
       result.data!._id.toString(),
       deviceId,
-      new Date(lastActiveDateStamp),
+      lastActiveDate,
     )
 
     const title = userAgent || 'Unknown Device'
@@ -229,7 +229,7 @@ export const authService = {
     await deviceSessionsCollection.insertOne({
       ip,
       title,
-      lastActiveDate: new Date(lastActiveDateStamp),
+      lastActiveDate,
       expirationDate,
       deviceId,
       userId: result.data!._id.toString(),
@@ -289,7 +289,7 @@ export const authService = {
       }
     }
 
-    if (session.lastActiveDate.getTime() !== decoded.lastActiveDate.getTime()) {
+    if (session.lastActiveDate !== decoded.lastActiveDate) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid last active date',
@@ -298,17 +298,17 @@ export const authService = {
       }
     }
     const newLastActiveDate = Date.now()
-    const newExpirationDate = new Date(newLastActiveDate + Number(REFRESH_TIME) * 1000)
+    const newExpirationDate = newLastActiveDate + Number(REFRESH_TIME) * 1000
     await deviceSessionsCollection.updateOne(
       { deviceId: decoded.deviceId },
-      { $set: { lastActiveDate: new Date(newLastActiveDate), expirationDate: newExpirationDate } },
+      { $set: { lastActiveDate: newLastActiveDate, expirationDate: newExpirationDate } },
     )
 
     const newAccessToken = await jwtService.createAccessToken(decoded.userId)
     const newRefreshToken = await jwtService.createRefreshToken(
       decoded.userId,
       decoded.deviceId,
-      new Date(newLastActiveDate),
+      newLastActiveDate,
     )
 
     //  await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
