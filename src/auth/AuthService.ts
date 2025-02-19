@@ -214,15 +214,22 @@ export const authService = {
       }
     }
 
+    const lastActiveDateStamp = Date.now()
+    const expirationDate = new Date(lastActiveDateStamp + Number(REFRESH_TIME) * 1000)
+
     const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
-    const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(), deviceId)
-    const expirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)
+    const refreshToken = await jwtService.createRefreshToken(
+      result.data!._id.toString(),
+      deviceId,
+      new Date(lastActiveDateStamp),
+    )
+
     const title = userAgent || 'Unknown Device'
 
     await deviceSessionsCollection.insertOne({
       ip,
       title,
-      lastActiveDate: new Date(),
+      lastActiveDate: new Date(lastActiveDateStamp),
       expirationDate,
       deviceId,
       userId: result.data!._id.toString(),
@@ -238,17 +245,17 @@ export const authService = {
   async refreshToken(
     oldRefreshToken: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
-    const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
-    if (isBlacklisted) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Invalid refresh token (blacklisted)',
-        data: null,
-        extensions: [{ field: null, message: 'Refresh token is blacklisted' }],
-      }
-    }
+    // const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
+    // if (isBlacklisted) {
+    //   return {
+    //     status: ResultStatus.Unauthorized,
+    //     errorMessage: 'Invalid refresh token (blacklisted)',
+    //     data: null,
+    //     extensions: [{ field: null, message: 'Refresh token is blacklisted' }],
+    //   }
+    //}
 
-    const decoded = await jwtService.verifyRefreshToken(oldRefreshToken)
+    const decoded = jwtService.verifyRefreshToken(oldRefreshToken)
     if (!decoded) {
       return {
         status: ResultStatus.Unauthorized,
@@ -290,17 +297,21 @@ export const authService = {
         extensions: [{ field: 'lastActiveDate', message: 'Last active date mismatch' }],
       }
     }
-
-    const newExpirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)
+    const newLastActiveDate = Date.now()
+    const newExpirationDate = new Date(newLastActiveDate + Number(REFRESH_TIME) * 1000)
     await deviceSessionsCollection.updateOne(
       { deviceId: decoded.deviceId },
-      { $set: { lastActiveDate: new Date(), expirationDate: newExpirationDate } },
+      { $set: { lastActiveDate: new Date(newLastActiveDate), expirationDate: newExpirationDate } },
     )
 
     const newAccessToken = await jwtService.createAccessToken(decoded.userId)
-    const newRefreshToken = await jwtService.createRefreshToken(decoded.userId, decoded.deviceId)
+    const newRefreshToken = await jwtService.createRefreshToken(
+      decoded.userId,
+      decoded.deviceId,
+      new Date(newLastActiveDate),
+    )
 
-    await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
+    //  await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
 
     await usersRepository.updateRefreshToken(decoded.userId, newRefreshToken)
 
