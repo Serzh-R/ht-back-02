@@ -248,7 +248,6 @@ export const authService = {
       }
     }
 
-    // Проверяем refresh-токен
     const decoded = await jwtService.verifyRefreshToken(oldRefreshToken)
     if (!decoded) {
       return {
@@ -258,16 +257,6 @@ export const authService = {
         extensions: [{ field: null, message: 'Invalid refresh token' }],
       }
     }
-/*
-        // Проверяем, что deviceId, переданный в запросе, совпадает с тем, что есть в decoded
-    if (decoded.deviceId !== deviceId) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Device mismatch',
-        data: null,
-        extensions: [{ field: 'deviceId', message: 'Device mismatch' }],
-      }
-    }*/
 
     const user = await usersRepository.findById(decoded.userId)
     if (!user) {
@@ -279,7 +268,6 @@ export const authService = {
       }
     }
 
-    // Находим сессию по deviceId
     const session = await deviceSessionsCollection.findOne({
       deviceId: decoded.deviceId,
       userId: decoded.userId,
@@ -309,15 +297,12 @@ export const authService = {
       { $set: { lastActiveDate: new Date(), expirationDate: newExpirationDate } },
     )
 
-    const newAccessToken = await jwtService.createAccessToken(decoded.userId.toString())
-    const newRefreshToken = await jwtService.createRefreshToken(
-      decoded.userId.toString(),
-      decoded.deviceId,
-    )
+    const newAccessToken = await jwtService.createAccessToken(decoded.userId)
+    const newRefreshToken = await jwtService.createRefreshToken(decoded.userId, decoded.deviceId)
 
     await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
 
-    await usersRepository.updateRefreshToken(decoded.userId.toString(), newRefreshToken)
+    await usersRepository.updateRefreshToken(decoded.userId, newRefreshToken)
 
     return {
       status: ResultStatus.Success,
@@ -336,7 +321,6 @@ export const authService = {
       }
     }
 
-    // Проверяем, есть ли токен в чёрном списке
     const isBlacklisted = await blacklistRepository.isTokenBlacklisted(refreshToken)
     if (isBlacklisted) {
       return {

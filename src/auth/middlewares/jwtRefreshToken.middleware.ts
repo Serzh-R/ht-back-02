@@ -28,7 +28,7 @@ export const jwtRefreshTokenMiddleware = async (
       return
     }
 
-    req.userId = decoded.userId.toString()
+    req.userId = decoded.userId
 
     next()
   } catch (error) {

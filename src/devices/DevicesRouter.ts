@@ -4,7 +4,6 @@ import { devicesService } from './DevicesService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
 import { devicesQueryRepository } from './DevicesQueryRepository'
 import { jwtRefreshTokenMiddleware } from '../auth/middlewares/jwtRefreshToken.middleware'
-import { deviceSessionsCollection } from '../db/mongoDb'
 
 export const devicesRouter = Router()
 
@@ -40,7 +39,7 @@ export const devicesController = {
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 
-  async deleteDeviceById(req: Request, res: Response) {
+  async deleteDeviceBySessionId(req: Request, res: Response) {
     const userId = req.userId
     const { deviceId } = req.params
 
@@ -49,24 +48,26 @@ export const devicesController = {
       return
     }
 
-    /*const device = await devicesService.deviceByDeviceId(userId, deviceId)*/
-
-    const device = await deviceSessionsCollection.findOne({ userId, deviceId })
+    const device = await devicesService.deviceBySessionId(deviceId)
 
     if (!device) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json({
+        errorsMessages: [{ field: 'device', message: 'Device not found' }],
+      })
+      return
+    }
+
+    if (device.data?.userId !== userId) {
+      res.status(HTTP_STATUSES.FORBIDDEN_403).json({
         errorsMessages: [
-          { field: 'device', message: 'Device not found' },
+          { field: 'authorization', message: 'You do not have permission to delete this device' },
         ],
       })
       return
     }
 
-    const isDeleted = await devicesService.deleteDeviceById(userId, deviceId)
-    if (!isDeleted) {
-      res.status(HTTP_STATUSES.FORBIDDEN_403).json({ message: 'Device not found or access denied' })
-      return
-    }
+    await devicesService.deleteDeviceById(deviceId)
+
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   },
 }
@@ -83,5 +84,5 @@ devicesRouter.delete(
   '/:id',
   jwtRefreshTokenMiddleware,
   idParamValidator,
-  devicesController.deleteDeviceById,
+  devicesController.deleteDeviceBySessionId,
 )

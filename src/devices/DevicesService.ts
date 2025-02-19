@@ -1,7 +1,6 @@
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { DeviceSessionDBType, DeviceSessionType } from './types'
-import { HTTP_STATUSES } from '../settings'
+import { DeviceSessionDBType } from './types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 
@@ -24,8 +23,8 @@ export const devicesService = {
     return true
   },
 
-  async deviceByDeviceId(userId: string, deviceId: string): Promise<Result<DeviceSessionDBType>> {
-    const device = await deviceSessionsCollection.findOne({ userId, deviceId })
+  async deviceBySessionId(deviceId: string): Promise<Result<DeviceSessionDBType>> {
+    const device = await deviceSessionsCollection.findOne({ deviceId })
 
     if (!device) {
       return {
@@ -43,11 +42,8 @@ export const devicesService = {
     }
   },
 
-  async deleteDeviceById(userId: string, deviceId: string): Promise<boolean> {
-    const result = await deviceSessionsCollection.deleteOne({
-      userId,
-      deviceId,
-    })
+  async deleteDeviceById(deviceId: string): Promise<boolean> {
+    const result = await deviceSessionsCollection.deleteOne({ deviceId })
     return result.deletedCount > 0
   },
 }

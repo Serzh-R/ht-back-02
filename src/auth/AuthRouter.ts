@@ -98,8 +98,6 @@ export const authController = {
       return
     }
 
-    /*const deviceId = req.cookies.deviceId*/
-
     const result = await authService.refreshToken(refreshToken)
 
     if (result.status !== ResultStatus.Success) {
@@ -110,7 +108,6 @@ export const authController = {
       return
     }
 
-    // Устанавливаем новый refresh-токен в httpOnly cookie
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
       secure: true,
