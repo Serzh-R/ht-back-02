@@ -98,9 +98,9 @@ export const authController = {
       return
     }
 
-    const deviceId = req.cookies.deviceId
+    /*const deviceId = req.cookies.deviceId*/
 
-    const result = await authService.refreshToken(refreshToken, deviceId)
+    const result = await authService.refreshToken(refreshToken)
 
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
@@ -114,7 +114,7 @@ export const authController = {
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,
       secure: true,
-      maxAge: 20 * 1000,
+      maxAge: Number(REFRESH_TIME) * 1000,
       sameSite: 'strict',
     })
 

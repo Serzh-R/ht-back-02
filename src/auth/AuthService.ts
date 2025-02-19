@@ -237,7 +237,6 @@ export const authService = {
 
   async refreshToken(
     oldRefreshToken: string,
-    deviceId: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
     if (isBlacklisted) {
@@ -259,8 +258,8 @@ export const authService = {
         extensions: [{ field: null, message: 'Invalid refresh token' }],
       }
     }
-
-    // Проверяем, что deviceId, переданный в запросе, совпадает с тем, что есть в decoded
+/*
+        // Проверяем, что deviceId, переданный в запросе, совпадает с тем, что есть в decoded
     if (decoded.deviceId !== deviceId) {
       return {
         status: ResultStatus.Unauthorized,
@@ -268,7 +267,7 @@ export const authService = {
         data: null,
         extensions: [{ field: 'deviceId', message: 'Device mismatch' }],
       }
-    }
+    }*/
 
     const user = await usersRepository.findById(decoded.userId)
     if (!user) {
@@ -282,8 +281,8 @@ export const authService = {
 
     // Находим сессию по deviceId
     const session = await deviceSessionsCollection.findOne({
-      deviceId: decoded.deviceId, // Проверяем совпадение deviceId из refreshToken
-      userId: decoded.userId, // Проверяем совпадение userId
+      deviceId: decoded.deviceId,
+      userId: decoded.userId,
     })
 
     if (!session) {
@@ -295,7 +294,6 @@ export const authService = {
       }
     }
 
-    // Проверяем, что переданная lastActiveDate соответствует записи в базе данных
     if (session.lastActiveDate.getTime() !== decoded.lastActiveDate.getTime()) {
       return {
         status: ResultStatus.Unauthorized,
@@ -305,7 +303,6 @@ export const authService = {
       }
     }
 
-    // Обновляем lastActiveDate в sessionCollection
     const newExpirationDate = new Date(Date.now() + Number(REFRESH_TIME) * 1000)
     await deviceSessionsCollection.updateOne(
       { deviceId: decoded.deviceId },
