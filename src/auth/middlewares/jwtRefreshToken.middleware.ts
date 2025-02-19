@@ -19,7 +19,7 @@ export const jwtRefreshTokenMiddleware = async (
       return
     }
 
-    const decoded = await jwtService.verifyRefreshToken(refreshToken)
+    const decoded = jwtService.verifyRefreshToken(refreshToken)
 
     if (!decoded) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).send({

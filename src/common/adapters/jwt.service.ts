@@ -1,6 +1,11 @@
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { ACCESS_SECRET, REFRESH_SECRET, ACCESS_TIME, REFRESH_TIME } from '../../settings'
 import { ObjectId } from 'mongodb'
+
+export interface RefreshTokenPayload extends JwtPayload {
+  userId: string
+  deviceId: string
+}
 
 export const jwtService = {
   async createAccessToken(userId: string): Promise<string> {
@@ -8,7 +13,9 @@ export const jwtService = {
   },
 
   async createRefreshToken(userId: string, deviceId: string): Promise<string> {
-    return jwt.sign({ userId, deviceId }, REFRESH_SECRET, { expiresIn: Number(REFRESH_TIME) })
+    return jwt.sign({ userId, deviceId } as RefreshTokenPayload, REFRESH_SECRET, {
+      expiresIn: Number(REFRESH_TIME),
+    })
   },
 
   async getUserIdByAccessToken(accessToken: string): Promise<ObjectId | null> {
@@ -39,13 +46,9 @@ export const jwtService = {
     }
   },
 
-  async verifyRefreshToken(refreshToken: string) {
+  verifyRefreshToken(refreshToken: string): RefreshTokenPayload | null {
     try {
-      return jwt.verify(refreshToken, REFRESH_SECRET) as {
-        userId: string
-        deviceId: string
-        lastActiveDate: Date
-      }
+      return jwt.verify(refreshToken, REFRESH_SECRET) as RefreshTokenPayload | null
     } catch {
       return null
     }

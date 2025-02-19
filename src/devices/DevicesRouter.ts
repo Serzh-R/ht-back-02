@@ -50,7 +50,7 @@ export const devicesController = {
 
     const device = await devicesService.deviceBySessionId(deviceId)
 
-    if (!device) {
+    if (!device.data) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json({
         errorsMessages: [{ field: 'device', message: 'Device not found' }],
       })
@@ -66,9 +66,14 @@ export const devicesController = {
       return
     }
 
-    await devicesService.deleteDeviceById(deviceId)
+    const deviceDeletionResult = await devicesService.deleteDeviceById(deviceId)
 
-    res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+    if (!deviceDeletionResult) {
+      res.sendStatus(500)
+      return
+    }
+
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   },
 }
 
@@ -81,7 +86,7 @@ devicesRouter.delete(
 )
 
 devicesRouter.delete(
-  '/:id',
+  '/:deviceId',
   jwtRefreshTokenMiddleware,
   idParamValidator,
   devicesController.deleteDeviceBySessionId,
