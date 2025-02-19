@@ -49,12 +49,14 @@ export const devicesController = {
       return
     }
 
-    const device = await devicesService.deviceByDeviceId(userId, deviceId)
+    /*const device = await devicesService.deviceByDeviceId(userId, deviceId)*/
+
+    const device = await deviceSessionsCollection.findOne({ userId, deviceId })
 
     if (!device) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json({
         errorsMessages: [
-          { field: 'authorization', message: 'You do not have permission to delete this device' },
+          { field: 'device', message: 'Device not found' },
         ],
       })
       return
@@ -62,7 +64,7 @@ export const devicesController = {
 
     const isDeleted = await devicesService.deleteDeviceById(userId, deviceId)
     if (!isDeleted) {
-      res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Device not found or access denied' })
+      res.status(HTTP_STATUSES.FORBIDDEN_403).json({ message: 'Device not found or access denied' })
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
