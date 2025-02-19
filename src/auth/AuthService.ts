@@ -265,6 +265,17 @@ export const authService = {
       }
     }
 
+    // Проверка expirationDate токена
+    const currentTime = Date.now()
+    if (decoded.expirationDate < currentTime) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Refresh token has expired',
+        data: null,
+        extensions: [{ field: 'expirationDate', message: 'Token has expired' }],
+      }
+    }
+
     const user = await usersRepository.findById(decoded.userId)
     if (!user) {
       return {
@@ -311,7 +322,7 @@ export const authService = {
       newLastActiveDate,
     )
 
-    //  await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
+    //await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
 
     await usersRepository.updateRefreshToken(decoded.userId, newRefreshToken)
 
