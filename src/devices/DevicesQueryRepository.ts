@@ -1,7 +1,7 @@
 import { DeviceSessionDBType, DeviceSessionType } from './types'
 import { deviceSessionsCollection } from '../db/mongoDb'
 
-export const devicesQueryRepository = {
+export const devicesQueryRepo = {
   async getDevicesByUserId(userId: string): Promise<DeviceSessionType[]> {
     const devices = await deviceSessionsCollection.find({ userId }).toArray()
 

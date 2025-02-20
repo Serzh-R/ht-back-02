@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
 import { devicesService } from './DevicesService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
-import { devicesQueryRepository } from './DevicesQueryRepository'
+import { devicesQueryRepo } from './DevicesQueryRepository'
 import { jwtRefreshTokenMiddleware } from '../auth/middlewares/jwtRefreshToken.middleware'
 
 export const devicesRouter = Router()
@@ -16,7 +16,7 @@ export const devicesController = {
       return
     }
 
-    const devices = await devicesQueryRepository.getDevicesByUserId(userId)
+    const devices = await devicesQueryRepo.getDevicesByUserId(userId)
     res.status(HTTP_STATUSES.OK_200).json(devices)
   },
 
@@ -69,7 +69,7 @@ export const devicesController = {
     const deviceDeletionResult = await devicesService.deleteDeviceById(deviceId)
 
     if (!deviceDeletionResult) {
-      res.sendStatus(500)
+      res.sendStatus(HTTP_STATUSES.SERVER_ERROR_500)
       return
     }
 
