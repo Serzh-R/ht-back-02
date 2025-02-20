@@ -9,14 +9,14 @@ import {
   passwordValidation,
 } from '../users/middlewares/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
-import { jwtAuthMiddleware } from './middlewares/jwt.auth.middleware'
+import { jwtAccessAuthMiddleware } from './middlewares/jwt.access.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'
 import { MeType } from './types/types'
 import { randomUUID } from 'node:crypto'
 import { countRequestsMiddleware } from '../middlewares/countRequests.middleware'
-import { jwtRefreshTokenMiddleware } from './middlewares/jwtRefreshToken.middleware'
+import { jwtRefreshAuthMiddleware } from './middlewares/jwt.refresh.auth.middleware'
 
 export const authRouter = Router()
 
@@ -101,11 +101,11 @@ export const authController = {
 
     const payload = jwtService.verifyRefreshToken(refreshToken)
     if (!payload) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({error: 'Invalid authorization method'})
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ error: 'Invalid authorization method' })
       return
     }
 
-    const {userId, deviceId, iat} = payload
+    const { userId, deviceId, iat } = payload
 
     const result = await authService.refreshToken(refreshToken)
 
@@ -225,8 +225,8 @@ authRouter.post(
   authController.registerEmailResending,
 )
 
-authRouter.get('/me', jwtAuthMiddleware, authController.me)
+authRouter.get('/me', jwtAccessAuthMiddleware, authController.me)
 
-authRouter.post('/refresh-token', jwtRefreshTokenMiddleware, authController.refreshToken)
+authRouter.post('/refresh-token', jwtRefreshAuthMiddleware, authController.refreshToken)
 
-authRouter.post('/logout', jwtRefreshTokenMiddleware, authController.logout)
+authRouter.post('/logout', jwtRefreshAuthMiddleware, authController.logout)

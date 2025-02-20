@@ -3,7 +3,7 @@ import { HTTP_STATUSES } from '../settings'
 import { devicesService } from './DevicesService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
 import { devicesQueryRepo } from './DevicesQueryRepository'
-import { jwtRefreshTokenMiddleware } from '../auth/middlewares/jwtRefreshToken.middleware'
+import { jwtRefreshAuthMiddleware } from '../auth/middlewares/jwt.refresh.auth.middleware'
 
 export const devicesRouter = Router()
 
@@ -77,17 +77,17 @@ export const devicesController = {
   },
 }
 
-devicesRouter.get('/', jwtRefreshTokenMiddleware, devicesController.getDevicesByUserId)
+devicesRouter.get('/', jwtRefreshAuthMiddleware, devicesController.getDevicesByUserId)
 
 devicesRouter.delete(
   '/',
-  jwtRefreshTokenMiddleware,
+  jwtRefreshAuthMiddleware,
   devicesController.deleteDevicesByUserIdExceptCurrent,
 )
 
 devicesRouter.delete(
   '/:deviceId',
-  jwtRefreshTokenMiddleware,
+  jwtRefreshAuthMiddleware,
   idParamValidator,
   devicesController.deleteDeviceBySessionId,
 )

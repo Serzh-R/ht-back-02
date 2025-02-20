@@ -7,7 +7,7 @@ import {
   idParamValidator,
 } from '../validation/express-validator/field.validators'
 import { commentsService } from './CommentsService'
-import { jwtAuthMiddleware } from '../auth/middlewares/jwt.auth.middleware'
+import { jwtAccessAuthMiddleware } from '../auth/middlewares/jwt.access.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
 import { checkCommentOwnership } from '../auth/middlewares/checkCommentOwnership'
 
@@ -70,7 +70,7 @@ commentsRouter.get('/:id', idParamValidator, commentsController.getCommentById)
 
 commentsRouter.put(
   '/:id',
-  jwtAuthMiddleware,
+  jwtAccessAuthMiddleware,
   checkCommentOwnership,
   idParamValidator,
   commentContentValidator,
@@ -80,7 +80,7 @@ commentsRouter.put(
 
 commentsRouter.delete(
   '/:id',
-  jwtAuthMiddleware,
+  jwtAccessAuthMiddleware,
   checkCommentOwnership,
   idParamValidator,
   commentsController.deleteCommentById,
