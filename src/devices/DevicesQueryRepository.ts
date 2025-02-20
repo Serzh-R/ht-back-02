@@ -9,7 +9,7 @@ export const devicesQueryRepo = {
       (device: DeviceSessionDBType): DeviceSessionType => ({
         ip: device.ip,
         title: device.title,
-        lastActiveDate: device.lastActiveDate.toString(),
+        lastActiveDate: new Date(device.lastActiveDate).toISOString(),
         deviceId: device.deviceId,
       }),
     )

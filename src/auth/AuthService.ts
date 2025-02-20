@@ -214,9 +214,6 @@ export const authService = {
       }
     }
 
-    //const lastActiveDate = Date.now()
-    //const expirationDate = lastActiveDate + Number(REFRESH_TIME) * 1000
-
     const title = userAgent || 'Unknown Device'
 
     const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
@@ -308,7 +305,16 @@ export const authService = {
       }
     }
 
-    if (session.lastActiveDate !== decoded.iat) {
+    if (!decoded.iat) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Invalid token: iat is missing',
+        data: null,
+        extensions: [{ field: 'lastActiveDate', message: 'iat is missing in token' }],
+      }
+    }
+
+    if (session.lastActiveDate !== decoded.iat * 1000) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid last active date',
@@ -323,7 +329,12 @@ export const authService = {
 
     await deviceSessionsCollection.updateOne(
       { deviceId: decoded.deviceId },
-      { $set: { lastActiveDate: newLastActiveDate, expirationDate: newExpirationDate } },
+      {
+        $set: {
+          lastActiveDate: newLastActiveDate * 1000,
+          expirationDate: newExpirationDate * 1000,
+        },
+      },
     )
 
     const newAccessToken = await jwtService.createAccessToken(decoded.userId)
