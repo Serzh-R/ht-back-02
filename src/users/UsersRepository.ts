@@ -48,10 +48,10 @@ export const usersRepository = {
   async updateRefreshToken(userId: string, newRefreshToken: string | null): Promise<boolean> {
     const result = await usersCollection.updateOne(
       { _id: new ObjectId(userId) },
-      { $set: { refreshToken: newRefreshToken } }
-    );
+      { $set: { refreshToken: newRefreshToken } },
+    )
 
-    return result.modifiedCount > 0; // Если обновлён хотя бы 1 документ → true
+    return result.modifiedCount > 0
   },
 
   async deleteUser(id: string): Promise<boolean> {
