@@ -14,7 +14,7 @@ import { errorsResultMiddleware } from '../validation/express-validator/errors.r
 import { paginationQueries } from '../common/helpers/paginations.values'
 import { postsService } from './PostsService'
 import { postsQueryRepository } from './PostsQueryRepository'
-import { jwtAuthMiddleware } from '../auth/middlewares/jwt.auth.middleware'
+import { jwtAccessAuthMiddleware } from '../auth/middlewares/jwt.access.auth.middleware'
 import { commentsService } from '../comments/CommentsService'
 import { ResultStatus } from '../common/result/resultCode'
 import { commentsQueryRepository } from '../comments/CommentsQueryRepository'
@@ -141,7 +141,7 @@ postRouter.post(
 
 postRouter.post(
   '/:postId/comments',
-  jwtAuthMiddleware,
+  jwtAccessAuthMiddleware,
   postIdValidator,
   commentContentValidator,
   errorsResultMiddleware,

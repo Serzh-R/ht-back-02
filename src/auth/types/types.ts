@@ -27,18 +27,6 @@ export type EmailConfirmationType = {
   isConfirmed: boolean
 }
 
-/*export type UserAccountDBType = WithId<{
-  accountData: UserAccountType
-  emailConfirmation: EmailConfirmationType
-}>
-
-export type UserAccountType = {
-  email: string
-  login: string
-  passwordHash: string
-  createdAt: Date
-}*/
-
 export type PaginatorUserType = {
   pagesCount: number
   page: number

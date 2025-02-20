@@ -2,14 +2,14 @@ import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { bcryptService } from '../common/adapters/bcrypt.service'
 import { usersRepository } from '../users/UsersRepository'
-import { jwtService } from '../common/adapters/jwt.service'
+import { jwtService, RefreshTokenPayload } from '../common/adapters/jwt.service'
 import { UserDBType, UserRegInsertDBType } from './types/types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
-import { REFRESH_TIME } from '../settings'
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { isTokenExpired } from './middlewares/isTokenExpired.middleware'
+import { REFRESH_TIME } from '../settings'
 
 export const authService = {
   async registerUser(
@@ -214,17 +214,26 @@ export const authService = {
       }
     }
 
-    const lastActiveDate = Date.now()
-    const expirationDate = lastActiveDate + Number(REFRESH_TIME) * 1000
-
-    const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
-    const refreshToken = await jwtService.createRefreshToken(
-      result.data!._id.toString(),
-      deviceId,
-      lastActiveDate,
-    )
+    //const lastActiveDate = Date.now()
+    //const expirationDate = lastActiveDate + Number(REFRESH_TIME) * 1000
 
     const title = userAgent || 'Unknown Device'
+
+    const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
+    const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(), deviceId)
+
+    // ✅ Получаем iat и exp из refreshToken
+    const decodedRefreshToken = (await jwtService.decodeToken(
+      refreshToken,
+    )) as unknown as RefreshTokenPayload
+
+    // ✅ Проверяем структуру данных
+    if (!decodedRefreshToken || !decodedRefreshToken.iat || !decodedRefreshToken.exp) {
+      throw new Error('Invalid refresh token structure')
+    }
+
+    const lastActiveDate = decodedRefreshToken.iat! * 1000
+    const expirationDate = decodedRefreshToken.exp! * 1000
 
     await deviceSessionsCollection.insertOne({
       ip,
@@ -299,7 +308,7 @@ export const authService = {
       }
     }
 
-    if (session.lastActiveDate !== decoded.lastActiveDate) {
+    if (session.lastActiveDate !== decoded.iat) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid last active date',
@@ -307,19 +316,18 @@ export const authService = {
         extensions: [{ field: 'lastActiveDate', message: 'Last active date mismatch' }],
       }
     }
-    const newLastActiveDate = Date.now()
-    const newExpirationDate = newLastActiveDate + Number(REFRESH_TIME) * 1000
+
+    // ✅ Используем текущее время вместо старого iat
+    const newLastActiveDate = Math.floor(Date.now() / 1000)
+    const newExpirationDate = newLastActiveDate + Number(REFRESH_TIME)
+
     await deviceSessionsCollection.updateOne(
       { deviceId: decoded.deviceId },
       { $set: { lastActiveDate: newLastActiveDate, expirationDate: newExpirationDate } },
     )
 
     const newAccessToken = await jwtService.createAccessToken(decoded.userId)
-    const newRefreshToken = await jwtService.createRefreshToken(
-      decoded.userId,
-      decoded.deviceId,
-      newLastActiveDate,
-    )
+    const newRefreshToken = await jwtService.createRefreshToken(decoded.userId, decoded.deviceId)
 
     //await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
 

@@ -44,8 +44,8 @@ export const BCRYPT_SALT = 5
 
 export const REQUEST_LIMIT = 5 // Максимальное количество запросов за 10 секунд
 
-export const ACCESS_TIME = process.env.JWT_ACCESS_TIME || '10'
+export const ACCESS_TIME = process.env.JWT_ACCESS_TIME || '20'
 export const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'your_secret_key'
 
-export const REFRESH_TIME = process.env.JWT_REFRESH_TIME || '20'
+export const REFRESH_TIME = process.env.JWT_REFRESH_TIME || '60'
 export const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your_secret_key'
