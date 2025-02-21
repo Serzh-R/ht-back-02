@@ -338,16 +338,6 @@ export const authService = {
       }
     }
 
-    /* const isBlacklisted = await blacklistRepository.isTokenBlacklisted(refreshToken)
-    if (isBlacklisted) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Refresh token is invalid (blacklisted)',
-        data: null,
-        extensions: [{ field: 'refreshToken', message: 'Refresh token already used' }],
-      }
-    }*/
-
     const decoded = jwtService.verifyRefreshToken(refreshToken)
     if (!decoded || !decoded.exp) {
       return {
@@ -377,11 +367,6 @@ export const authService = {
         extensions: [{ field: 'userId', message: 'User not found' }],
       }
     }
-
-    //await blacklistRepository.addTokenToBlacklist(refreshToken)
-
-    // Удаляем refresh-токен из базы (если храним его у пользователя)
-    await usersRepository.updateRefreshToken(user._id.toString(), null)
 
     return {
       status: ResultStatus.Success,
