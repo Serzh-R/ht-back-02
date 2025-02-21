@@ -10,6 +10,7 @@ import { emailManager } from '../email/EmailManager'
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { isTokenExpired } from './middlewares/isTokenExpired.middleware'
 import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
+import { REFRESH_TIME } from '../settings'
 
 export const authService = {
   async registerUser(
@@ -252,7 +253,7 @@ export const authService = {
     oldRefreshToken: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     const decoded = jwtService.verifyRefreshToken(oldRefreshToken)
-    if (!decoded || !decoded.exp) {
+    if (!decoded || !decoded.exp || !decoded.iat) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid refresh token',
@@ -271,20 +272,10 @@ export const authService = {
       }
     }
 
-    const user = await usersRepository.findById(decoded.userId)
-    if (!user) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'User not found',
-        data: null,
-        extensions: [{ field: 'userId', message: 'User not found' }],
-      }
-    }
-
-    const session = await deviceSessionsCollection.findOne({
-      deviceId: decoded.deviceId,
-      userId: decoded.userId,
-    })
+    const session = await deviceSessionsRepository.findSessionByDeviceIdAndUserId(
+      decoded.deviceId,
+      decoded.userId,
+    )
 
     if (!session) {
       return {
@@ -295,16 +286,7 @@ export const authService = {
       }
     }
 
-    if (!decoded.iat) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Invalid token: iat is missing',
-        data: null,
-        extensions: [{ field: 'lastActiveDate', message: 'iat is missing in token' }],
-      }
-    }
-
-    if (!session || session.lastActiveDate !== decoded.iat * 1000) {
+    if (session.lastActiveDate !== decoded.iat * 1000) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid last active date',
@@ -314,13 +296,28 @@ export const authService = {
     }
 
     const newLastActiveDate = Math.floor(Date.now() / 1000)
-    await deviceSessionsCollection.updateOne(
-      { deviceId: decoded.deviceId },
-      { $set: { lastActiveDate: newLastActiveDate * 1000 } },
+    const newExpirationDate = newLastActiveDate + Number(REFRESH_TIME)
+
+    const isUpdated = await deviceSessionsRepository.updateSessionDates(
+      decoded.deviceId,
+      decoded.userId,
+      newLastActiveDate,
+      newExpirationDate,
     )
+
+    if (!isUpdated) {
+      return {
+        status: ResultStatus.ServerError,
+        errorMessage: 'Failed to update session dates',
+        data: null,
+        extensions: [],
+      }
+    }
 
     const newAccessToken = await jwtService.createAccessToken(decoded.userId)
     const newRefreshToken = await jwtService.createRefreshToken(decoded.userId, decoded.deviceId)
+
+    //await deviceSessionsRepository.deleteOldSessions(decoded.userId, decoded.deviceId)
 
     return {
       status: ResultStatus.Success,
@@ -330,15 +327,6 @@ export const authService = {
   },
 
   async logout(refreshToken: string): Promise<Result<null>> {
-    /*if (!refreshToken) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'No refresh token provided',
-        data: null,
-        extensions: [{ field: 'refreshToken', message: 'Refresh token is missing' }],
-      }
-    }*/
-
     const decoded = jwtService.verifyRefreshToken(refreshToken)
     if (!decoded || !decoded.exp) {
       return {
@@ -359,13 +347,11 @@ export const authService = {
       }
     }
 
-    // Удаляем сессию устройства из базы данных
     const sessionDeleted = await deviceSessionsRepository.deleteDeviceSessions({
       deviceId: decoded.deviceId,
       userId: decoded.userId,
     })
 
-    // Если сессия не найдена, возвращаем ошибку
     if (!sessionDeleted) {
       return {
         status: ResultStatus.Unauthorized,
@@ -374,16 +360,6 @@ export const authService = {
         extensions: [{ field: 'deviceId', message: 'Session not found' }],
       }
     }
-
-    /*const user = await usersRepository.findById(decoded.userId)
-    if (!user) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'User not found',
-        data: null,
-        extensions: [{ field: 'userId', message: 'User not found' }],
-      }
-    }*/
 
     return {
       status: ResultStatus.Success,

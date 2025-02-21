@@ -26,4 +26,37 @@ export const deviceSessionsRepository = {
 
     return result.deletedCount > 0
   },
+
+  /*async deleteOldSessions(userId: string, deviceId: string) {
+    await deviceSessionsCollection.deleteMany({
+      userId,
+      deviceId,
+      isCurrent: false, // Удаляем все сессии, кроме текущей
+    })
+  },*/
+
+  async findSessionByDeviceIdAndUserId(deviceId: string, userId: string) {
+    return await deviceSessionsCollection.findOne({
+      deviceId,
+      userId,
+    })
+  },
+
+  async updateSessionDates(
+    deviceId: string,
+    userId: string,
+    lastActiveDate: number,
+    expirationDate: number,
+  ) {
+    const result = await deviceSessionsCollection.updateOne(
+      { deviceId, userId },
+      {
+        $set: {
+          lastActiveDate: lastActiveDate * 1000,
+          expirationDate: expirationDate * 1000,
+        },
+      },
+    )
+    return result.modifiedCount > 0
+  },
 }
