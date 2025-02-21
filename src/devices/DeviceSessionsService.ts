@@ -3,24 +3,25 @@ import { ObjectId } from 'mongodb'
 import { DeviceSessionDBType } from './types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
+import { deviceSessionsRepository } from './DeviceSessionsRepository'
 
-export const devicesService = {
+export const deviceSessionsService = {
   async deleteDevicesByUserIdExceptCurrent(
     userId: string,
     currentRefreshToken: string,
   ): Promise<boolean> {
-    const currentDevice = await deviceSessionsCollection.findOne({
+    const currentDevice = await deviceSessionsRepository.findCurrentDevice(
       userId,
-      refreshToken: currentRefreshToken,
-    })
+      currentRefreshToken,
+    )
     if (!currentDevice) return false
 
-    await deviceSessionsCollection.deleteMany({
+    const isDeleted = await deviceSessionsRepository.deleteDevicesExceptCurrent(
       userId,
-      _id: { $ne: new ObjectId(currentDevice._id) },
-    })
+      new ObjectId(currentDevice._id),
+    )
 
-    return true
+    return isDeleted
   },
 
   async deviceBySessionId(deviceId: string): Promise<Result<DeviceSessionDBType>> {

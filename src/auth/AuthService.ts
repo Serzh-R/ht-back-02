@@ -9,6 +9,7 @@ import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { isTokenExpired } from './middlewares/isTokenExpired.middleware'
+import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 
 export const authService = {
   async registerUser(
@@ -329,14 +330,14 @@ export const authService = {
   },
 
   async logout(refreshToken: string): Promise<Result<null>> {
-    if (!refreshToken) {
+    /*if (!refreshToken) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'No refresh token provided',
         data: null,
         extensions: [{ field: 'refreshToken', message: 'Refresh token is missing' }],
       }
-    }
+    }*/
 
     const decoded = jwtService.verifyRefreshToken(refreshToken)
     if (!decoded || !decoded.exp) {
@@ -358,7 +359,23 @@ export const authService = {
       }
     }
 
-    const user = await usersRepository.findById(decoded.userId)
+    // Удаляем сессию устройства из базы данных
+    const sessionDeleted = await deviceSessionsRepository.deleteDeviceSessions({
+      deviceId: decoded.deviceId,
+      userId: decoded.userId,
+    })
+
+    // Если сессия не найдена, возвращаем ошибку
+    if (!sessionDeleted) {
+      return {
+        status: ResultStatus.Unauthorized,
+        errorMessage: 'Session not found',
+        data: null,
+        extensions: [{ field: 'deviceId', message: 'Session not found' }],
+      }
+    }
+
+    /*const user = await usersRepository.findById(decoded.userId)
     if (!user) {
       return {
         status: ResultStatus.Unauthorized,
@@ -366,7 +383,7 @@ export const authService = {
         data: null,
         extensions: [{ field: 'userId', message: 'User not found' }],
       }
-    }
+    }*/
 
     return {
       status: ResultStatus.Success,

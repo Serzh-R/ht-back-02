@@ -149,11 +149,11 @@ export const authController = {
       return
     }
 
-    res.cookie('refreshToken', '', {
+    res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
-      maxAge: 0,
       sameSite: 'strict',
+      path: '/',
     })
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()

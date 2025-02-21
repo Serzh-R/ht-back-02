@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
-import { devicesService } from './DevicesService'
+import { deviceSessionsService } from './DeviceSessionsService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
-import { devicesQueryRepo } from './DevicesQueryRepository'
+import { deviceSessionsQueryRepository } from './DeviceSessionsQueryRepository'
 import { jwtRefreshAuthMiddleware } from '../auth/middlewares/jwt.refresh.auth.middleware'
 
-export const devicesRouter = Router()
+export const deviceSessionsRouter = Router()
 
 export const devicesController = {
   async getDevicesByUserId(req: Request, res: Response) {
@@ -16,7 +16,7 @@ export const devicesController = {
       return
     }
 
-    const devices = await devicesQueryRepo.getDevicesByUserId(userId)
+    const devices = await deviceSessionsQueryRepository.getDevicesByUserId(userId)
     res.status(HTTP_STATUSES.OK_200).json(devices)
   },
 
@@ -28,7 +28,7 @@ export const devicesController = {
       return
     }
 
-    const isDeleted = await devicesService.deleteDevicesByUserIdExceptCurrent(
+    const isDeleted = await deviceSessionsService.deleteDevicesByUserIdExceptCurrent(
       userId,
       req.cookies.refreshToken,
     )
@@ -48,7 +48,7 @@ export const devicesController = {
       return
     }
 
-    const device = await devicesService.deviceBySessionId(deviceId)
+    const device = await deviceSessionsService.deviceBySessionId(deviceId)
 
     if (!device.data) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json({
@@ -66,7 +66,7 @@ export const devicesController = {
       return
     }
 
-    const deviceDeletionResult = await devicesService.deleteDeviceById(deviceId)
+    const deviceDeletionResult = await deviceSessionsService.deleteDeviceById(deviceId)
 
     if (!deviceDeletionResult) {
       res.sendStatus(HTTP_STATUSES.SERVER_ERROR_500)
@@ -77,15 +77,15 @@ export const devicesController = {
   },
 }
 
-devicesRouter.get('/', jwtRefreshAuthMiddleware, devicesController.getDevicesByUserId)
+deviceSessionsRouter.get('/', jwtRefreshAuthMiddleware, devicesController.getDevicesByUserId)
 
-devicesRouter.delete(
+deviceSessionsRouter.delete(
   '/',
   jwtRefreshAuthMiddleware,
   devicesController.deleteDevicesByUserIdExceptCurrent,
 )
 
-devicesRouter.delete(
+deviceSessionsRouter.delete(
   '/:deviceId',
   jwtRefreshAuthMiddleware,
   idParamValidator,
