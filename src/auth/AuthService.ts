@@ -9,7 +9,6 @@ import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { isTokenExpired } from './middlewares/isTokenExpired.middleware'
-import { REFRESH_TIME } from '../settings'
 
 export const authService = {
   async registerUser(
