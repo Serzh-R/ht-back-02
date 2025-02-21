@@ -2,7 +2,7 @@ import { SETTINGS } from '../settings'
 import { MongoClient, Collection, Db } from 'mongodb'
 import { BlogDBType, PostDBType } from '../types/types'
 import { CommentDBType } from '../comments/types'
-import { BlacklistDBType, UserRegDBType } from '../auth/types/types'
+import { BlacklistDBType, UserRegDBType } from '../users/types'
 import { AppealToApi, DeviceSessionDBType } from '../devices/types'
 
 export let blogsCollection: Collection<BlogDBType>

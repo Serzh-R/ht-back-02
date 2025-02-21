@@ -1,5 +1,5 @@
 import { emailAdapter } from './EmailAdapter'
-import { UserRegInsertDBType } from '../auth/types/types'
+import { UserRegInsertDBType } from '../users/types'
 
 export const emailManager = {
   async sendEmailConfirmationMessage(user: UserRegInsertDBType) {

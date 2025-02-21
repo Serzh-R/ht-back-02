@@ -13,7 +13,7 @@ import { jwtAccessAuthMiddleware } from './middlewares/jwt.access.auth.middlewar
 import { ResultStatus } from '../common/result/resultCode'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService } from '../common/adapters/jwt.service'
-import { MeType } from './types/types'
+import { MeType } from '../users/types'
 import { randomUUID } from 'node:crypto'
 import { countRequestsMiddleware } from '../middlewares/countRequests.middleware'
 import { jwtRefreshAuthMiddleware } from './middlewares/jwt.refresh.auth.middleware'
@@ -92,22 +92,22 @@ export const authController = {
   },
 
   async refreshToken(req: Request, res: Response): Promise<void> {
-    const refreshToken = req.cookies?.refreshToken
+    const oldRefreshToken = req.cookies?.refreshToken
 
-    if (!refreshToken) {
+    if (!oldRefreshToken) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Refresh token missing' })
       return
     }
 
-    const payload = jwtService.verifyRefreshToken(refreshToken)
+    /*const payload = jwtService.verifyRefreshToken(oldRefreshToken)
     if (!payload) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ error: 'Invalid authorization method' })
       return
-    }
+    }*/
 
-    const { userId, deviceId, iat } = payload
+    //const { userId, deviceId, iat } = payload
 
-    const result = await authService.refreshToken(refreshToken)
+    const result = await authService.refreshToken(oldRefreshToken)
 
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
@@ -117,17 +117,18 @@ export const authController = {
       return
     }
 
-    res.locals.userId = userId
+    /*res.locals.userId = userId
     res.locals.deviceId = deviceId
+    res.locals.iat = iat*/
 
-    res.cookie('refreshToken', result.data!.refreshToken, {
+    res.cookie('refreshToken', result.data?.refreshToken, {
       httpOnly: true,
       secure: true,
       maxAge: Number(REFRESH_TIME) * 1000,
       sameSite: 'strict',
     })
 
-    res.status(HTTP_STATUSES.OK_200).json({ accessToken: result.data!.accessToken })
+    res.status(HTTP_STATUSES.OK_200).json({ accessToken: result.data?.accessToken })
   },
 
   async logout(req: Request, res: Response): Promise<void> {

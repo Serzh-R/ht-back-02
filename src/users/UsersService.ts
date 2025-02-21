@@ -1,6 +1,6 @@
 import { usersRepository } from './UsersRepository'
 import { bcryptService } from '../common/adapters/bcrypt.service'
-import { UserInputType, UserRegInsertDBType } from '../auth/types/types'
+import { UserInputType, UserRegInsertDBType } from './types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'

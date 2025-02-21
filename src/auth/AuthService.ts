@@ -3,7 +3,7 @@ import { ResultStatus } from '../common/result/resultCode'
 import { bcryptService } from '../common/adapters/bcrypt.service'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService, RefreshTokenPayload } from '../common/adapters/jwt.service'
-import { UserDBType, UserRegInsertDBType } from './types/types'
+import { UserDBType, UserRegInsertDBType } from '../users/types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
@@ -251,16 +251,6 @@ export const authService = {
   async refreshToken(
     oldRefreshToken: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
-    // const isBlacklisted = await blacklistRepository.isTokenBlacklisted(oldRefreshToken)
-    // if (isBlacklisted) {
-    //   return {
-    //     status: ResultStatus.Unauthorized,
-    //     errorMessage: 'Invalid refresh token (blacklisted)',
-    //     data: null,
-    //     extensions: [{ field: null, message: 'Refresh token is blacklisted' }],
-    //   }
-    //}
-
     const decoded = jwtService.verifyRefreshToken(oldRefreshToken)
     if (!decoded || !decoded.exp) {
       return {
@@ -314,7 +304,7 @@ export const authService = {
       }
     }
 
-    if (session.lastActiveDate !== decoded.iat * 1000) {
+    if (!session || session.lastActiveDate !== decoded.iat * 1000) {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Invalid last active date',
@@ -323,26 +313,14 @@ export const authService = {
       }
     }
 
-    // ✅ Используем текущее время вместо старого iat
     const newLastActiveDate = Math.floor(Date.now() / 1000)
-    const newExpirationDate = newLastActiveDate + Number(REFRESH_TIME)
-
     await deviceSessionsCollection.updateOne(
       { deviceId: decoded.deviceId },
-      {
-        $set: {
-          lastActiveDate: newLastActiveDate * 1000,
-          expirationDate: newExpirationDate * 1000,
-        },
-      },
+      { $set: { lastActiveDate: newLastActiveDate * 1000 } },
     )
 
     const newAccessToken = await jwtService.createAccessToken(decoded.userId)
     const newRefreshToken = await jwtService.createRefreshToken(decoded.userId, decoded.deviceId)
-
-    //await blacklistRepository.addTokenToBlacklist(oldRefreshToken)
-
-    await usersRepository.updateRefreshToken(decoded.userId, newRefreshToken)
 
     return {
       status: ResultStatus.Success,

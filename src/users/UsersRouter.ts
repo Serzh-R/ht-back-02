@@ -7,7 +7,7 @@ import { errorsResultMiddleware } from '../validation/express-validator/errors.r
 import { usersService } from './UsersService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
 import { authMiddleware } from '../auth/middlewares/auth.middleware'
-import { UserInputType } from '../auth/types/types'
+import { UserInputType } from './types'
 import { ResultStatus } from '../common/result/resultCode'
 
 export const usersRouter = Router()
