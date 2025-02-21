@@ -233,7 +233,13 @@ export const authService = {
     const lastActiveDate = decodedRefreshToken.iat! * 1000
     const expirationDate = decodedRefreshToken.exp! * 1000
 
-    await deviceSessionsCollection.insertOne({
+    // ✅ Удаляем старую сессию перед созданием новой
+    await deviceSessionsRepository.deleteDeviceSessions({
+      deviceId,
+      userId: result.data!._id.toString(),
+    })
+
+    const isSessionCreated = await deviceSessionsRepository.createDeviceSession({
       ip,
       title,
       lastActiveDate,
@@ -241,6 +247,10 @@ export const authService = {
       deviceId,
       userId: result.data!._id.toString(),
     })
+
+    if (!isSessionCreated) {
+      throw new Error('Failed to create device session')
+    }
 
     return {
       status: ResultStatus.Success,

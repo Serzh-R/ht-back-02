@@ -1,7 +1,19 @@
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
+import { DeviceSessionDBType } from './types'
 
 export const deviceSessionsRepository = {
+  // ✅ Создание новой сессии устройства
+  async createDeviceSession(sessionData: DeviceSessionDBType) {
+    try {
+      await deviceSessionsCollection.insertOne(sessionData)
+      return true
+    } catch (error) {
+      console.error('Error creating device session:', error)
+      return false
+    }
+  },
+
   async findCurrentDevice(userId: string, currentRefreshToken: string) {
     return await deviceSessionsCollection.findOne({
       userId,

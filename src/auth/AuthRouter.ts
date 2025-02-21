@@ -99,14 +99,6 @@ export const authController = {
       return
     }
 
-    /*const payload = jwtService.verifyRefreshToken(oldRefreshToken)
-    if (!payload) {
-      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ error: 'Invalid authorization method' })
-      return
-    }*/
-
-    //const { userId, deviceId, iat } = payload
-
     const result = await authService.refreshToken(oldRefreshToken)
 
     if (result.status !== ResultStatus.Success) {
@@ -116,10 +108,6 @@ export const authController = {
       })
       return
     }
-
-    /*res.locals.userId = userId
-    res.locals.deviceId = deviceId
-    res.locals.iat = iat*/
 
     res.cookie('refreshToken', result.data?.refreshToken, {
       httpOnly: true,
