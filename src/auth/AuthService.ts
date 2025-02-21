@@ -307,7 +307,7 @@ export const authService = {
 
     if (!isUpdated) {
       return {
-        status: ResultStatus.ServerError,
+        status: ResultStatus.Unauthorized,
         errorMessage: 'Failed to update session dates',
         data: null,
         extensions: [],
@@ -316,8 +316,6 @@ export const authService = {
 
     const newAccessToken = await jwtService.createAccessToken(decoded.userId)
     const newRefreshToken = await jwtService.createRefreshToken(decoded.userId, decoded.deviceId)
-
-    //await deviceSessionsRepository.deleteOldSessions(decoded.userId, decoded.deviceId)
 
     return {
       status: ResultStatus.Success,
