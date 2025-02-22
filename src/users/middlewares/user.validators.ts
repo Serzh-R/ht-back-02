@@ -64,7 +64,7 @@ export const passwordValidation = body('password')
   .trim()
   .isLength({ min: 6, max: 20 })
   .withMessage('password must be between 6 and 20 characters')
-  .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,20}$/)
-  .withMessage('password must contain at least one letter, one number, and be 6-20 characters long')
+//.matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,20}$/)
+//.withMessage('password must contain at least one letter, one number, and be 6-20 characters long')
 
 export const userInputValidators = [loginValidation, passwordValidation, emailValidation]
