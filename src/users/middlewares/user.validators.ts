@@ -40,14 +40,6 @@ export const loginOrEmailValidation = body('loginOrEmail')
   .trim()
   .isLength({ min: 1, max: 500 })
   .withMessage('loginOrEmail is not correct')
-  .custom((value) => {
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-    const isLogin = /^[a-zA-Z0-9_-]{1,500}$/.test(value)
-    if (!isEmail && !isLogin) {
-      throw new Error('loginOrEmail is not valid')
-    }
-    return true
-  })
 
 export const loginValidation = body('login')
   .isString()
