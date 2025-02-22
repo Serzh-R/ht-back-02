@@ -25,15 +25,25 @@ export const isUserConfirmedByEmailValidation = body('email')
   .withMessage('email is required')
   .isEmail()
   .withMessage('email is not correct')
-  .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+  //.matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
   .withMessage('email format is invalid')
   .custom(async (email: string) => {
     const user = await usersRepository.findByLoginOrEmail(email)
-    if (!user || user.emailConfirmation.isConfirmed) {
-      throw new Error("user doesn't exist or already confirmed")
+    if (!user) {
+      throw new Error("user doesn't exist")
+    }
+    if (user.emailConfirmation.isConfirmed) {
+      throw new Error('user already confirmed')
     }
     return true
   })
+// .custom(async (email: string) => {
+//   const user = await usersRepository.findByLoginOrEmail(email)
+//   if (!user || user.emailConfirmation.isConfirmed) {
+//     throw new Error("user doesn't exist or already confirmed")
+//   }
+//   return true
+// })
 
 export const loginOrEmailValidation = body('loginOrEmail')
   .isString()
