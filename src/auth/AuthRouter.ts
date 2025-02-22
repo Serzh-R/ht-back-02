@@ -191,36 +191,36 @@ export const authController = {
 
 authRouter.post(
   '/login',
+  countRequestsMiddleware,
   loginOrEmailValidation,
   passwordValidation,
   errorsResultMiddleware,
   authController.login,
-  countRequestsMiddleware,
 )
 
 authRouter.post(
   '/registration',
+  countRequestsMiddleware,
   loginValidation,
   passwordValidation,
   emailValidation,
   errorsResultMiddleware,
   authController.registerUser,
-  countRequestsMiddleware,
 )
 
 authRouter.post(
   '/registration-confirmation',
+  countRequestsMiddleware,
   errorsResultMiddleware,
   authController.registerConfirm,
-  countRequestsMiddleware,
 )
 
 authRouter.post(
   '/registration-email-resending',
+  countRequestsMiddleware,
   isUserConfirmedByEmailValidation,
   errorsResultMiddleware,
   authController.registerEmailResending,
-  countRequestsMiddleware,
 )
 
 authRouter.get('/me', jwtAccessAuthMiddleware, authController.me)
