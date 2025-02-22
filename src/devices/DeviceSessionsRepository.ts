@@ -3,7 +3,6 @@ import { ObjectId } from 'mongodb'
 import { DeviceSessionDBType } from './types'
 
 export const deviceSessionsRepository = {
-  // ✅ Создание новой сессии устройства
   async createDeviceSession(sessionData: DeviceSessionDBType) {
     try {
       await deviceSessionsCollection.insertOne(sessionData)
@@ -30,7 +29,6 @@ export const deviceSessionsRepository = {
   },
 
   async deleteDeviceSessions({ deviceId, userId }: { deviceId: string; userId: string }) {
-    // Удаляем все сессии устройства для данного пользователя
     const result = await deviceSessionsCollection.deleteMany({
       deviceId,
       userId,

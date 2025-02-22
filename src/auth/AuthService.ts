@@ -7,10 +7,9 @@ import { UserDBType, UserRegInsertDBType } from '../users/types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
-import { deviceSessionsCollection } from '../db/mongoDb'
-import { isTokenExpired } from './middlewares/isTokenExpired.middleware'
 import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 import { REFRESH_TIME } from '../settings'
+import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
 
 export const authService = {
   async registerUser(
@@ -220,12 +219,10 @@ export const authService = {
     const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
     const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(), deviceId)
 
-    // ✅ Получаем iat и exp из refreshToken
     const decodedRefreshToken = (await jwtService.decodeToken(
       refreshToken,
     )) as unknown as RefreshTokenPayload
 
-    // ✅ Проверяем структуру данных
     if (!decodedRefreshToken || !decodedRefreshToken.iat || !decodedRefreshToken.exp) {
       throw new Error('Invalid refresh token structure')
     }
@@ -233,7 +230,6 @@ export const authService = {
     const lastActiveDate = decodedRefreshToken.iat! * 1000
     const expirationDate = decodedRefreshToken.exp! * 1000
 
-    // ✅ Удаляем старую сессию перед созданием новой
     await deviceSessionsRepository.deleteDeviceSessions({
       deviceId,
       userId: result.data!._id.toString(),
@@ -262,48 +258,18 @@ export const authService = {
   async refreshToken(
     oldRefreshToken: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
-    const decoded = jwtService.verifyRefreshToken(oldRefreshToken)
-    if (!decoded || !decoded.exp || !decoded.iat) {
+    const validationResult = await validateRefreshTokenAndSession(oldRefreshToken)
+
+    if (validationResult.status !== ResultStatus.Success) {
       return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Invalid refresh token',
+        status: validationResult.status,
+        errorMessage: validationResult.errorMessage,
         data: null,
-        extensions: [{ field: null, message: 'Invalid refresh token' }],
+        extensions: validationResult.extensions,
       }
     }
 
-    const currentTime = Date.now() / 1000
-    if (decoded.exp < currentTime) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Refresh token has expired',
-        data: null,
-        extensions: [{ field: 'expirationDate', message: 'Token has expired' }],
-      }
-    }
-
-    const session = await deviceSessionsRepository.findSessionByDeviceIdAndUserId(
-      decoded.deviceId,
-      decoded.userId,
-    )
-
-    if (!session) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Invalid device or session not found',
-        data: null,
-        extensions: [{ field: 'deviceId', message: 'Session not found' }],
-      }
-    }
-
-    if (session.lastActiveDate !== decoded.iat * 1000) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Invalid last active date',
-        data: null,
-        extensions: [{ field: 'lastActiveDate', message: 'Last active date mismatch' }],
-      }
-    }
+    const { decoded } = validationResult.data!
 
     const newLastActiveDate = Math.floor(Date.now() / 1000)
     const newExpirationDate = newLastActiveDate + Number(REFRESH_TIME)
@@ -335,25 +301,13 @@ export const authService = {
   },
 
   async logout(refreshToken: string): Promise<Result<null>> {
-    const decoded = jwtService.verifyRefreshToken(refreshToken)
-    if (!decoded || !decoded.exp) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Invalid refresh token',
-        data: null,
-        extensions: [{ field: 'refreshToken', message: 'Refresh token is invalid' }],
-      }
+    const validationResult = await validateRefreshTokenAndSession(refreshToken)
+
+    if (validationResult.status !== ResultStatus.Success) {
+      return validationResult as Result<null> // Явно указываем, что возвращаем Result<null>
     }
 
-    const currentTime = Date.now() / 1000
-    if (isTokenExpired(decoded.exp, currentTime)) {
-      return {
-        status: ResultStatus.Unauthorized,
-        errorMessage: 'Refresh token has expired',
-        data: null,
-        extensions: [{ field: 'expirationDate', message: 'Token has expired' }],
-      }
-    }
+    const { decoded } = validationResult.data!
 
     const sessionDeleted = await deviceSessionsRepository.deleteDeviceSessions({
       deviceId: decoded.deviceId,

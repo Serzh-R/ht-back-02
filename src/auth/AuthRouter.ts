@@ -79,7 +79,6 @@ export const authController = {
       })
       return
     }
-    console.log(result, ' result')
 
     res.cookie('refreshToken', result.data!.refreshToken, {
       httpOnly: true,

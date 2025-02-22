@@ -40,6 +40,14 @@ export const loginOrEmailValidation = body('loginOrEmail')
   .trim()
   .isLength({ min: 1, max: 500 })
   .withMessage('loginOrEmail is not correct')
+  .custom((value) => {
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+    const isLogin = /^[a-zA-Z0-9_-]{1,500}$/.test(value)
+    if (!isEmail && !isLogin) {
+      throw new Error('loginOrEmail is not valid')
+    }
+    return true
+  })
 
 export const loginValidation = body('login')
   .isString()
@@ -61,5 +69,7 @@ export const passwordValidation = body('password')
   .trim()
   .isLength({ min: 6, max: 20 })
   .withMessage('password must be between 6 and 20 characters')
+  .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,20}$/)
+  .withMessage('password must contain at least one letter, one number, and be 6-20 characters long')
 
 export const userInputValidators = [loginValidation, passwordValidation, emailValidation]
