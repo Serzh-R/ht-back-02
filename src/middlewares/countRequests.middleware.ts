@@ -31,6 +31,11 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
       date: new Date(),
     })
 
+    // Удаление старых записей
+    await requestsCollection.deleteMany({
+      date: { $lt: tenSecondsAgo },
+    })
+
     next()
   } catch (error) {
     console.error('Error counting requests:', error)

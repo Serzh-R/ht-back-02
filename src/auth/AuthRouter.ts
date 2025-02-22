@@ -69,6 +69,16 @@ export const authController = {
     const ip = req.ip || req.socket.remoteAddress || 'Unknown IP'
     const { loginOrEmail, password } = req.body
 
+    if (!loginOrEmail || !password) {
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+        errorsMessages: [
+          { field: 'loginOrEmail', message: 'loginOrEmail is required' },
+          { field: 'password', message: 'Password is required' },
+        ],
+      })
+      return
+    }
+
     const deviceId = randomUUID()
 
     const result = await authService.login(loginOrEmail, password, userAgent, ip, deviceId)
@@ -181,36 +191,36 @@ export const authController = {
 
 authRouter.post(
   '/login',
-  countRequestsMiddleware,
   loginOrEmailValidation,
   passwordValidation,
   errorsResultMiddleware,
   authController.login,
+  countRequestsMiddleware,
 )
 
 authRouter.post(
   '/registration',
-  countRequestsMiddleware,
   loginValidation,
   passwordValidation,
   emailValidation,
   errorsResultMiddleware,
   authController.registerUser,
+  countRequestsMiddleware,
 )
 
 authRouter.post(
   '/registration-confirmation',
-  countRequestsMiddleware,
   errorsResultMiddleware,
   authController.registerConfirm,
+  countRequestsMiddleware,
 )
 
 authRouter.post(
   '/registration-email-resending',
-  countRequestsMiddleware,
   isUserConfirmedByEmailValidation,
   errorsResultMiddleware,
   authController.registerEmailResending,
+  countRequestsMiddleware,
 )
 
 authRouter.get('/me', jwtAccessAuthMiddleware, authController.me)

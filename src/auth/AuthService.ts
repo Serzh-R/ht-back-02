@@ -243,11 +243,6 @@ export const authService = {
       throw new Error('Failed to create device session')
     }
 
-    /*await deviceSessionsRepository.deleteDeviceSessions({
-      deviceId,
-      userId: result.data!._id.toString(),
-    })*/
-
     return {
       status: ResultStatus.Success,
       data: { accessToken, refreshToken },
@@ -335,22 +330,34 @@ export const authService = {
     password: string,
   ): Promise<Result<UserDBType | null>> {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
-    if (!user)
+    if (!user) {
       return {
         status: ResultStatus.Unauthorized,
         data: null,
-        errorMessage: 'Not Found',
+        errorMessage: 'Unauthorized',
         extensions: [{ field: 'loginOrEmail', message: 'Wrong credentials' }],
       }
+    }
 
-    const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
-    if (!isPassCorrect)
+    //  добавлена проверка на подтверждение email
+    if (!user.emailConfirmation.isConfirmed) {
       return {
         status: ResultStatus.Unauthorized,
         data: null,
-        errorMessage: 'Bad Request',
+        errorMessage: 'Unauthorized',
+        extensions: [{ field: 'email', message: 'Email is not confirmed' }],
+      }
+    }
+
+    const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
+    if (!isPassCorrect) {
+      return {
+        status: ResultStatus.Unauthorized, // Исправлено на 401 Unauthorized
+        data: null,
+        errorMessage: 'Unauthorized',
         extensions: [{ field: 'password', message: 'Wrong password' }],
       }
+    }
 
     return {
       status: ResultStatus.Success,

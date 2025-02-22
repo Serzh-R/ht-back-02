@@ -3,8 +3,7 @@ import { BCRYPT_SALT } from '../../settings'
 
 export const bcryptService = {
   async generateHash(password: string): Promise<string> {
-    const passwordHash = await bcrypt.hash(password, BCRYPT_SALT)
-    return passwordHash
+    return await bcrypt.hash(password, BCRYPT_SALT)
   },
 
   async checkPassword(password: string, passwordHash: string) {

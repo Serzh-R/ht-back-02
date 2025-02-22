@@ -37,13 +37,6 @@ export const isUserConfirmedByEmailValidation = body('email')
     }
     return true
   })
-// .custom(async (email: string) => {
-//   const user = await usersRepository.findByLoginOrEmail(email)
-//   if (!user || user.emailConfirmation.isConfirmed) {
-//     throw new Error("user doesn't exist or already confirmed")
-//   }
-//   return true
-// })
 
 export const loginOrEmailValidation = body('loginOrEmail')
   .isString()
