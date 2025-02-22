@@ -69,15 +69,15 @@ export const authController = {
     const ip = req.ip || req.socket.remoteAddress || 'Unknown IP'
     const { loginOrEmail, password } = req.body
 
-    if (!loginOrEmail || !password) {
-      res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
-        errorsMessages: [
-          { field: 'loginOrEmail', message: 'loginOrEmail is required' },
-          { field: 'password', message: 'Password is required' },
-        ],
-      })
-      return
-    }
+    // if (!loginOrEmail || !password) {
+    //   res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
+    //     errorsMessages: [
+    //       { field: 'loginOrEmail', message: 'loginOrEmail is required' },
+    //       { field: 'password', message: 'Password is required' },
+    //     ],
+    //   })
+    //   return
+    // }
 
     const deviceId = randomUUID()
 
