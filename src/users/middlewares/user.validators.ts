@@ -25,7 +25,7 @@ export const isUserConfirmedByEmailValidation = body('email')
   .withMessage('email is required')
   .isEmail()
   .withMessage('email is not correct')
-  //.matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+  .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
   .withMessage('email format is invalid')
   .custom(async (email: string) => {
     const user = await usersRepository.findByLoginOrEmail(email)
