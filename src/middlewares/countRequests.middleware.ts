@@ -20,7 +20,7 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
       date: new Date(),
     })
 
-    if (count > 5) {
+    if (count >= 5) {
       res.status(HTTP_STATUSES.TOO_MANY_REQUESTS_429).json({
         error: 'Too Many Requests',
         message:
