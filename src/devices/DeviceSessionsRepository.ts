@@ -13,10 +13,10 @@ export const deviceSessionsRepository = {
     }
   },
 
-  async findCurrentDevice(userId: string, currentRefreshToken: string) {
+  async findCurrentDevice(userId: string, deviceId: string) {
     return await deviceSessionsCollection.findOne({
       userId,
-      refreshToken: currentRefreshToken,
+      deviceId,
     })
   },
 

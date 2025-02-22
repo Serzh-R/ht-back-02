@@ -4,6 +4,7 @@ import { deviceSessionsService } from './DeviceSessionsService'
 import { idParamValidator } from '../validation/express-validator/field.validators'
 import { deviceSessionsQueryRepository } from './DeviceSessionsQueryRepository'
 import { jwtRefreshAuthMiddleware } from '../auth/middlewares/jwt.refresh.auth.middleware'
+import { jwtService } from '../common/adapters/jwt.service'
 
 export const deviceSessionsRouter = Router()
 
@@ -22,15 +23,22 @@ export const devicesController = {
 
   async deleteDevicesByUserIdExceptCurrent(req: Request, res: Response) {
     const userId = req.userId
+    const refreshToken = req.cookies.refreshToken
 
-    if (!userId) {
+    if (!userId || !refreshToken) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Unauthorized' })
+      return
+    }
+
+    const decoded = jwtService.verifyRefreshToken(refreshToken)
+    if (!decoded) {
+      res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Invalid token' })
       return
     }
 
     const isDeleted = await deviceSessionsService.deleteDevicesByUserIdExceptCurrent(
       userId,
-      req.cookies.refreshToken,
+      decoded.deviceId,
     )
     if (!isDeleted) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({ message: 'Unauthorized' })

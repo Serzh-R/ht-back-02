@@ -8,12 +8,9 @@ import { deviceSessionsRepository } from './DeviceSessionsRepository'
 export const deviceSessionsService = {
   async deleteDevicesByUserIdExceptCurrent(
     userId: string,
-    currentRefreshToken: string,
+    currentDeviceId: string,
   ): Promise<boolean> {
-    const currentDevice = await deviceSessionsRepository.findCurrentDevice(
-      userId,
-      currentRefreshToken,
-    )
+    const currentDevice = await deviceSessionsRepository.findCurrentDevice(userId, currentDeviceId)
     if (!currentDevice) return false
 
     const isDeleted = await deviceSessionsRepository.deleteDevicesExceptCurrent(
