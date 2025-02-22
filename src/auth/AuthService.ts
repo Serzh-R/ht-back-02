@@ -340,19 +340,19 @@ export const authService = {
     }
 
     //  добавлена проверка на подтверждение email
-    if (!user.emailConfirmation.isConfirmed) {
-      return {
-        status: ResultStatus.Unauthorized,
-        data: null,
-        errorMessage: 'Unauthorized',
-        extensions: [{ field: 'email', message: 'Email is not confirmed' }],
-      }
-    }
+    // if (!user.emailConfirmation.isConfirmed) {
+    //   return {
+    //     status: ResultStatus.Unauthorized,
+    //     data: null,
+    //     errorMessage: 'Unauthorized',
+    //     extensions: [{ field: 'email', message: 'Email is not confirmed' }],
+    //   }
+    // }
 
     const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
     if (!isPassCorrect) {
       return {
-        status: ResultStatus.Unauthorized, // Исправлено на 401 Unauthorized
+        status: ResultStatus.Unauthorized,
         data: null,
         errorMessage: 'Unauthorized',
         extensions: [{ field: 'password', message: 'Wrong password' }],

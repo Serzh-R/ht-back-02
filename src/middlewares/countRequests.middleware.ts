@@ -32,9 +32,9 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
     })
 
     // Удаление старых записей
-    await requestsCollection.deleteMany({
-      date: { $lt: tenSecondsAgo },
-    })
+    // await requestsCollection.deleteMany({
+    //   date: { $lt: tenSecondsAgo },
+    // })
 
     next()
   } catch (error) {
