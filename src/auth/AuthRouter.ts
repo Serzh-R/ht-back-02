@@ -7,7 +7,7 @@ import {
   loginOrEmailValidation,
   loginValidation,
   passwordValidation,
-} from '../users/middlewares/user.validators'
+} from '../users/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { jwtAccessAuthMiddleware } from './middlewares/jwt.access.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
@@ -68,16 +68,6 @@ export const authController = {
     const userAgent = req.headers['user-agent'] || 'Unknown Device'
     const ip = req.ip || req.socket.remoteAddress || 'Unknown IP'
     const { loginOrEmail, password } = req.body
-
-    // if (!loginOrEmail || !password) {
-    //   res.status(HTTP_STATUSES.BAD_REQUEST_400).json({
-    //     errorsMessages: [
-    //       { field: 'loginOrEmail', message: 'loginOrEmail is required' },
-    //       { field: 'password', message: 'Password is required' },
-    //     ],
-    //   })
-    //   return
-    // }
 
     const deviceId = randomUUID()
 

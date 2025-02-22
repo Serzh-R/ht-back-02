@@ -3,7 +3,6 @@ import { validationResult } from 'express-validator'
 import { FieldValidationError } from 'express-validator/lib/base'
 import { HTTP_STATUSES } from '../../settings'
 
-//type CustomFieldValidationError = { path: string; msg: string }
 export const errorsResultMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)
 
