@@ -13,8 +13,7 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
       url: originalUrl,
     }
 
-    // Задержка для корректного выполнения запросов
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     const count = await requestsCollection.countDocuments(filter)
 
@@ -47,7 +46,6 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
 
     next()
 
-    // Очищаем старые записи после выполнения запроса
     await requestsCollection.deleteMany({
       date: { $lt: tenSecondsAgo },
     })
