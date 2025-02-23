@@ -10,6 +10,7 @@ import { emailManager } from '../email/EmailManager'
 import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 import { REFRESH_TIME } from '../settings'
 import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
+import { validationResult } from 'express-validator'
 
 export const authService = {
   async registerUser(
@@ -30,23 +31,15 @@ export const authService = {
       },
     }
     const userId = await usersRepository.createUser(user)
-    try {
-      await emailManager.sendEmailConfirmationMessage(user)
-    } catch (error) {
-      console.error('Ошибка при отправке email:', error)
+
+    emailManager.sendEmailConfirmationMessage(user).catch(async (e: Error) => {
+      console.error('Ошибка при отправке email:', e)
 
       const isDeleted = await usersRepository.deleteUser(userId.toString())
       if (!isDeleted) {
         console.error('Failed to delete user after email sending error')
       }
-
-      return {
-        status: ResultStatus.ServerError,
-        data: null,
-        errorMessage: 'Failed to send confirmation email',
-        extensions: [{ field: 'email', message: 'Email sending failed' }],
-      }
-    }
+    })
 
     return {
       status: ResultStatus.Success,
@@ -185,7 +178,7 @@ export const authService = {
       }
     }
 
-    await emailManager.sendEmailConfirmationMessage(updatedUser)
+    emailManager.sendEmailConfirmationMessage(updatedUser).catch((e: Error) => console.error(e))
 
     console.log(`New confirmation code sent to email: ${email}`)
 

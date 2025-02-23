@@ -13,7 +13,7 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
       url: originalUrl,
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    //await new Promise((resolve) => setTimeout(resolve, 50))
 
     const count = await requestsCollection.countDocuments(filter)
 
