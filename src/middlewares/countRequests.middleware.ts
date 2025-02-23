@@ -46,9 +46,9 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
 
     next()
 
-    await requestsCollection.deleteMany({
-      date: { $lt: tenSecondsAgo },
-    })
+    // await requestsCollection.deleteMany({
+    //   date: { $lt: tenSecondsAgo },
+    // })
   } catch (error) {
     console.error('Error counting requests:', error)
     res.status(500).json({ error: 'Internal Server Error' })
