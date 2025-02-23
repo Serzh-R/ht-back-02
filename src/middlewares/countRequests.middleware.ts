@@ -12,6 +12,10 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
       ip,
       url: originalUrl,
     }
+
+    // Задержка для корректного выполнения запросов
+    await new Promise((resolve) => setTimeout(resolve, 50))
+
     const count = await requestsCollection.countDocuments(filter)
 
     await requestsCollection.insertOne({
@@ -19,6 +23,12 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
       url: originalUrl,
       date: new Date(),
     })
+
+    // смотрим логи
+    console.log('Filter:', filter)
+    console.log('Count:', count)
+    const allRequests = await requestsCollection.find().toArray()
+    console.log('All Requests:', allRequests)
 
     if (count >= 5) {
       res.status(HTTP_STATUSES.TOO_MANY_REQUESTS_429).json({
@@ -31,12 +41,16 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
 
     res.locals.count = count
 
-    //Удаление старых записей
+    // await requestsCollection.deleteMany({
+    //   date: { $lt: tenSecondsAgo },
+    // })
+
+    next()
+
+    // Очищаем старые записи после выполнения запроса
     await requestsCollection.deleteMany({
       date: { $lt: tenSecondsAgo },
     })
-
-    next()
   } catch (error) {
     console.error('Error counting requests:', error)
     res.status(500).json({ error: 'Internal Server Error' })
