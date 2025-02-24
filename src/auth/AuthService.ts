@@ -10,7 +10,6 @@ import { emailManager } from '../email/EmailManager'
 import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 import { REFRESH_TIME } from '../settings'
 import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
-import { validationResult } from 'express-validator'
 
 export const authService = {
   async registerUser(
@@ -331,16 +330,6 @@ export const authService = {
         extensions: [{ field: 'loginOrEmail', message: 'Wrong credentials' }],
       }
     }
-
-    //  добавлена проверка на подтверждение email
-    // if (!user.emailConfirmation.isConfirmed) {
-    //   return {
-    //     status: ResultStatus.Unauthorized,
-    //     data: null,
-    //     errorMessage: 'Unauthorized',
-    //     extensions: [{ field: 'email', message: 'Email is not confirmed' }],
-    //   }
-    // }
 
     const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
     if (!isPassCorrect) {

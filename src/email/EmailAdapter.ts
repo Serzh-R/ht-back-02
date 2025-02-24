@@ -27,31 +27,3 @@ export const emailAdapter = {
     }
   },
 }
-
-/*import nodemailer from 'nodemailer'
-import { SETTINGS } from '../settings'
-
-export const emailAdapter = {
-  async sendEmail(email: string, subject: string, message: string) {
-    let transport = nodemailer.createTransport({
-      service: 'yandex',
-      auth: {
-        user: SETTINGS.EMAIL.USER,
-        pass: SETTINGS.EMAIL.PASS,
-      },
-    })
-
-    try {
-      let info = await transport.sendMail({
-        from: 'Serzh <sr.ti@yandex.kz>',
-        to: email,
-        subject: subject,
-        html: message,
-      })
-      return info
-    } catch (error) {
-      console.error('Failed to send email:', error)
-      throw new Error('Email sending failed')
-    }
-  },
-}*/

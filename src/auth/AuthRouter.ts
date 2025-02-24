@@ -17,12 +17,14 @@ import { MeType } from '../users/types'
 import { randomUUID } from 'node:crypto'
 import { countRequestsMiddleware } from '../middlewares/countRequests.middleware'
 import { jwtRefreshAuthMiddleware } from './middlewares/jwt.refresh.auth.middleware'
+import { type } from 'node:os'
 
 export const authRouter = Router()
 
 export const authController = {
   async registerUser(req: Request, res: Response): Promise<void> {
-    const user = await authService.registerUser(req.body.login, req.body.email, req.body.password)
+    const { login, email, password } = req.body
+    const user = await authService.registerUser(login, email, password)
 
     if (!user || user.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.BAD_REQUEST_400).send()
@@ -89,6 +91,32 @@ export const authController = {
 
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
   },
+
+  // async passwordRecovery(req: Request, res: Response): Promise<void> {
+  //   const { email } = req.body
+  //   const result = await authService.passwordRecovery(email)
+  //
+  //   if (result.status !== ResultStatus.Success) {
+  //     res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+  //       errorsMessages: result.extensions,
+  //     })
+  //     return
+  //   }
+  //   res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+  // },
+
+  // async newPassword(req: Request, res: Response): Promise<void> {
+  //   const { newPassword, recoveryCode } = req.body
+  //   const result = await authService.newPassword(newPassword, recoveryCode)
+  //
+  //   if (result.status !== ResultStatus.Success) {
+  //     res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+  //       errorsMessages: result.extensions,
+  //     })
+  //     return
+  //   }
+  //   res.status(HTTP_STATUSES.NO_CONTENT_204).send()
+  // },
 
   async refreshToken(req: Request, res: Response): Promise<void> {
     const oldRefreshToken = req.cookies?.refreshToken

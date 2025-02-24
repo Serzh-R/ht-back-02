@@ -9,14 +9,6 @@ export const deviceSessionsQueryRepository = {
       })
       .toArray()
 
-    /*const currentTime = Date.now()
-    const devices = await deviceSessionsCollection
-      .find({
-        userId,
-        expirationDate: { $gt: currentTime },
-      })
-      .toArray()*/
-
     return devices.map(
       (device: DeviceSessionDBType): DeviceSessionType => ({
         ip: device.ip,

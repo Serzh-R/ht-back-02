@@ -1,12 +1,12 @@
 import { usersRepository } from './UsersRepository'
 import { bcryptService } from '../common/adapters/bcrypt.service'
-import { UserInputType, UserRegInsertDBType } from './types'
+import { EmailConfirmationType, UserInputType, UserRegInsertDBType } from './types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'
 import { randomUUID } from 'node:crypto'
 
-export const usersService = {
+class UsersService {
   async createUser(body: UserInputType): Promise<Result<{ userId: string } | null>> {
     const userByLogin = await usersRepository.findByLoginOrEmail(body.login)
     if (userByLogin) {
@@ -30,17 +30,33 @@ export const usersService = {
 
     const passwordHash = await bcryptService.generateHash(body.password)
 
-    const userDB: UserRegInsertDBType = {
+    // Создаем объект emailConfirmation на основе класса EmailConfirmationType
+    const emailConfirmation = new EmailConfirmationType(
+      randomUUID(), // confirmationCode
+      new Date(), // expirationDate
+      false, // isConfirmed
+    )
+
+    // Создаем объект userDB на основе класса UserRegInsertDBType
+    const userDB = new UserRegInsertDBType({
       login: body.login,
       email: body.email,
-      passwordHash,
+      passwordHash: passwordHash,
       createdAt: new Date(),
-      emailConfirmation: {
-        confirmationCode: randomUUID(),
-        expirationDate: new Date(),
-        isConfirmed: false,
-      },
-    }
+      emailConfirmation: emailConfirmation,
+    })
+
+    // const userDB: UserRegInsertDBType = {
+    //   login: body.login,
+    //   email: body.email,
+    //   passwordHash,
+    //   createdAt: new Date(),
+    //   emailConfirmation: {
+    //     confirmationCode: randomUUID(),
+    //     expirationDate: new Date(),
+    //     isConfirmed: false,
+    //   },
+    // }
 
     const userId = await usersRepository.createUser(userDB)
 
@@ -49,7 +65,7 @@ export const usersService = {
       data: { userId: userId.toString() },
       extensions: [],
     }
-  },
+  }
 
   async deleteUser(id: string): Promise<boolean> {
     if (!ObjectId.isValid(id)) {
@@ -57,5 +73,7 @@ export const usersService = {
       return false
     }
     return await usersRepository.deleteUser(id)
-  },
+  }
 }
+
+export const usersService = new UsersService()

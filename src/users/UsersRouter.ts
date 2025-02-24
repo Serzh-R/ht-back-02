@@ -12,7 +12,7 @@ import { ResultStatus } from '../common/result/resultCode'
 
 export const usersRouter = Router()
 
-export const usersController = {
+class UsersController {
   async getUsers(req: Request, res: Response) {
     const { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } =
       paginationQueries(req)
@@ -26,7 +26,7 @@ export const usersController = {
       searchEmailTerm,
     )
     res.status(HTTP_STATUSES.OK_200).json(users)
-  },
+  }
 
   async createUser(req: Request, res: Response) {
     const body: UserInputType = req.body
@@ -43,7 +43,7 @@ export const usersController = {
     const newUser = await usersQueryRepository.getUserById(userId)
 
     res.status(HTTP_STATUSES.CREATED_201).send(newUser)
-  },
+  }
 
   async deleteUser(req: Request, res: Response) {
     const id = req.params.id
@@ -53,8 +53,10 @@ export const usersController = {
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 }
+
+export const usersController = new UsersController()
 
 usersRouter.get('/', authMiddleware, usersController.getUsers)
 usersRouter.post(

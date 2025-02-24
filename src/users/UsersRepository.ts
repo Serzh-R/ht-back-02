@@ -2,28 +2,28 @@ import { ObjectId } from 'mongodb'
 import { usersCollection } from '../db/mongoDb'
 import { UserRegDBType, UserRegInsertDBType } from './types'
 
-export const usersRepository = {
+class UsersRepository {
   async createUser(user: UserRegInsertDBType): Promise<ObjectId> {
     const result = await usersCollection.insertOne(user as UserRegDBType)
     return result.insertedId
-  },
+  }
 
   async findById(userId: string) {
     return usersCollection.findOne({ _id: new ObjectId(userId) })
-  },
+  }
 
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserRegDBType | null> {
     return await usersCollection.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     })
-  },
+  }
 
   async findUserByConfirmationCode(emailConfirmationCode: string): Promise<UserRegDBType | null> {
     const user = await usersCollection.findOne({
       'emailConfirmation.confirmationCode': emailConfirmationCode,
     })
     return user
-  },
+  }
 
   async updateConfirmationCode(
     _id: ObjectId,
@@ -35,7 +35,7 @@ export const usersRepository = {
   ): Promise<boolean> {
     const result = await usersCollection.updateOne({ _id }, { $set: { emailConfirmation } })
     return result.modifiedCount === 1
-  },
+  }
 
   async updateConfirmation(_id: ObjectId) {
     let result = await usersCollection.updateOne(
@@ -43,7 +43,7 @@ export const usersRepository = {
       { $set: { 'emailConfirmation.isConfirmed': true } },
     )
     return result.modifiedCount === 1
-  },
+  }
 
   async updateRefreshToken(userId: string, newRefreshToken: string | null): Promise<boolean> {
     const result = await usersCollection.updateOne(
@@ -52,7 +52,7 @@ export const usersRepository = {
     )
 
     return result.modifiedCount > 0
-  },
+  }
 
   async deleteUser(id: string): Promise<boolean> {
     try {
@@ -62,5 +62,7 @@ export const usersRepository = {
       console.error('Error deleting user:', error)
       return false
     }
-  },
+  }
 }
+
+export const usersRepository = new UsersRepository()

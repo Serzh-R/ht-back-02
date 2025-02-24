@@ -2,7 +2,7 @@ import { usersCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
 import { PaginatorUserType, UserDBType, UserType } from './types'
 
-export const usersQueryRepository = {
+class UsersQueryRepository {
   async getUsers(
     sortBy: string,
     sortDirection: 'asc' | 'desc',
@@ -34,28 +34,28 @@ export const usersQueryRepository = {
       .limit(pageSize)
       .toArray()
 
-    return {
-      pagesCount: Math.ceil(usersCount / pageSize),
-      page: pageNumber,
+    // Преобразуем UserDBType в UserType
+    const userItems = users.map((user) => this._mapViewModel(user))
+
+    return new PaginatorUserType(
+      Math.ceil(usersCount / pageSize),
+      pageNumber,
       pageSize,
-      totalCount: usersCount,
-      items: users.map((user) => this._mapViewModel(user)),
-    }
-  },
+      usersCount,
+      userItems,
+    )
+  }
 
   async getUserById(id: string): Promise<UserType | null> {
     const user = await usersCollection.findOne<UserDBType>({
       _id: new ObjectId(id),
     })
     return user ? this._mapViewModel(user) : null
-  },
+  }
 
   _mapViewModel(user: UserDBType): UserType {
-    return {
-      id: user._id.toString(),
-      login: user.login,
-      email: user.email,
-      createdAt: user.createdAt.toISOString(),
-    }
-  },
+    return new UserType(user._id.toString(), user.login, user.email, user.createdAt.toISOString())
+  }
 }
+
+export const usersQueryRepository = new UsersQueryRepository()
