@@ -255,12 +255,9 @@ export const authService = {
       }
     }
 
-    // Генерация кода восстановления
     const recoveryCode = randomUUID()
-    const expirationDate = add(new Date(), { hours: 1 }) // Код действителен 1 час
-    const isConfirmed = false
+    const expirationDate = add(new Date(), { hours: 1 })
 
-    // Обновляем код восстановления в базе данных
     const updateSuccess = await usersRepository.updateConfirmationCode(user._id, {
       confirmationCode: recoveryCode,
       expirationDate,
@@ -277,16 +274,39 @@ export const authService = {
       }
     }
 
-    // Формируем ссылку для восстановления пароля
-    //const recoveryLink = `https://somesite.com/password-recovery?recoveryCode=${recoveryCode}`;
-
-    // Отправляем письмо с кодом восстановления
-    //   const emailContent = `
-    //   <h1>Password recovery</h1>
-    //   <p>To finish password recovery please follow the link below:</p>
-    //   <a href="${recoveryLink}">recovery password</a>
-    // `;
     await emailManager.sendEmailPasswordRecovery(user)
+
+    return {
+      status: ResultStatus.Success,
+      data: true,
+      extensions: [],
+    }
+  },
+
+  async newPassword(recoveryCode: string, newPassword: string): Promise<Result<boolean>> {
+    const user = await usersRepository.findUserByConfirmationCode(recoveryCode)
+
+    if (!user) {
+      return {
+        status: ResultStatus.NotFound,
+        data: false,
+        errorMessage: 'Invalid recovery code',
+        extensions: [{ field: 'recoveryCode', message: 'Invalid recovery code' }],
+      }
+    }
+
+    if (new Date() > user.emailConfirmation.expirationDate) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: false,
+        errorMessage: 'Recovery code expired',
+        extensions: [{ field: 'recoveryCode', message: 'Invalid recovery code' }],
+      }
+    }
+
+    const passwordHash = await bcryptService.generateHash(newPassword)
+
+    await usersRepository.updatePassword(user._id, passwordHash)
 
     return {
       status: ResultStatus.Success,

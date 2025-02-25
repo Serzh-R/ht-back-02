@@ -45,6 +45,11 @@ class UsersRepository {
     return result.modifiedCount === 1
   }
 
+  async updatePassword(_id: ObjectId, password: string): Promise<boolean> {
+    const result = await usersCollection.updateOne({ _id }, { $set: { password } })
+    return result.modifiedCount === 1
+  }
+
   async updateRefreshToken(userId: string, newRefreshToken: string | null): Promise<boolean> {
     const result = await usersCollection.updateOne(
       { _id: new ObjectId(userId) },

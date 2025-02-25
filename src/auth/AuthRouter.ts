@@ -105,8 +105,8 @@ export const authController = {
   },
 
   async newPassword(req: Request, res: Response): Promise<void> {
-    const { newPassword, recoveryCode } = req.body
-    const result = await authService.newPassword(newPassword, recoveryCode)
+    const { recoveryCode, newPassword } = req.body
+    const result = await authService.newPassword(recoveryCode, newPassword)
 
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
