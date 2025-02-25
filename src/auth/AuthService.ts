@@ -420,6 +420,15 @@ export const authService = {
       }
     }
 
+    if (!user.emailConfirmation.isConfirmed) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        errorMessage: 'Unauthorized',
+        extensions: [{ field: 'login', message: 'Invalid credentials or account not confirmed' }],
+      }
+    }
+
     const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
     if (!isPassCorrect) {
       return {
