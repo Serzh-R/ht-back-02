@@ -288,7 +288,7 @@ export const authService = {
 
     if (!user) {
       return {
-        status: ResultStatus.NotFound,
+        status: ResultStatus.BadRequest,
         data: false,
         errorMessage: 'Invalid recovery code',
         extensions: [{ field: 'recoveryCode', message: 'Invalid recovery code' }],
