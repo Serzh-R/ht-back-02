@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 import { usersCollection } from '../db/mongoDb'
-import { UserRegDBType, UserRegInsertDBType } from './types'
+import { UserRegDBType, UserRegInsertDBType } from './user-types'
 
 class UsersRepository {
   async createUser(user: UserRegInsertDBType): Promise<ObjectId> {

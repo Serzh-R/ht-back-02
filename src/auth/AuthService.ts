@@ -3,13 +3,14 @@ import { ResultStatus } from '../common/result/resultCode'
 import { bcryptService } from '../common/adapters/bcrypt.service'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService, RefreshTokenPayload } from '../common/adapters/jwt.service'
-import { UserDBType, UserRegInsertDBType } from '../users/types'
+import { UserDBType, UserRegInsertDBType } from '../users/user-types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
 import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 import { REFRESH_TIME } from '../settings'
 import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
+import { validationResult } from 'express-validator'
 
 export const authService = {
   async registerUser(
@@ -238,6 +239,58 @@ export const authService = {
     return {
       status: ResultStatus.Success,
       data: { accessToken, refreshToken },
+      extensions: [],
+    }
+  },
+
+  async passwordRecovery(email: string): Promise<Result<boolean>> {
+    const user = await usersRepository.findByLoginOrEmail(email)
+
+    if (!user) {
+      return {
+        status: ResultStatus.NotFound,
+        data: false,
+        errorMessage: 'User with this email does not exist',
+        extensions: [{ field: 'email', message: 'User with this email does not exist' }],
+      }
+    }
+
+    // Генерация кода восстановления
+    const recoveryCode = randomUUID()
+    const expirationDate = add(new Date(), { hours: 1 }) // Код действителен 1 час
+    const isConfirmed = false
+
+    // Обновляем код восстановления в базе данных
+    const updateSuccess = await usersRepository.updateConfirmationCode(user._id, {
+      confirmationCode: recoveryCode,
+      expirationDate,
+      isConfirmed: false,
+    })
+
+    if (!updateSuccess) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: false,
+        errorMessage:
+          'If the inputModel has incorrect value or RecoveryCode is incorrect or expired',
+        extensions: [{ field: 'inputModel', message: 'RecoveryCode is incorrect or expired' }],
+      }
+    }
+
+    // Формируем ссылку для восстановления пароля
+    //const recoveryLink = `https://somesite.com/password-recovery?recoveryCode=${recoveryCode}`;
+
+    // Отправляем письмо с кодом восстановления
+    //   const emailContent = `
+    //   <h1>Password recovery</h1>
+    //   <p>To finish password recovery please follow the link below:</p>
+    //   <a href="${recoveryLink}">recovery password</a>
+    // `;
+    await emailManager.sendEmailPasswordRecovery(user)
+
+    return {
+      status: ResultStatus.Success,
+      data: true,
       extensions: [],
     }
   },

@@ -1,6 +1,6 @@
 import { usersCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { PaginatorUserType, UserDBType, UserType } from './types'
+import { PaginatorUserType, UserDBType, UserType } from './user-types'
 
 class UsersQueryRepository {
   async getUsers(

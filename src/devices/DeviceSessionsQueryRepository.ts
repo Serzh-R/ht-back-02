@@ -1,4 +1,4 @@
-import { DeviceSessionDBType, DeviceSessionType } from './types'
+import { DeviceSessionDBType, DeviceSessionType } from './device-types'
 import { deviceSessionsCollection } from '../db/mongoDb'
 
 export const deviceSessionsQueryRepository = {

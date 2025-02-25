@@ -1,6 +1,6 @@
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { DeviceSessionDBType } from './types'
+import { DeviceSessionDBType } from './device-types'
 
 export const deviceSessionsRepository = {
   async createDeviceSession(sessionData: DeviceSessionDBType) {

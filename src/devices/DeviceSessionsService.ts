@@ -1,6 +1,6 @@
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { DeviceSessionDBType } from './types'
+import { DeviceSessionDBType } from './device-types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { deviceSessionsRepository } from './DeviceSessionsRepository'
