@@ -247,10 +247,9 @@ export const authService = {
 
     if (!user) {
       return {
-        status: ResultStatus.NotFound,
-        data: false,
-        errorMessage: 'User with this email does not exist',
-        extensions: [{ field: 'email', message: 'User with this email does not exist' }],
+        status: ResultStatus.Success,
+        data: true,
+        extensions: [],
       }
     }
 
@@ -267,9 +266,8 @@ export const authService = {
       return {
         status: ResultStatus.BadRequest,
         data: false,
-        errorMessage:
-          'If the inputModel has incorrect value or RecoveryCode is incorrect or expired',
-        extensions: [{ field: 'inputModel', message: 'RecoveryCode is incorrect or expired' }],
+        errorMessage: 'Failed to update recovery code',
+        extensions: [{ field: 'inputModel', message: 'Failed to update recovery code' }],
       }
     }
 
