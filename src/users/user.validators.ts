@@ -10,13 +10,13 @@ export const emailValidation = body('email')
   .withMessage('email is not correct')
   .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
   .withMessage('email format is invalid')
-  .custom(async (email: string) => {
-    const user = await usersRepository.findByLoginOrEmail(email)
-    if (user) {
-      throw new Error('email already exists')
-    }
-    return true
-  })
+// .custom(async (email: string) => {
+//   const user = await usersRepository.findByLoginOrEmail(email)
+//   if (user) {
+//     throw new Error('email already exists')
+//   }
+//   return true
+// })
 
 export const isUserConfirmedByEmailValidation = body('email')
   .isString()
