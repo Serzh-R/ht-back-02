@@ -10,6 +10,7 @@ import { emailManager } from '../email/EmailManager'
 import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 import { REFRESH_TIME } from '../settings'
 import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
+import { compare } from 'bcrypt'
 
 export const authService = {
   async registerUser(
@@ -300,6 +301,16 @@ export const authService = {
         data: false,
         errorMessage: 'Recovery code expired',
         extensions: [{ field: 'recoveryCode', message: 'Invalid recovery code' }],
+      }
+    }
+
+    const isPasswordCorrect = await bcryptService.checkPassword(newPassword, user.passwordHash)
+    if (isPasswordCorrect) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: false,
+        errorMessage: 'You cannot use the old password',
+        extensions: [{ field: 'password', message: 'Cannot use the old password' }],
       }
     }
 
