@@ -23,6 +23,10 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
       date: new Date(),
     })
 
+    await requestsCollection.deleteMany({
+      date: { $lt: tenSecondsAgo },
+    })
+
     // смотрим логи
     console.log('Filter:', filter)
     console.log('Count:', count)
@@ -40,15 +44,7 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
 
     res.locals.count = count
 
-    // await requestsCollection.deleteMany({
-    //   date: { $lt: tenSecondsAgo },
-    // })
-
     next()
-
-    // await requestsCollection.deleteMany({
-    //   date: { $lt: tenSecondsAgo },
-    // })
   } catch (error) {
     console.error('Error counting requests:', error)
     res.status(500).json({ error: 'Internal Server Error' })

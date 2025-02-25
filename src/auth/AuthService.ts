@@ -282,7 +282,7 @@ export const authService = {
     }
   },
 
-  async newPassword(recoveryCode: string, newPassword: string): Promise<Result<boolean>> {
+  async newPassword(newPassword: string, recoveryCode: string): Promise<Result<boolean>> {
     const user = await usersRepository.findUserByConfirmationCode(recoveryCode)
 
     if (!user) {
@@ -305,7 +305,16 @@ export const authService = {
 
     const passwordHash = await bcryptService.generateHash(newPassword)
 
-    await usersRepository.updatePassword(user._id, passwordHash)
+    const isUpdated = await usersRepository.updatePassword(user._id, passwordHash)
+
+    if (!isUpdated) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: false,
+        errorMessage: 'Failed to update password',
+        extensions: [{ field: 'password', message: 'Password update failed' }],
+      }
+    }
 
     return {
       status: ResultStatus.Success,
