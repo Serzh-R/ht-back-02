@@ -10,7 +10,6 @@ import { emailManager } from '../email/EmailManager'
 import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 import { REFRESH_TIME } from '../settings'
 import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
-import { validationResult } from 'express-validator'
 
 export const authService = {
   async registerUser(
