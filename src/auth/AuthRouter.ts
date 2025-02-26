@@ -6,6 +6,7 @@ import {
   isUserConfirmedByEmailValidation,
   loginOrEmailValidation,
   loginValidation,
+  newPasswordValidation,
   passwordValidation,
 } from '../users/user.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
@@ -226,7 +227,7 @@ authRouter.post(
 authRouter.post(
   '/new-password',
   countRequestsMiddleware,
-  passwordValidation,
+  newPasswordValidation,
   errorsResultMiddleware,
   authController.newPassword,
 )

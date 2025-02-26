@@ -307,7 +307,7 @@ export const authService = {
         status: ResultStatus.Unauthorized,
         data: false,
         errorMessage: 'You cannot use the old password',
-        extensions: [{ field: 'password', message: 'Cannot use the old password' }],
+        extensions: [{ field: 'newPassword', message: 'Cannot use the old password' }],
       }
     }
 
@@ -320,7 +320,7 @@ export const authService = {
         status: ResultStatus.BadRequest,
         data: false,
         errorMessage: 'Failed to update password',
-        extensions: [{ field: 'password', message: 'Password update failed' }],
+        extensions: [{ field: 'newPassword', message: 'Password update failed' }],
       }
     }
 
