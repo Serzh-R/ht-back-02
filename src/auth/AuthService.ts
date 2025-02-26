@@ -254,7 +254,9 @@ export const authService = {
     }
 
     const recoveryCode = randomUUID()
-    const expirationDate = add(new Date(), { hours: 1 })
+    const expirationDate = add(new Date(), { hours: 2 })
+
+    console.log('Generated Recovery Code:', recoveryCode) // Логирование
 
     const updateSuccess = await usersRepository.updateConfirmationCode(user._id, {
       confirmationCode: recoveryCode,
@@ -263,6 +265,7 @@ export const authService = {
     })
 
     if (!updateSuccess) {
+      console.error('Failed to update recovery code for user:', user._id) // Логирование ошибки
       return {
         status: ResultStatus.BadRequest,
         data: false,
@@ -281,6 +284,8 @@ export const authService = {
   },
 
   async newPassword(newPassword: string, recoveryCode: string): Promise<Result<boolean>> {
+    console.log('Searching User by Recovery Code:', recoveryCode) // Логирование
+
     const user = await usersRepository.findUserByConfirmationCode(recoveryCode)
 
     if (!user) {
