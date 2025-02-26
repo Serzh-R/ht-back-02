@@ -46,7 +46,10 @@ class UsersRepository {
   }
 
   async updatePassword(_id: ObjectId, passwordHash: string): Promise<boolean> {
-    const result = await usersCollection.updateOne({ _id }, { $set: { passwordHash } })
+    const result = await usersCollection.updateOne(
+      { _id },
+      { $set: { passwordHash, 'emailConfirmation.isConfirmed': true } },
+    )
     return result.modifiedCount === 1
   }
 
