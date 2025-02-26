@@ -10,11 +10,17 @@ export const emailManager = {
     await emailAdapter.sendEmail(user.email, subject, message)
   },
 
-  async sendEmailPasswordRecovery(user: UserRegInsertDBType) {
+  async sendEmailPasswordRecovery({
+    email,
+    confirmationCode,
+  }: {
+    confirmationCode: string
+    email: string
+  }) {
     const subject = 'Password Recovery'
     const message = `<h1>Password recovery</h1>
           <p>Для завершения восстановления пароля перейдите по ссылке ниже:</p>
-    <a href="http://localhost:3004/password-recovery?recoveryCode=${user.emailConfirmation.confirmationCode}">recovery password</a>`
-    await emailAdapter.sendEmail(user.email, subject, message)
+    <a href="http://localhost:3004/password-recovery?recoveryCode=${confirmationCode}">recovery password</a>`
+    await emailAdapter.sendEmail(email, subject, message)
   },
 }

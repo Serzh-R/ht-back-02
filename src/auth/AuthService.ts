@@ -254,7 +254,7 @@ export const authService = {
     }
 
     const recoveryCode = randomUUID()
-    const expirationDate = add(new Date(), { hours: 2 })
+    const expirationDate = add(new Date(), { hours: 1 })
 
     console.log('Generated Recovery Code:', recoveryCode) // Логирование
 
@@ -274,7 +274,7 @@ export const authService = {
       }
     }
 
-    await emailManager.sendEmailPasswordRecovery(user)
+    await emailManager.sendEmailPasswordRecovery({ confirmationCode: recoveryCode, email })
 
     return {
       status: ResultStatus.Success,

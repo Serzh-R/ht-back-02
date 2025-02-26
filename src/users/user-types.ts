@@ -66,6 +66,7 @@ export class UserRegDBType {
     public passwordHash: string,
     public createdAt: Date,
     public emailConfirmation: EmailConfirmationType,
+    //public passwordRecovery: {code: string,  date: string} | null
   ) {}
 }
 
