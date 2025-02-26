@@ -14,7 +14,7 @@ export const emailManager = {
     const subject = 'Password Recovery'
     const message = `<h1>Password recovery</h1>
           <p>Для завершения восстановления пароля перейдите по ссылке ниже:</p>
-    <a href="https://somesite.com/password-recovery?recoveryCode=${user.emailConfirmation.confirmationCode}">recovery password</a>`
+    <a href="http://localhost:3004/password-recovery?recoveryCode=${user.emailConfirmation.confirmationCode}">recovery password</a>`
     await emailAdapter.sendEmail(user.email, subject, message)
   },
 }
