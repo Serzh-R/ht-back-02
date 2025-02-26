@@ -1,6 +1,6 @@
 import { commentsCollection, postsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { CommentDBType, CommentType, PaginatorCommentType } from './types'
+import { CommentDBType, CommentType, PaginatorCommentType } from './comment-types'
 import { ResultStatus } from '../common/result/resultCode'
 import { Result } from '../common/result/result.type'
 

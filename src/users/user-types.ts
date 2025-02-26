@@ -9,13 +9,6 @@ export class UserType {
   ) {}
 }
 
-// export type UserType = {
-//   id: string
-//   login: string
-//   email: string
-//   createdAt: string
-// }
-
 // ****************************************************************** //
 
 export class UserDBType {
@@ -27,14 +20,6 @@ export class UserDBType {
     public createdAt: Date,
   ) {}
 }
-
-// export type UserDBType = {
-//   _id: ObjectId
-//   login: string
-//   email: string
-//   passwordHash: string
-//   createdAt: Date
-// }
 
 // ****************************************************************** //
 
@@ -53,8 +38,6 @@ export class UserDBInsertType {
   }
 }
 
-//export type UserDBInsertType = Omit<UserDBType, '_id'>
-
 // ****************************************************************** //
 
 // UserRegDBType — модель регистрации пользователя в базе данных с подтверждением почты
@@ -66,11 +49,9 @@ export class UserRegDBType {
     public passwordHash: string,
     public createdAt: Date,
     public emailConfirmation: EmailConfirmationType,
-    //public passwordRecovery: {code: string,  date: string} | null
+    public passwordRecovery: PasswordRecovery | null,
   ) {}
 }
-
-//export type UserRegDBType = UserDBType & { emailConfirmation: EmailConfirmationType }
 
 // ********************************************************** //
 
@@ -97,8 +78,6 @@ export class UserRegInsertDBType {
   }
 }
 
-//export type UserRegInsertDBType = UserDBInsertType & { emailConfirmation: EmailConfirmationType }
-
 // ****************************************************************** //
 
 export class EmailConfirmationType {
@@ -109,11 +88,12 @@ export class EmailConfirmationType {
   ) {}
 }
 
-// export type EmailConfirmationType = {
-//   confirmationCode: string
-//   expirationDate: Date
-//   isConfirmed: boolean
-// }
+export class PasswordRecovery {
+  constructor(
+    public passwordRecoveryCode: string,
+    public expirationDate: Date,
+  ) {}
+}
 
 // ****************************************************************** //
 
@@ -127,14 +107,6 @@ export class PaginatorUserType {
   ) {}
 }
 
-// export type PaginatorUserType = {
-//   pagesCount: number
-//   page: number
-//   pageSize: number
-//   totalCount: number
-//   items: UserType[]
-// }
-
 // ****************************************************************** //
 
 export class UserInputType {
@@ -144,12 +116,6 @@ export class UserInputType {
     public email: string,
   ) {}
 }
-
-// export type UserInputType = {
-//   login: string
-//   password: string
-//   email: string
-// }
 
 // ****************************************************************** //
 
@@ -161,12 +127,6 @@ export class BlacklistDBType {
   ) {}
 }
 
-// export type BlacklistDBType = {
-//   _id: ObjectId
-//   refreshToken: string
-//   createdAt: Date
-// }
-
 // ****************************************************************** //
 
 export class MeType {
@@ -177,13 +137,81 @@ export class MeType {
   ) {}
 }
 
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+// export type UserType = {
+//   id: string
+//   login: string
+//   email: string
+//   createdAt: string
+// }
+
+//************************************************************
+
+// export type UserDBType = {
+//   _id: ObjectId
+//   login: string
+//   email: string
+//   passwordHash: string
+//   createdAt: Date
+// }
+
+//************************************************************
+
+//export type UserDBInsertType = Omit<UserDBType, '_id'>
+
+//************************************************************
+
+//export type UserRegDBType = UserDBType & { emailConfirmation: EmailConfirmationType }
+
+//************************************************************
+
+//export type UserRegInsertDBType = UserDBInsertType & { emailConfirmation: EmailConfirmationType }
+
+//************************************************************
+
+// export type EmailConfirmationType = {
+//   confirmationCode: string
+//   expirationDate: Date
+//   isConfirmed: boolean
+// }
+
+//*************************************************************
+
+// export type PaginatorUserType = {
+//   pagesCount: number
+//   page: number
+//   pageSize: number
+//   totalCount: number
+//   items: UserType[]
+// }
+
+//*************************************************************
+
+// export type UserInputType = {
+//   login: string
+//   password: string
+//   email: string
+// }
+
+//*************************************************************
+
+// export type BlacklistDBType = {
+//   _id: ObjectId
+//   refreshToken: string
+//   createdAt: Date
+// }
+
+//*************************************************************
+
 // export type MeType = {
 //   email: string
 //   login: string
 //   userId: string
 // }
 
-// ****************************************************************** //
+//**************************************************************
 
 // export type LoginOrEmailInputType = {
 //   loginOrEmail: string

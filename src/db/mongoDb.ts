@@ -1,7 +1,7 @@
 import { SETTINGS } from '../settings'
 import { MongoClient, Collection, Db } from 'mongodb'
 import { BlogDBType, PostDBType } from '../types/types'
-import { CommentDBType } from '../comments/types'
+import { CommentDBType } from '../comments/comment-types'
 import { BlacklistDBType, UserRegDBType } from '../users/user-types'
 import { AppealToApi, DeviceSessionDBType } from '../devices/device-types'
 

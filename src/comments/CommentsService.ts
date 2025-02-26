@@ -1,6 +1,6 @@
 import { commentsRepository } from './CommentsRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
-import { CommentDBInsertType, CommentType } from './types'
+import { CommentDBInsertType, CommentType } from './comment-types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'

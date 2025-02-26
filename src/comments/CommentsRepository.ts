@@ -1,6 +1,6 @@
 import { commentsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { CommentDBType } from './types'
+import { CommentDBType } from './comment-types'
 
 export const commentsRepository = {
   async updateCommentById(id: string, content: string): Promise<boolean> {
