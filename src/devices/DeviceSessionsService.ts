@@ -1,6 +1,6 @@
 import { deviceSessionsCollection } from '../db/mongoDb'
-import { ObjectId } from 'mongodb'
-import { DeviceSessionDBType } from './device-types'
+import { ObjectId, WithId } from 'mongodb'
+import { DeviceSessionDB } from './device-types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { deviceSessionsRepository } from './DeviceSessionsRepository'
@@ -21,7 +21,7 @@ export const deviceSessionsService = {
     return isDeleted
   },
 
-  async deviceBySessionId(deviceId: string): Promise<Result<DeviceSessionDBType>> {
+  async deviceBySessionId(deviceId: string): Promise<Result<WithId<DeviceSessionDB>>> {
     const device = await deviceSessionsCollection.findOne({ deviceId })
 
     if (!device) {

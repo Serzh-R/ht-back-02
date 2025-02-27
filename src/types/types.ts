@@ -24,7 +24,7 @@ export class APIErrorResultType {
 
 export class BlogDBType {
   constructor(
-    public _id: ObjectId | undefined, // Optional for MongoDB insertions
+    //public _id: ObjectId | undefined, // Optional for MongoDB insertions
     public name: string,
     public description: string,
     public websiteUrl: string,

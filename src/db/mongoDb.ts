@@ -1,5 +1,5 @@
 import { SETTINGS } from '../settings'
-import { MongoClient, Collection, Db } from 'mongodb'
+import { MongoClient, Collection, Db, WithId } from 'mongodb'
 import { BlogDBType, PostDBType } from '../types/types'
 import { CommentDBType } from '../comments/comment-types'
 import { BlacklistDBType, UserRegDBType } from '../users/user-types'
@@ -10,7 +10,7 @@ export let postsCollection: Collection<PostDBType>
 export let usersCollection: Collection<UserRegDBType>
 export let commentsCollection: Collection<CommentDBType>
 export let blacklistCollection: Collection<BlacklistDBType>
-export let deviceSessionsCollection: Collection<DeviceSessionDB>
+export let deviceSessionsCollection: Collection<WithId<DeviceSessionDB>>
 export let requestsCollection: Collection<AppealToApi>
 
 export let client: MongoClient
@@ -30,7 +30,7 @@ export async function runDb(url: string): Promise<boolean> {
   usersCollection = mongoDb.collection<UserRegDBType>('users')
   commentsCollection = mongoDb.collection<CommentDBType>('comments')
   blacklistCollection = mongoDb.collection<BlacklistDBType>('blacklist')
-  deviceSessionsCollection = mongoDb.collection<DeviceSessionDBType>('sessions')
+  deviceSessionsCollection = mongoDb.collection<WithId<DeviceSessionDB>>('sessions')
   requestsCollection = mongoDb.collection<AppealToApi>('requests')
 
   try {
