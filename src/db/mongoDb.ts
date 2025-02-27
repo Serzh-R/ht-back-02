@@ -3,14 +3,14 @@ import { MongoClient, Collection, Db } from 'mongodb'
 import { BlogDBType, PostDBType } from '../types/types'
 import { CommentDBType } from '../comments/comment-types'
 import { BlacklistDBType, UserRegDBType } from '../users/user-types'
-import { AppealToApi, DeviceSessionDBType } from '../devices/device-types'
+import { AppealToApi, DeviceSessionDB } from '../devices/device-types'
 
 export let blogsCollection: Collection<BlogDBType>
 export let postsCollection: Collection<PostDBType>
 export let usersCollection: Collection<UserRegDBType>
 export let commentsCollection: Collection<CommentDBType>
 export let blacklistCollection: Collection<BlacklistDBType>
-export let deviceSessionsCollection: Collection<DeviceSessionDBType>
+export let deviceSessionsCollection: Collection<DeviceSessionDB>
 export let requestsCollection: Collection<AppealToApi>
 
 export let client: MongoClient

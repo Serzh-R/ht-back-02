@@ -1,9 +1,9 @@
 import { deviceSessionsCollection } from '../db/mongoDb'
-import { ObjectId } from 'mongodb'
-import { DeviceSessionDBType } from './device-types'
+import { ObjectId, WithId } from 'mongodb'
+import { DeviceSessionDB } from './device-types'
 
 export const deviceSessionsRepository = {
-  async createDeviceSession(sessionData: DeviceSessionDBType) {
+  async createDeviceSession(sessionData: WithId<DeviceSessionDB>) {
     try {
       await deviceSessionsCollection.insertOne(sessionData)
       return true
