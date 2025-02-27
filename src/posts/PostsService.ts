@@ -4,7 +4,7 @@ import {
   PostDBType,
   PostInputType,
   PostType,
-} from '../types/types'
+} from '../blogs/blog-post-types'
 import { postsRepository } from './PostsRepository'
 import { blogsQueryRepository } from '../blogs/BlogsQueryRepository'
 import { ObjectId } from 'mongodb'

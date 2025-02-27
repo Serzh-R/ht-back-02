@@ -5,10 +5,11 @@ import { idParamValidator } from '../validation/express-validator/field.validato
 import { deviceSessionsQueryRepository } from './DeviceSessionsQueryRepository'
 import { jwtRefreshAuthMiddleware } from '../auth/middlewares/jwt.refresh.auth.middleware'
 import { jwtService } from '../common/adapters/jwt.service'
+import { req } from '../../__test__/test-helpers'
 
 export const deviceSessionsRouter = Router()
 
-export const devicesController = {
+class DevicesController {
   async getDevicesByUserId(req: Request, res: Response) {
     const userId = req.userId
 
@@ -19,7 +20,7 @@ export const devicesController = {
 
     const devices = await deviceSessionsQueryRepository.getDevicesByUserId(userId)
     res.status(HTTP_STATUSES.OK_200).json(devices)
-  },
+  }
 
   async deleteDevicesByUserIdExceptCurrent(req: Request, res: Response) {
     const userId = req.userId
@@ -45,7 +46,7 @@ export const devicesController = {
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 
   async deleteDeviceBySessionId(req: Request, res: Response) {
     const userId = req.userId
@@ -82,8 +83,10 @@ export const devicesController = {
     }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-  },
+  }
 }
+
+export const devicesController = new DevicesController()
 
 deviceSessionsRouter.get('/', jwtRefreshAuthMiddleware, devicesController.getDevicesByUserId)
 

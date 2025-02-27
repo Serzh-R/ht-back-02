@@ -13,7 +13,7 @@ import { checkCommentOwnership } from '../auth/middlewares/checkCommentOwnership
 
 export const commentsRouter = Router()
 
-export const commentsController = {
+class CommentsController {
   async getCommentById(req: Request, res: Response) {
     const id = req.params.id
 
@@ -24,7 +24,7 @@ export const commentsController = {
     }
 
     res.status(HTTP_STATUSES.OK_200).json(commentById)
-  },
+  }
 
   async updateCommentById(req: Request, res: Response) {
     const { id } = req.params
@@ -44,7 +44,7 @@ export const commentsController = {
     }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-  },
+  }
 
   async deleteCommentById(req: Request, res: Response) {
     const { id } = req.params
@@ -63,8 +63,10 @@ export const commentsController = {
     }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-  },
+  }
 }
+
+export const commentsController = new CommentsController()
 
 commentsRouter.get('/:id', idParamValidator, commentsController.getCommentById)
 

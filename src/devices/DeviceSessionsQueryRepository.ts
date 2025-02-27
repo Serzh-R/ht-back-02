@@ -2,7 +2,7 @@ import { DeviceSession, DeviceSessionDB } from './device-types'
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { WithId } from 'mongodb'
 
-export const deviceSessionsQueryRepository = {
+class DeviceSessionsQueryRepository {
   async getDevicesByUserId(userId: string): Promise<DeviceSession[]> {
     const devices = await deviceSessionsCollection
       .find({
@@ -18,5 +18,7 @@ export const deviceSessionsQueryRepository = {
         deviceId: device.deviceId,
       }),
     )
-  },
+  }
 }
+
+export const deviceSessionsQueryRepository = new DeviceSessionsQueryRepository()

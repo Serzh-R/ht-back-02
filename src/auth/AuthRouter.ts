@@ -21,7 +21,7 @@ import { jwtRefreshAuthMiddleware } from './middlewares/jwt.refresh.auth.middlew
 
 export const authRouter = Router()
 
-export const authController = {
+class AuthController {
   async registerUser(req: Request, res: Response): Promise<void> {
     const { login, email, password } = req.body
     const user = await authService.registerUser(login, email, password)
@@ -31,7 +31,7 @@ export const authController = {
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 
   async registerConfirm(req: Request, res: Response): Promise<void> {
     const { code } = req.body
@@ -50,7 +50,7 @@ export const authController = {
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 
   async registerEmailResending(req: Request, res: Response): Promise<void> {
     const { email } = req.body
@@ -64,7 +64,7 @@ export const authController = {
     }
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 
   async login(req: Request, res: Response) {
     const userAgent = req.headers['user-agent'] || 'Unknown Device'
@@ -90,7 +90,7 @@ export const authController = {
     })
 
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: result.data!.accessToken })
-  },
+  }
 
   async passwordRecovery(req: Request, res: Response): Promise<void> {
     const { email } = req.body
@@ -103,7 +103,7 @@ export const authController = {
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 
   async newPassword(req: Request, res: Response): Promise<void> {
     const { newPassword, recoveryCode } = req.body
@@ -116,7 +116,7 @@ export const authController = {
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 
   async refreshToken(req: Request, res: Response): Promise<void> {
     const oldRefreshToken = req.cookies?.refreshToken
@@ -144,7 +144,7 @@ export const authController = {
     })
 
     res.status(HTTP_STATUSES.OK_200).json({ accessToken: result.data?.accessToken })
-  },
+  }
 
   async logout(req: Request, res: Response): Promise<void> {
     const refreshToken = req.cookies?.refreshToken
@@ -172,7 +172,7 @@ export const authController = {
     })
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 
   // TODO: Remove
   async me(req: Request, res: Response) {
@@ -204,8 +204,10 @@ export const authController = {
       email: user.email,
       login: user.login,
     } as MeType)
-  },
+  }
 }
+
+export const authController = new AuthController()
 
 authRouter.post(
   '/login',

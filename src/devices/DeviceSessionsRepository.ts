@@ -2,7 +2,7 @@ import { deviceSessionsCollection } from '../db/mongoDb'
 import { ObjectId, WithId } from 'mongodb'
 import { DeviceSessionDB } from './device-types'
 
-export const deviceSessionsRepository = {
+class DeviceSessionsRepository {
   async createDeviceSession(sessionData: WithId<DeviceSessionDB>) {
     try {
       await deviceSessionsCollection.insertOne(sessionData)
@@ -11,14 +11,14 @@ export const deviceSessionsRepository = {
       console.error('Error creating device session:', error)
       return false
     }
-  },
+  }
 
   async findCurrentDevice(userId: string, deviceId: string) {
     return await deviceSessionsCollection.findOne({
       userId,
       deviceId,
     })
-  },
+  }
 
   async deleteDevicesExceptCurrent(userId: string, currentDeviceId: ObjectId) {
     const result = await deviceSessionsCollection.deleteMany({
@@ -26,7 +26,7 @@ export const deviceSessionsRepository = {
       _id: { $ne: currentDeviceId },
     })
     return result.deletedCount > 0
-  },
+  }
 
   async deleteDeviceSessions({ deviceId, userId }: { deviceId: string; userId: string }) {
     const result = await deviceSessionsCollection.deleteMany({
@@ -35,14 +35,14 @@ export const deviceSessionsRepository = {
     })
 
     return result.deletedCount > 0
-  },
+  }
 
   async findSessionByDeviceIdAndUserId(deviceId: string, userId: string) {
     return await deviceSessionsCollection.findOne({
       deviceId,
       userId,
     })
-  },
+  }
 
   async updateSessionDates(
     deviceId: string,
@@ -60,5 +60,7 @@ export const deviceSessionsRepository = {
       },
     )
     return result.modifiedCount > 0
-  },
+  }
 }
+
+export const deviceSessionsRepository = new DeviceSessionsRepository()

@@ -5,7 +5,7 @@ import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { deviceSessionsRepository } from './DeviceSessionsRepository'
 
-export const deviceSessionsService = {
+class DeviceSessionsService {
   async deleteDevicesByUserIdExceptCurrent(
     userId: string,
     currentDeviceId: string,
@@ -19,7 +19,7 @@ export const deviceSessionsService = {
     )
 
     return isDeleted
-  },
+  }
 
   async deviceBySessionId(deviceId: string): Promise<Result<WithId<DeviceSessionDB>>> {
     const device = await deviceSessionsCollection.findOne({ deviceId })
@@ -38,10 +38,12 @@ export const deviceSessionsService = {
       data: device,
       extensions: [],
     }
-  },
+  }
 
   async deleteDeviceById(deviceId: string): Promise<boolean> {
     const result = await deviceSessionsCollection.deleteOne({ deviceId })
     return result.deletedCount > 0
-  },
+  }
 }
+
+export const deviceSessionsService = new DeviceSessionsService()

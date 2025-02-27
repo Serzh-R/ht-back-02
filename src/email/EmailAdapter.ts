@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import { SETTINGS } from '../settings'
 
-export const emailAdapter = {
+class EmailAdapter {
   async sendEmail(email: string, subject: string, message: string) {
     try {
       const transport = nodemailer.createTransport({
@@ -25,5 +25,7 @@ export const emailAdapter = {
       console.error('Failed to send email:', error)
       return { success: false, error: 'Email sending failed' }
     }
-  },
+  }
 }
+
+export const emailAdapter = new EmailAdapter()

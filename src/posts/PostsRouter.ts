@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
-import { PostInputType } from '../types/types'
+import { PostInputType } from '../blogs/blog-post-types'
 import {
   blogIdValidator,
   commentContentValidator,
@@ -23,13 +23,13 @@ import { resultCodeToHttpException } from '../common/result/resultCodeToHttpExce
 
 export const postRouter = Router()
 
-export const postController = {
+class PostController {
   async getPosts(req: Request, res: Response) {
     const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
 
     const posts = await postsQueryRepository.getPosts(pageNumber, pageSize, sortBy, sortDirection)
     res.status(HTTP_STATUSES.OK_200).json(posts)
-  },
+  }
 
   async createPost(req: Request, res: Response) {
     const body: PostInputType = req.body
@@ -44,7 +44,7 @@ export const postController = {
     }
 
     res.status(HTTP_STATUSES.CREATED_201).json(newPost)
-  },
+  }
 
   async getPostById(req: Request, res: Response) {
     const id = req.params.id
@@ -56,7 +56,7 @@ export const postController = {
     }
 
     res.status(HTTP_STATUSES.OK_200).json(postById)
-  },
+  }
 
   async updatePost(req: Request, res: Response) {
     const id = req.params.id
@@ -67,7 +67,7 @@ export const postController = {
     } else {
       res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     }
-  },
+  }
 
   async deletePost(req: Request, res: Response) {
     const id = req.params.id
@@ -78,7 +78,7 @@ export const postController = {
     } else {
       res.status(HTTP_STATUSES.NO_CONTENT_204).send()
     }
-  },
+  }
 
   async createCommentForPost(req: Request, res: Response) {
     const postId = req.params.postId
@@ -104,7 +104,7 @@ export const postController = {
     }
 
     res.status(HTTP_STATUSES.CREATED_201).send(result.data)
-  },
+  }
 
   async getCommentsForPost(req: Request, res: Response) {
     const { postId } = req.params
@@ -124,8 +124,10 @@ export const postController = {
     }
 
     res.status(HTTP_STATUSES.OK_200).send(result.data)
-  },
+  }
 }
+
+export const postController = new PostController()
 
 postRouter.get('/', postController.getPosts)
 postRouter.post(

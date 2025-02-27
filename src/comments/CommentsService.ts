@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb'
 import { commentsQueryRepository } from './CommentsQueryRepository'
 import { usersQueryRepository } from '../users/UsersQueryRepository'
 
-export const commentsService = {
+class CommentsService {
   async updateCommentById(
     commentId: string,
     userId: string | null | undefined,
@@ -40,7 +40,7 @@ export const commentsService = {
       data: success,
       extensions: [],
     }
-  },
+  }
 
   async deleteComment(
     commentId: string,
@@ -73,7 +73,7 @@ export const commentsService = {
       data: success,
       extensions: [],
     }
-  },
+  }
 
   async createCommentForPost(postData: {
     postId: string
@@ -129,5 +129,7 @@ export const commentsService = {
       },
       extensions: [],
     }
-  },
+  }
 }
+
+export const commentsService = new CommentsService()

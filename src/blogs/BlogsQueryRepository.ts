@@ -1,8 +1,8 @@
-import { BlogDBType, BlogType, PaginatorBlogType } from '../types/types'
+import { BlogDBType, BlogType, PaginatorBlogType } from './blog-post-types'
 import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, WithId } from 'mongodb'
 
-export const blogsQueryRepository = {
+class BlogsQueryRepository {
   async getBlogs(
     searchNameTerm: string | null,
     sortBy: string,
@@ -34,7 +34,7 @@ export const blogsQueryRepository = {
       totalCount: blogsCount,
       items: blogs.map((blog) => this._getInView(blog)),
     }
-  },
+  }
 
   async getBlogsCount(searchNameTerm: string | null): Promise<number> {
     const filter: any = {}
@@ -42,13 +42,13 @@ export const blogsQueryRepository = {
       filter.name = { $regex: searchNameTerm, $options: 'i' }
     }
     return blogsCollection.countDocuments(filter)
-  },
+  }
 
   async getBlogById(blogId: string): Promise<BlogType | null> {
     if (!ObjectId.isValid(blogId)) return null
     const blog = await blogsCollection.findOne({ _id: new ObjectId(blogId) })
     return blog ? this._getInView(blog) : null
-  },
+  }
 
   _getInView(blog: WithId<BlogDBType>): BlogType {
     return {
@@ -59,8 +59,10 @@ export const blogsQueryRepository = {
       createdAt: blog.createdAt,
       isMembership: blog.isMembership,
     }
-  },
+  }
   _checkObjectId(id: string): boolean {
     return ObjectId.isValid(id)
-  },
+  }
 }
+
+export const blogsQueryRepository = new BlogsQueryRepository()

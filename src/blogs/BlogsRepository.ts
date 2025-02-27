@@ -1,8 +1,9 @@
-import { BlogInputType, BlogDBInsertType, BlogType } from '../types/types'
+import { BlogInputType, BlogDBInsertType, BlogType } from './blog-post-types'
 import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, OptionalId } from 'mongodb'
+import { body } from 'express-validator'
 
-export const blogsRepository = {
+class BlogsRepository {
   async createBlog(body: BlogInputType): Promise<BlogType> {
     const newBlog: BlogDBInsertType = {
       name: body.name ? body.name : '',
@@ -12,9 +13,7 @@ export const blogsRepository = {
       isMembership: false,
     }
 
-    const result = await blogsCollection.insertOne(
-      newBlog as OptionalId<BlogType>,
-    )
+    const result = await blogsCollection.insertOne(newBlog as OptionalId<BlogType>)
 
     return {
       id: result.insertedId.toString(),
@@ -24,7 +23,7 @@ export const blogsRepository = {
       createdAt: newBlog.createdAt,
       isMembership: newBlog.isMembership,
     } as BlogType
-  },
+  }
 
   async updateBlog(id: string, body: BlogInputType): Promise<boolean> {
     if (!body.name || !body.description || !body.websiteUrl) {
@@ -44,10 +43,12 @@ export const blogsRepository = {
     )
 
     return result.matchedCount > 0
-  },
+  }
 
   async deleteBlog(id: string): Promise<boolean> {
     const result = await blogsCollection.deleteOne({ _id: new ObjectId(id) })
     return result.deletedCount > 0
-  },
+  }
 }
+
+export const blogsRepository = new BlogsRepository()

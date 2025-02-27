@@ -1,24 +1,24 @@
-import { DBType } from "../types/types"
+import { DBType } from '../blogs/blog-post-types'
 
 export const db: DBType = {
   blogs: [
     {
-      id: "1",
-      name: "Serzh",
-      description: "description",
-      websiteUrl: "https://live.com",
+      id: '1',
+      name: 'Serzh',
+      description: 'description',
+      websiteUrl: 'https://live.com',
       createdAt: new Date().toISOString(),
       isMembership: false,
     },
   ],
   posts: [
     {
-      id: "1",
-      title: "Back",
-      shortDescription: "shortDescription",
-      content: "content",
-      blogId: "1",
-      blogName: "Serzh",
+      id: '1',
+      title: 'Back',
+      shortDescription: 'shortDescription',
+      content: 'content',
+      blogId: '1',
+      blogName: 'Serzh',
       createdAt: new Date().toISOString(),
     },
   ],

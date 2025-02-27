@@ -4,7 +4,7 @@ import { CommentDBType, CommentType, PaginatorCommentType } from './comment-type
 import { ResultStatus } from '../common/result/resultCode'
 import { Result } from '../common/result/result.type'
 
-export const commentsQueryRepository = {
+class CommentsQueryRepository {
   async getCommentById(id: string): Promise<CommentType | null> {
     const comment = await commentsCollection.findOne<CommentDBType>({ _id: new ObjectId(id) })
     if (!comment) {
@@ -12,7 +12,7 @@ export const commentsQueryRepository = {
     }
 
     return this._mapViewModel(comment)
-  },
+  }
 
   async getCommentsForPost(
     postId: string,
@@ -58,7 +58,7 @@ export const commentsQueryRepository = {
       },
       extensions: [],
     }
-  },
+  }
 
   _mapViewModel(comment: CommentDBType): CommentType {
     return {
@@ -67,5 +67,7 @@ export const commentsQueryRepository = {
       commentatorInfo: comment.commentatorInfo,
       createdAt: comment.createdAt.toISOString(),
     }
-  },
+  }
 }
+
+export const commentsQueryRepository = new CommentsQueryRepository()

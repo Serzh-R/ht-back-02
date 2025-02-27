@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
-import { BlogInputType, BlogPostInputType, PaginatorPostType } from '../types/types'
+import { BlogInputType, BlogPostInputType, PaginatorPostType } from './blog-post-types'
 import {
   blogFieldsValidator,
   idParamValidator,
@@ -18,7 +18,7 @@ import { authMiddleware } from '../auth/middlewares/auth.middleware'
 
 export const blogRouter = Router()
 
-export const blogController = {
+class BlogController {
   async getBlogs(req: Request, res: Response) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
 
@@ -30,7 +30,7 @@ export const blogController = {
       pageSize,
     )
     res.status(HTTP_STATUSES.OK_200).json(blogs)
-  },
+  }
 
   async createBlog(req: Request, res: Response) {
     const body: BlogInputType = req.body
@@ -38,7 +38,7 @@ export const blogController = {
     const newBlog = await blogsService.createBlog(body)
 
     res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
-  },
+  }
 
   async createPostForBlog(req: Request, res: Response): Promise<void> {
     const id = req.params.id
@@ -52,7 +52,7 @@ export const blogController = {
     }
 
     res.status(HTTP_STATUSES.CREATED_201).json(createdPost)
-  },
+  }
 
   async getBlogById(req: Request, res: Response) {
     const blogId = req.params.id
@@ -63,7 +63,7 @@ export const blogController = {
       return
     }
     res.status(HTTP_STATUSES.OK_200).json(blog)
-  },
+  }
 
   async getPostsForBlog(req: Request, res: Response): Promise<void> {
     const blogId = req.params.id
@@ -85,7 +85,7 @@ export const blogController = {
     )
 
     res.status(HTTP_STATUSES.OK_200).json(posts)
-  },
+  }
 
   async updateBlog(req: Request, res: Response) {
     const id = req.params.id
@@ -96,7 +96,7 @@ export const blogController = {
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 
   async deleteBlog(req: Request, res: Response) {
     const id = req.params.id
@@ -107,8 +107,10 @@ export const blogController = {
       return
     }
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
-  },
+  }
 }
+
+export const blogController = new BlogController()
 
 blogRouter.get('/', blogController.getBlogs)
 

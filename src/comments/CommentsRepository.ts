@@ -2,14 +2,14 @@ import { commentsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
 import { CommentDBType } from './comment-types'
 
-export const commentsRepository = {
+class CommentsRepository {
   async updateCommentById(id: string, content: string): Promise<boolean> {
     const result = await commentsCollection.updateOne(
       { _id: new ObjectId(id) },
       { $set: { content } },
     )
     return result.matchedCount > 0
-  },
+  }
 
   async createComment(commentData: {
     content: string
@@ -25,10 +25,12 @@ export const commentsRepository = {
     } as CommentDBType)
 
     return result.insertedId
-  },
+  }
 
   async deleteById(id: string): Promise<boolean> {
     const result = await commentsCollection.deleteOne({ _id: new ObjectId(id) })
     return result.deletedCount > 0
-  },
+  }
 }
+
+export const commentsRepository = new CommentsRepository()

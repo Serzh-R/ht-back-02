@@ -1,4 +1,4 @@
-import { PostType, PaginatorPostType, PostDBType } from '../types/types'
+import { PostType, PaginatorPostType, PostDBType } from '../blogs/blog-post-types'
 import { postsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
 

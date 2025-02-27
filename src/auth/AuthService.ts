@@ -12,7 +12,7 @@ import { REFRESH_TIME } from '../settings'
 import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
 import { ObjectId } from 'mongodb'
 
-export const authService = {
+class AuthService {
   async registerUser(
     login: string,
     email: string,
@@ -46,7 +46,7 @@ export const authService = {
       data: { userId: userId.toString() },
       extensions: [],
     }
-  },
+  }
 
   async registerConfirm(code: string): Promise<Result<boolean>> {
     try {
@@ -126,7 +126,7 @@ export const authService = {
         extensions: [],
       }
     }
-  },
+  }
 
   async registerEmailResending(email: string): Promise<Result<boolean>> {
     const user = await usersRepository.findByLoginOrEmail(email)
@@ -187,7 +187,7 @@ export const authService = {
       data: true,
       extensions: [],
     }
-  },
+  }
 
   async login(
     loginOrEmail: string,
@@ -242,7 +242,7 @@ export const authService = {
       data: { accessToken, refreshToken },
       extensions: [],
     }
-  },
+  }
 
   async passwordRecovery(email: string): Promise<Result<boolean>> {
     const user = await usersRepository.findByLoginOrEmail(email)
@@ -283,7 +283,7 @@ export const authService = {
       data: true,
       extensions: [],
     }
-  },
+  }
 
   async newPassword(newPassword: string, recoveryCode: string): Promise<Result<boolean>> {
     console.log('Searching User by Recovery Code:', recoveryCode) // Логирование
@@ -336,7 +336,7 @@ export const authService = {
       data: true,
       extensions: [],
     }
-  },
+  }
 
   async refreshToken(
     oldRefreshToken: string,
@@ -381,7 +381,7 @@ export const authService = {
       data: { accessToken: newAccessToken, refreshToken: newRefreshToken },
       extensions: [],
     }
-  },
+  }
 
   async logout(refreshToken: string): Promise<Result<null>> {
     const validationResult = await validateRefreshTokenAndSession(refreshToken)
@@ -411,7 +411,7 @@ export const authService = {
       data: null,
       extensions: [],
     }
-  },
+  }
 
   async checkUserCredentials(
     loginOrEmail: string,
@@ -451,5 +451,7 @@ export const authService = {
       data: user,
       extensions: [],
     }
-  },
+  }
 }
+
+export const authService = new AuthService()

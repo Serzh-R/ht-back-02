@@ -1,4 +1,4 @@
-import { APIErrorResultType } from "../../types/types"
+import { APIErrorResultType } from '../../blogs/blog-post-types'
 
 export const errorResponse = (errorsArray: Array<{ message: string; field: string }>) => {
   let errors_: APIErrorResultType = {

@@ -1,4 +1,4 @@
-import { PostDBInsertType, PostDBType, PostInputType } from '../types/types'
+import { PostDBInsertType, PostDBType, PostInputType } from '../blogs/blog-post-types'
 import { blogsCollection, postsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
 
