@@ -10,6 +10,7 @@ import { emailManager } from '../email/EmailManager'
 import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 import { REFRESH_TIME } from '../settings'
 import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
+import { ObjectId } from 'mongodb'
 
 export const authService = {
   async registerUser(
@@ -223,6 +224,7 @@ export const authService = {
     const expirationDate = decodedRefreshToken.exp! * 1000
 
     const isSessionCreated = await deviceSessionsRepository.createDeviceSession({
+      _id: new ObjectId(),
       ip,
       title,
       lastActiveDate,
