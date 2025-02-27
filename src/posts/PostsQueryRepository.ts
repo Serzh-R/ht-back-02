@@ -2,7 +2,7 @@ import { PostType, PaginatorPostType, PostDBType } from '../blogs/blog-post-type
 import { postsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
 
-export const postsQueryRepository = {
+class PostsQueryRepository {
   async getPosts(
     pageNumber: number,
     pageSize: number,
@@ -25,12 +25,12 @@ export const postsQueryRepository = {
       totalCount,
       items: posts.map((post) => this._mapViewModel(post)),
     }
-  },
+  }
 
   async getPostById(postId: string): Promise<PostType | null> {
     const post = await postsCollection.findOne({ _id: new ObjectId(postId) })
     return post ? this._mapViewModel(post) : null
-  },
+  }
 
   async getPostsForBlog(
     blogId: string,
@@ -55,12 +55,12 @@ export const postsQueryRepository = {
       totalCount: postsCount,
       items: posts.map((post: PostDBType) => this._mapViewModel(post)),
     }
-  },
+  }
 
   async getPostsCountForBlog(blogId: string): Promise<number> {
     const objectId = new ObjectId(blogId)
     return await postsCollection.countDocuments({ blogId: objectId.toString() })
-  },
+  }
 
   _mapViewModel(post: PostDBType): PostType {
     return {
@@ -72,9 +72,11 @@ export const postsQueryRepository = {
       blogName: post.blogName,
       createdAt: post.createdAt.toISOString(),
     }
-  },
+  }
 
   /*_checkObjectId(id: string): boolean {
     return ObjectId.isValid(id)
   },*/
 }
+
+export const postsQueryRepository = new PostsQueryRepository()

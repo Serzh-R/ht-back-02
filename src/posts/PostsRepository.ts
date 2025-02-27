@@ -1,8 +1,9 @@
 import { PostDBInsertType, PostDBType, PostInputType } from '../blogs/blog-post-types'
 import { blogsCollection, postsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
+import { body } from 'express-validator'
 
-export const postsRepository = {
+class PostsRepository {
   async createPost(post: PostDBInsertType): Promise<PostDBType> {
     const result = await postsCollection.insertOne(post as PostDBType)
 
@@ -15,7 +16,7 @@ export const postsRepository = {
       blogName: post.blogName,
       createdAt: post.createdAt,
     }
-  },
+  }
 
   async updatePost(id: string, body: PostInputType): Promise<boolean> {
     const blog = await blogsCollection.findOne({
@@ -40,7 +41,7 @@ export const postsRepository = {
     )
 
     return result.matchedCount > 0
-  },
+  }
 
   async deletePost(postId: string): Promise<boolean> {
     if (!ObjectId.isValid(postId)) {
@@ -50,5 +51,7 @@ export const postsRepository = {
       _id: new ObjectId(postId),
     })
     return result.deletedCount > 0
-  },
+  }
 }
+
+export const postsRepository = new PostsRepository()
