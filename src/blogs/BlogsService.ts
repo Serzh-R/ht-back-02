@@ -18,5 +18,3 @@ export class BlogsService {
     return await this.blogsRepository.deleteBlog(id)
   }
 }
-
-//export const blogsService = new BlogsService()
