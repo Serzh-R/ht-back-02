@@ -12,7 +12,7 @@ import { errorsResultMiddleware } from '../validation/express-validator/errors.r
 import { BlogsService } from './BlogsService'
 import { paginationQueries } from '../common/helpers/paginations.values'
 import { postsService } from '../posts/PostsService'
-import { blogsQueryRepository } from './BlogsQueryRepository'
+import { BlogsQueryRepository } from './BlogsQueryRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
 import { authMiddleware } from '../auth/middlewares/auth.middleware'
 
@@ -20,13 +20,15 @@ export const blogRouter = Router()
 
 class BlogController {
   private blogsService: BlogsService
+  private blogsQueryRepository: BlogsQueryRepository
   constructor() {
     this.blogsService = new BlogsService()
+    this.blogsQueryRepository = new BlogsQueryRepository()
   }
   async getBlogs(req: Request, res: Response) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
 
-    const blogs = await blogsQueryRepository.getBlogs(
+    const blogs = await this.blogsQueryRepository.getBlogs(
       searchNameTerm,
       sortBy,
       sortDirection,
@@ -61,7 +63,7 @@ class BlogController {
   async getBlogById(req: Request, res: Response) {
     const blogId = req.params.id
 
-    const blog = await blogsQueryRepository.getBlogById(blogId)
+    const blog = await this.blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found' })
       return
@@ -72,7 +74,7 @@ class BlogController {
   async getPostsForBlog(req: Request, res: Response): Promise<void> {
     const blogId = req.params.id
 
-    const blog = await blogsQueryRepository.getBlogById(blogId)
+    const blog = await this.blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found', field: 'blogId' })
       return
@@ -130,7 +132,7 @@ blogRouter.post(
   authMiddleware,
   blogFieldsValidator,
   errorsResultMiddleware,
-  blogController.createBlog,
+  blogController.createBlog.bind(blogController),
 )
 
 blogRouter.post(
@@ -152,7 +154,7 @@ blogRouter.put(
   idParamValidator,
   blogFieldsValidator,
   errorsResultMiddleware,
-  blogController.updateBlog,
+  blogController.updateBlog.bind(blogController),
 )
 
 blogRouter.delete(
@@ -160,5 +162,5 @@ blogRouter.delete(
   authMiddleware,
   idParamValidator,
   errorsResultMiddleware,
-  blogController.deleteBlog,
+  blogController.deleteBlog.bind(blogController),
 )

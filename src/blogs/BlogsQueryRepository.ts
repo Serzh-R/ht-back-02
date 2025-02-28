@@ -2,7 +2,7 @@ import { BlogDBType, BlogType, PaginatorBlogType } from './blog-post-types'
 import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, WithId } from 'mongodb'
 
-class BlogsQueryRepository {
+export class BlogsQueryRepository {
   async getBlogs(
     searchNameTerm: string | null,
     sortBy: string,
@@ -65,4 +65,4 @@ class BlogsQueryRepository {
   }
 }
 
-export const blogsQueryRepository = new BlogsQueryRepository()
+//export const blogsQueryRepository = new BlogsQueryRepository()

@@ -5,12 +5,16 @@ import {
   PostViewModel,
 } from '../blogs/blog-post-types'
 import { postsRepository } from './PostsRepository'
-import { blogsQueryRepository } from '../blogs/BlogsQueryRepository'
+import { BlogsQueryRepository } from '../blogs/BlogsQueryRepository'
 import { ObjectId, WithId } from 'mongodb'
 
 class PostsService {
+  blogsQueryRepository: BlogsQueryRepository
+  constructor() {
+    this.blogsQueryRepository = new BlogsQueryRepository()
+  }
   async createPost(post: PostInputModel): Promise<PostViewModel | null> {
-    const blog = await blogsQueryRepository.getBlogById(post.blogId)
+    const blog = await this.blogsQueryRepository.getBlogById(post.blogId)
     if (!blog) {
       throw new Error('Invalid blogId')
     }
@@ -30,7 +34,7 @@ class PostsService {
   }
 
   async createPostForBlog(blogId: string, post: BlogPostInputModel): Promise<PostViewModel | null> {
-    const blog = await blogsQueryRepository.getBlogById(blogId)
+    const blog = await this.blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
       return null
     }
