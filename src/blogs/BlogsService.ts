@@ -1,7 +1,7 @@
 import { BlogsRepository } from './BlogsRepository'
 import { BlogInputType, BlogType } from './blog-post-types'
 
-class BlogsService {
+export class BlogsService {
   blogsRepository: BlogsRepository
   constructor() {
     this.blogsRepository = new BlogsRepository()
@@ -19,4 +19,4 @@ class BlogsService {
   }
 }
 
-export const blogsService = new BlogsService()
+//export const blogsService = new BlogsService()

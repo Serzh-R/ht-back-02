@@ -9,7 +9,7 @@ import {
   postTitleValidator,
 } from '../validation/express-validator/field.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
-import { blogsService } from './BlogsService'
+import { BlogsService } from './BlogsService'
 import { paginationQueries } from '../common/helpers/paginations.values'
 import { postsService } from '../posts/PostsService'
 import { blogsQueryRepository } from './BlogsQueryRepository'
@@ -19,6 +19,10 @@ import { authMiddleware } from '../auth/middlewares/auth.middleware'
 export const blogRouter = Router()
 
 class BlogController {
+  private blogsService: BlogsService
+  constructor() {
+    this.blogsService = new BlogsService()
+  }
   async getBlogs(req: Request, res: Response) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
 
@@ -35,7 +39,7 @@ class BlogController {
   async createBlog(req: Request, res: Response) {
     const body: BlogInputType = req.body
 
-    const newBlog = await blogsService.createBlog(body)
+    const newBlog = await this.blogsService.createBlog(body)
 
     res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
   }
@@ -90,7 +94,7 @@ class BlogController {
   async updateBlog(req: Request, res: Response) {
     const id = req.params.id
     const body: BlogInputType = req.body
-    const isUpdated = await blogsService.updateBlog(id, body)
+    const isUpdated = await this.blogsService.updateBlog(id, body)
     if (!isUpdated) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found' })
       return
@@ -101,7 +105,7 @@ class BlogController {
   async deleteBlog(req: Request, res: Response) {
     const id = req.params.id
 
-    const isDeleted = await blogsService.deleteBlog(id)
+    const isDeleted = await this.blogsService.deleteBlog(id)
     if (!isDeleted) {
       res.status(HTTP_STATUSES.NOT_FOUND_404).json({ message: 'Blog not found' })
       return
