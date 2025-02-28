@@ -1,12 +1,12 @@
 import { SETTINGS } from '../settings'
 import { MongoClient, Collection, Db, WithId } from 'mongodb'
-import { BlogDBType, PostDBType } from '../blogs/blog-post-types'
+import { BlogDBType, PostDBModel } from '../blogs/blog-post-types'
 import { CommentDBType } from '../comments/comment-types'
 import { BlacklistDBType, UserRegDBType } from '../users/user-types'
 import { AppealToApi, DeviceSessionDB } from '../devices/device-types'
 
 export let blogsCollection: Collection<BlogDBType>
-export let postsCollection: Collection<PostDBType>
+export let postsCollection: Collection<WithId<PostDBModel>>
 export let usersCollection: Collection<UserRegDBType>
 export let commentsCollection: Collection<CommentDBType>
 export let blacklistCollection: Collection<BlacklistDBType>
@@ -26,7 +26,7 @@ export async function runDb(url: string): Promise<boolean> {
   mongoDb = client.db(SETTINGS.DB_NAME)
 
   blogsCollection = mongoDb.collection<BlogDBType>('blogs')
-  postsCollection = mongoDb.collection<PostDBType>('posts')
+  postsCollection = mongoDb.collection<WithId<PostDBModel>>('posts')
   usersCollection = mongoDb.collection<UserRegDBType>('users')
   commentsCollection = mongoDb.collection<CommentDBType>('comments')
   blacklistCollection = mongoDb.collection<BlacklistDBType>('blacklist')

@@ -1,6 +1,6 @@
-import { PostType, PaginatorPostType, PostDBType } from '../blogs/blog-post-types'
+import { PostViewModel, PaginatorPostViewModel, PostDBModel } from '../blogs/blog-post-types'
 import { postsCollection } from '../db/mongoDb'
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 class PostsQueryRepository {
   async getPosts(
@@ -8,7 +8,7 @@ class PostsQueryRepository {
     pageSize: number,
     sortBy: string,
     sortDirection: 'asc' | 'desc',
-  ): Promise<PaginatorPostType> {
+  ): Promise<PaginatorPostViewModel> {
     const totalCount = await postsCollection.countDocuments()
 
     const posts = await postsCollection
@@ -27,7 +27,7 @@ class PostsQueryRepository {
     }
   }
 
-  async getPostById(postId: string): Promise<PostType | null> {
+  async getPostById(postId: string): Promise<PostViewModel | null> {
     const post = await postsCollection.findOne({ _id: new ObjectId(postId) })
     return post ? this._mapViewModel(post) : null
   }
@@ -38,7 +38,7 @@ class PostsQueryRepository {
     pageSize: number,
     sortBy: string,
     sortDirection: 'asc' | 'desc',
-  ): Promise<PaginatorPostType> {
+  ): Promise<PaginatorPostViewModel> {
     const postsCount = await postsCollection.countDocuments({ blogId })
 
     const posts = await postsCollection
@@ -53,7 +53,7 @@ class PostsQueryRepository {
       page: pageNumber,
       pageSize,
       totalCount: postsCount,
-      items: posts.map((post: PostDBType) => this._mapViewModel(post)),
+      items: posts.map((post: WithId<PostDBModel>) => this._mapViewModel(post)),
     }
   }
 
@@ -62,7 +62,7 @@ class PostsQueryRepository {
     return await postsCollection.countDocuments({ blogId: objectId.toString() })
   }
 
-  _mapViewModel(post: PostDBType): PostType {
+  _mapViewModel(post: WithId<PostDBModel>): PostViewModel {
     return {
       id: post._id.toString(),
       title: post.title,

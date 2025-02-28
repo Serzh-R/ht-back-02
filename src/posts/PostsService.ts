@@ -1,22 +1,21 @@
 import {
-  BlogPostInputType,
-  PostDBInsertType,
-  PostDBType,
-  PostInputType,
-  PostType,
+  BlogPostInputModel,
+  PostDBModel,
+  PostInputModel,
+  PostViewModel,
 } from '../blogs/blog-post-types'
 import { postsRepository } from './PostsRepository'
 import { blogsQueryRepository } from '../blogs/BlogsQueryRepository'
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 class PostsService {
-  async createPost(post: PostInputType): Promise<PostType | null> {
+  async createPost(post: PostInputModel): Promise<PostViewModel | null> {
     const blog = await blogsQueryRepository.getBlogById(post.blogId)
     if (!blog) {
       throw new Error('Invalid blogId')
     }
 
-    const newPost: PostDBInsertType = {
+    const newPost: PostDBModel = {
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
@@ -27,16 +26,16 @@ class PostsService {
 
     const createdPost = await postsRepository.createPost(newPost)
 
-    return this._mapViewModel(createdPost)
+    return this._mapViewModel(createdPost as WithId<PostDBModel>)
   }
 
-  async createPostForBlog(blogId: string, post: BlogPostInputType): Promise<PostType | null> {
+  async createPostForBlog(blogId: string, post: BlogPostInputModel): Promise<PostViewModel | null> {
     const blog = await blogsQueryRepository.getBlogById(blogId)
     if (!blog) {
       return null
     }
 
-    const newPost: PostDBInsertType = {
+    const newPost: PostDBModel = {
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
@@ -47,10 +46,10 @@ class PostsService {
 
     const createdPost = await postsRepository.createPost(newPost)
 
-    return this._mapViewModel(createdPost)
+    return this._mapViewModel(createdPost as WithId<PostDBModel>)
   }
 
-  _mapViewModel(post: PostDBType): PostType {
+  _mapViewModel(post: WithId<PostDBModel>): PostViewModel {
     return {
       id: post._id.toString(),
       title: post.title,
@@ -62,7 +61,7 @@ class PostsService {
     }
   }
 
-  async updatePost(id: string, body: PostInputType): Promise<boolean> {
+  async updatePost(id: string, body: PostInputModel): Promise<boolean> {
     return await postsRepository.updatePost(new ObjectId(id).toString(), body)
   }
 

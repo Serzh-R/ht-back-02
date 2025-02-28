@@ -1,17 +1,21 @@
-import { blogsRepository } from './BlogsRepository'
+import { BlogsRepository } from './BlogsRepository'
 import { BlogInputType, BlogType } from './blog-post-types'
 
 class BlogsService {
+  blogsRepository: BlogsRepository
+  constructor() {
+    this.blogsRepository = new BlogsRepository()
+  }
   async createBlog(body: BlogInputType): Promise<BlogType> {
-    return await blogsRepository.createBlog(body)
+    return await this.blogsRepository.createBlog(body)
   }
 
   async updateBlog(id: string, body: BlogInputType): Promise<boolean> {
-    return await blogsRepository.updateBlog(id, body)
+    return await this.blogsRepository.updateBlog(id, body)
   }
 
   async deleteBlog(id: string): Promise<boolean> {
-    return await blogsRepository.deleteBlog(id)
+    return await this.blogsRepository.deleteBlog(id)
   }
 }
 

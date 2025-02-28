@@ -1,11 +1,10 @@
-import { PostDBInsertType, PostDBType, PostInputType } from '../blogs/blog-post-types'
+import { PostDBModel, PostInputModel } from '../blogs/blog-post-types'
 import { blogsCollection, postsCollection } from '../db/mongoDb'
-import { ObjectId } from 'mongodb'
-import { body } from 'express-validator'
+import { ObjectId, WithId } from 'mongodb'
 
 class PostsRepository {
-  async createPost(post: PostDBInsertType): Promise<PostDBType> {
-    const result = await postsCollection.insertOne(post as PostDBType)
+  async createPost(post: PostDBModel): Promise<WithId<PostDBModel>> {
+    const result = await postsCollection.insertOne(post as WithId<PostDBModel>)
 
     return {
       _id: result.insertedId,
@@ -18,7 +17,7 @@ class PostsRepository {
     }
   }
 
-  async updatePost(id: string, body: PostInputType): Promise<boolean> {
+  async updatePost(id: string, body: PostInputModel): Promise<boolean> {
     const blog = await blogsCollection.findOne({
       _id: new ObjectId(body.blogId),
     })

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
-import { BlogInputType, BlogPostInputType, PaginatorPostType } from './blog-post-types'
+import { BlogInputType, BlogPostInputModel, PaginatorPostViewModel } from './blog-post-types'
 import {
   blogFieldsValidator,
   idParamValidator,
@@ -42,7 +42,7 @@ class BlogController {
 
   async createPostForBlog(req: Request, res: Response): Promise<void> {
     const id = req.params.id
-    const body: BlogPostInputType = req.body
+    const body: BlogPostInputModel = req.body
 
     const createdPost = await postsService.createPostForBlog(id, body)
 
@@ -76,7 +76,7 @@ class BlogController {
 
     const { pageNumber, pageSize, sortBy, sortDirection } = paginationQueries(req)
 
-    const posts: PaginatorPostType = await postsQueryRepository.getPostsForBlog(
+    const posts: PaginatorPostViewModel = await postsQueryRepository.getPostsForBlog(
       blogId,
       pageNumber,
       pageSize,

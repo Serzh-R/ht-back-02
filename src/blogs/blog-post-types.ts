@@ -1,10 +1,8 @@
-import { ObjectId } from 'mongodb'
-
 // ********* DB Type ******************* //
 export class DBType {
   constructor(
     public blogs: BlogType[],
-    public posts: PostType[],
+    public posts: PostViewModel[],
   ) {}
 }
 
@@ -74,9 +72,9 @@ export class BlogInputType {
 
 //******* Post **********************//
 
-export class PostDBType {
+export class PostDBModel {
   constructor(
-    public _id: ObjectId,
+    //public _id: ObjectId,
     public title: string,
     public shortDescription: string,
     public content: string,
@@ -86,18 +84,18 @@ export class PostDBType {
   ) {}
 }
 
-export class PostDBInsertType {
-  constructor(
-    public title: string,
-    public shortDescription: string,
-    public content: string,
-    public blogId: string,
-    public blogName: string,
-    public createdAt: Date,
-  ) {}
-}
+// export class PostDBInsertType {
+//   constructor(
+//     public title: string,
+//     public shortDescription: string,
+//     public content: string,
+//     public blogId: string,
+//     public blogName: string,
+//     public createdAt: Date,
+//   ) {}
+// }
 
-export class PostType {
+export class PostViewModel {
   constructor(
     public id: string,
     public title: string,
@@ -109,17 +107,17 @@ export class PostType {
   ) {}
 }
 
-export class PaginatorPostType {
+export class PaginatorPostViewModel {
   constructor(
     public pagesCount: number,
     public page: number,
     public pageSize: number,
     public totalCount: number,
-    public items: PostType[],
+    public items: PostViewModel[],
   ) {}
 }
 
-export class BlogPostInputType {
+export class BlogPostInputModel {
   constructor(
     public title: string,
     public shortDescription: string,
@@ -127,7 +125,7 @@ export class BlogPostInputType {
   ) {}
 }
 
-export class PostInputType {
+export class PostInputModel {
   constructor(
     public title: string,
     public shortDescription: string,

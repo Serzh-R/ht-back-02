@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../settings'
-import { PostInputType } from '../blogs/blog-post-types'
+import { PostInputModel } from '../blogs/blog-post-types'
 import {
   blogIdValidator,
   commentContentValidator,
@@ -32,7 +32,7 @@ class PostController {
   }
 
   async createPost(req: Request, res: Response) {
-    const body: PostInputType = req.body
+    const body: PostInputModel = req.body
 
     const newPost = await postsService.createPost(body)
 

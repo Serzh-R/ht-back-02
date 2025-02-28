@@ -3,7 +3,7 @@ import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, OptionalId } from 'mongodb'
 import { body } from 'express-validator'
 
-class BlogsRepository {
+export class BlogsRepository {
   async createBlog(body: BlogInputType): Promise<BlogType> {
     const newBlog: BlogDBInsertType = {
       name: body.name ? body.name : '',
@@ -50,5 +50,3 @@ class BlogsRepository {
     return result.deletedCount > 0
   }
 }
-
-export const blogsRepository = new BlogsRepository()
