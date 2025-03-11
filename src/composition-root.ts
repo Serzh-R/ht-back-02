@@ -1,7 +1,7 @@
 import { BlogsRepository } from './blogs/BlogsRepository'
 import { BlogsService } from './blogs/BlogsService'
-import { BlogsController } from './blogs/BlogsRouter'
 import { BlogsQueryRepository } from './blogs/BlogsQueryRepository'
+import { BlogsController } from './blogs/BlogsController'
 
 const blogsRepository = new BlogsRepository()
 
