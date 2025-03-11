@@ -2,10 +2,7 @@ import { BlogsRepository } from './BlogsRepository'
 import { BlogInputType, BlogType } from './blog-post-types'
 
 export class BlogsService {
-  blogsRepository: BlogsRepository
-  constructor(blogsRepository: BlogsRepository) {
-    this.blogsRepository = blogsRepository
-  }
+  constructor(protected blogsRepository: BlogsRepository) {}
   async createBlog(body: BlogInputType): Promise<BlogType> {
     return await this.blogsRepository.createBlog(body)
   }

@@ -26,6 +26,7 @@ class BlogController {
     const repository = new BlogsRepository()
 
     this.blogsService = new BlogsService(repository)
+
     this.blogsQueryRepository = new BlogsQueryRepository()
   }
   async getBlogs(req: Request, res: Response) {
