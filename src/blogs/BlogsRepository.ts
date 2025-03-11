@@ -1,7 +1,6 @@
 import { BlogInputType, BlogDBInsertType, BlogType } from './blog-post-types'
 import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, OptionalId } from 'mongodb'
-import { body } from 'express-validator'
 
 export class BlogsRepository {
   async createBlog(body: BlogInputType): Promise<BlogType> {

@@ -2,7 +2,6 @@ import { BlogsRepository } from './blogs/BlogsRepository'
 import { BlogsService } from './blogs/BlogsService'
 import { BlogsQueryRepository } from './blogs/BlogsQueryRepository'
 import { BlogsController } from './blogs/BlogsController'
-import { queryObjects } from 'v8'
 
 const objects: any[] = []
 
