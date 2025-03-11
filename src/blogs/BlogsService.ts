@@ -3,8 +3,8 @@ import { BlogInputType, BlogType } from './blog-post-types'
 
 export class BlogsService {
   blogsRepository: BlogsRepository
-  constructor() {
-    this.blogsRepository = new BlogsRepository()
+  constructor(blogsRepository: BlogsRepository) {
+    this.blogsRepository = blogsRepository
   }
   async createBlog(body: BlogInputType): Promise<BlogType> {
     return await this.blogsRepository.createBlog(body)

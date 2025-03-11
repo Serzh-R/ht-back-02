@@ -15,6 +15,7 @@ import { postsService } from '../posts/PostsService'
 import { BlogsQueryRepository } from './BlogsQueryRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
 import { authMiddleware } from '../auth/middlewares/auth.middleware'
+import { BlogsRepository } from './BlogsRepository'
 
 export const blogRouter = Router()
 
@@ -22,7 +23,9 @@ class BlogController {
   private blogsService: BlogsService
   private blogsQueryRepository: BlogsQueryRepository
   constructor() {
-    this.blogsService = new BlogsService()
+    const repository = new BlogsRepository()
+
+    this.blogsService = new BlogsService(repository)
     this.blogsQueryRepository = new BlogsQueryRepository()
   }
   async getBlogs(req: Request, res: Response) {
