@@ -15,20 +15,15 @@ import { postsService } from '../posts/PostsService'
 import { BlogsQueryRepository } from './BlogsQueryRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
 import { authMiddleware } from '../auth/middlewares/auth.middleware'
-import { BlogsRepository } from './BlogsRepository'
+import { blogsController } from '../composition-root'
 
 export const blogRouter = Router()
 
-class BlogController {
-  private blogsService: BlogsService
-  private blogsQueryRepository: BlogsQueryRepository
-  constructor() {
-    const repository = new BlogsRepository()
-
-    this.blogsService = new BlogsService(repository)
-
-    this.blogsQueryRepository = new BlogsQueryRepository()
-  }
+export class BlogsController {
+  constructor(
+    protected blogsService: BlogsService,
+    protected blogsQueryRepository: BlogsQueryRepository,
+  ) {}
   async getBlogs(req: Request, res: Response) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
 
@@ -120,15 +115,13 @@ class BlogController {
   }
 }
 
-export const blogController = new BlogController()
-
-blogRouter.get('/', blogController.getBlogs)
+blogRouter.get('/', blogsController.getBlogs)
 
 blogRouter.get(
   '/:id/posts',
   idParamValidator,
   errorsResultMiddleware,
-  blogController.getPostsForBlog,
+  blogsController.getPostsForBlog,
 )
 
 blogRouter.post(
@@ -136,7 +129,7 @@ blogRouter.post(
   authMiddleware,
   blogFieldsValidator,
   errorsResultMiddleware,
-  blogController.createBlog.bind(blogController),
+  blogsController.createBlog.bind(blogsController),
 )
 
 blogRouter.post(
@@ -147,10 +140,10 @@ blogRouter.post(
   postShortDescriptionValidator,
   postContentValidator,
   errorsResultMiddleware,
-  blogController.createPostForBlog,
+  blogsController.createPostForBlog,
 )
 
-blogRouter.get('/:id', idParamValidator, errorsResultMiddleware, blogController.getBlogById)
+blogRouter.get('/:id', idParamValidator, errorsResultMiddleware, blogsController.getBlogById)
 
 blogRouter.put(
   '/:id',
@@ -158,7 +151,7 @@ blogRouter.put(
   idParamValidator,
   blogFieldsValidator,
   errorsResultMiddleware,
-  blogController.updateBlog.bind(blogController),
+  blogsController.updateBlog.bind(blogsController),
 )
 
 blogRouter.delete(
@@ -166,5 +159,5 @@ blogRouter.delete(
   authMiddleware,
   idParamValidator,
   errorsResultMiddleware,
-  blogController.deleteBlog.bind(blogController),
+  blogsController.deleteBlog.bind(blogsController),
 )
