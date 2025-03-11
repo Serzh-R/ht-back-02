@@ -1,7 +1,10 @@
 import { BlogDBType, BlogType, PaginatorBlogType } from './blog-post-types'
 import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, WithId } from 'mongodb'
+import { injectable } from 'inversify'
+import 'reflect-metadata'
 
+@injectable()
 export class BlogsQueryRepository {
   async getBlogs(
     searchNameTerm: string | null,

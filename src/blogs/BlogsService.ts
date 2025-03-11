@@ -1,6 +1,9 @@
 import { BlogsRepository } from './BlogsRepository'
 import { BlogInputType, BlogType } from './blog-post-types'
+import { injectable } from 'inversify'
+import 'reflect-metadata'
 
+@injectable()
 export class BlogsService {
   constructor(protected blogsRepository: BlogsRepository) {}
 

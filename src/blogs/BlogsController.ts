@@ -6,7 +6,10 @@ import { HTTP_STATUSES } from '../settings'
 import { BlogInputType, BlogPostInputModel, PaginatorPostViewModel } from './blog-post-types'
 import { postsService } from '../posts/PostsService'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
+import { injectable } from 'inversify'
+import 'reflect-metadata'
 
+@injectable()
 export class BlogsController {
   constructor(
     protected blogsService: BlogsService,

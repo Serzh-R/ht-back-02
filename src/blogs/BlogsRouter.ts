@@ -8,10 +8,13 @@ import {
 } from '../validation/express-validator/field.validators'
 import { errorsResultMiddleware } from '../validation/express-validator/errors.result.middleware'
 import { authMiddleware } from '../auth/middlewares/auth.middleware'
-import { ioc } from '../composition-root'
+import { container } from '../composition-root'
 import { BlogsController } from './BlogsController'
+import 'reflect-metadata'
 
-const blogsController = ioc.getInstance<BlogsController>(BlogsController)
+//const blogsController = ioc.getInstance<BlogsController>(BlogsController)
+
+const blogsController = container.get<BlogsController>(BlogsController)
 
 export const blogRouter = Router()
 
