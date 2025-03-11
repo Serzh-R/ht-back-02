@@ -2,7 +2,6 @@ import { BlogInputType, BlogDBInsertType, BlogType } from './blog-post-types'
 import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, OptionalId } from 'mongodb'
 import { injectable } from 'inversify'
-import 'reflect-metadata'
 
 @injectable()
 export class BlogsRepository {

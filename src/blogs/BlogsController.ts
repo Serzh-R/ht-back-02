@@ -6,14 +6,13 @@ import { HTTP_STATUSES } from '../settings'
 import { BlogInputType, BlogPostInputModel, PaginatorPostViewModel } from './blog-post-types'
 import { postsService } from '../posts/PostsService'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
-import { injectable } from 'inversify'
-import 'reflect-metadata'
+import { inject, injectable } from 'inversify'
 
 @injectable()
 export class BlogsController {
   constructor(
-    protected blogsService: BlogsService,
-    protected blogsQueryRepository: BlogsQueryRepository,
+    @inject(BlogsService) protected blogsService: BlogsService,
+    @inject(BlogsQueryRepository) protected blogsQueryRepository: BlogsQueryRepository,
   ) {}
   async getBlogs(req: Request, res: Response) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)

@@ -1,9 +1,9 @@
+import 'reflect-metadata'
 import { BlogsRepository } from './blogs/BlogsRepository'
 import { BlogsService } from './blogs/BlogsService'
 import { BlogsQueryRepository } from './blogs/BlogsQueryRepository'
 import { BlogsController } from './blogs/BlogsController'
 import { Container } from 'inversify'
-import 'reflect-metadata'
 
 // const objects: any[] = []
 //
@@ -28,6 +28,6 @@ import 'reflect-metadata'
 
 export const container = new Container()
 container.bind(BlogsController).to(BlogsController)
-container.bind<BlogsService>(BlogsService).to(BlogsService)
-container.bind<BlogsRepository>(BlogsRepository).to(BlogsRepository)
-container.bind<BlogsQueryRepository>(BlogsQueryRepository).to(BlogsQueryRepository)
+container.bind(BlogsService).to(BlogsService)
+container.bind(BlogsRepository).to(BlogsRepository)
+container.bind(BlogsQueryRepository).to(BlogsQueryRepository)

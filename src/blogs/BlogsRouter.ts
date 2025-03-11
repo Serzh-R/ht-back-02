@@ -10,7 +10,6 @@ import { errorsResultMiddleware } from '../validation/express-validator/errors.r
 import { authMiddleware } from '../auth/middlewares/auth.middleware'
 import { container } from '../composition-root'
 import { BlogsController } from './BlogsController'
-import 'reflect-metadata'
 
 //const blogsController = ioc.getInstance<BlogsController>(BlogsController)
 
