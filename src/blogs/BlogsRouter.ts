@@ -17,7 +17,7 @@ const blogsController = container.get<BlogsController>(BlogsController)
 
 export const blogRouter = Router()
 
-blogRouter.get('/', blogsController.getBlogs)
+blogRouter.get('/', blogsController.getBlogs.bind(blogsController))
 
 blogRouter.get(
   '/:id/posts',
@@ -32,7 +32,6 @@ blogRouter.post(
   blogFieldsValidator,
   errorsResultMiddleware,
   blogsController.createBlog.bind(blogsController),
-  //blogsController.createBlog,
 )
 
 blogRouter.post(
