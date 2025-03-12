@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify'
 
 @injectable()
 export class BlogsService {
-  constructor(@inject(BlogsRepository) protected blogsRepository: BlogsRepository) {}
+  constructor(@inject(BlogsRepository) private blogsRepository: BlogsRepository) {}
 
   async createBlog(body: BlogInputType): Promise<BlogType> {
     return await this.blogsRepository.createBlog(body)

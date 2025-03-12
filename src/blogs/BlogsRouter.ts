@@ -32,6 +32,7 @@ blogRouter.post(
   blogFieldsValidator,
   errorsResultMiddleware,
   blogsController.createBlog.bind(blogsController),
+  //blogsController.createBlog,
 )
 
 blogRouter.post(

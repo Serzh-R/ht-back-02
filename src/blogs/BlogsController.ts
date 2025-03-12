@@ -11,8 +11,8 @@ import { inject, injectable } from 'inversify'
 @injectable()
 export class BlogsController {
   constructor(
-    @inject(BlogsService) protected blogsService: BlogsService,
-    @inject(BlogsQueryRepository) protected blogsQueryRepository: BlogsQueryRepository,
+    @inject(BlogsService) private blogsService: BlogsService,
+    @inject(BlogsQueryRepository) private blogsQueryRepository: BlogsQueryRepository,
   ) {}
   async getBlogs(req: Request, res: Response) {
     const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = paginationQueries(req)
