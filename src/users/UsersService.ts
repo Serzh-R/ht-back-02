@@ -1,6 +1,6 @@
 import { usersRepository } from './UsersRepository'
 import { bcryptService } from '../common/adapters/bcrypt.service'
-import { EmailConfirmationType, UserInputType, UserRegInsertDBType } from './user-types'
+import { EmailConfirmation, UserInputType, UserRegInsertDBType } from './user-types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'
@@ -31,7 +31,7 @@ class UsersService {
     const passwordHash = await bcryptService.generateHash(body.password)
 
     // Создаем объект emailConfirmation на основе класса EmailConfirmationType
-    const emailConfirmation = new EmailConfirmationType(
+    const emailConfirmation = new EmailConfirmation(
       randomUUID(), // confirmationCode
       new Date(), // expirationDate
       false, // isConfirmed

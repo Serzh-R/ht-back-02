@@ -3,7 +3,7 @@ import { ResultStatus } from '../common/result/resultCode'
 import { bcryptService } from '../common/adapters/bcrypt.service'
 import { usersRepository } from '../users/UsersRepository'
 import { jwtService, RefreshTokenPayload } from '../common/adapters/jwt.service'
-import { UserDBType, UserRegInsertDBType } from '../users/user-types'
+import { UserDB, UserRegInsertDBType } from '../users/user-types'
 import { randomUUID } from 'node:crypto'
 import { add } from 'date-fns/add'
 import { emailManager } from '../email/EmailManager'
@@ -416,7 +416,7 @@ class AuthService {
   async checkUserCredentials(
     loginOrEmail: string,
     password: string,
-  ): Promise<Result<UserDBType | null>> {
+  ): Promise<Result<UserDB | null>> {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
     if (!user) {
       return {

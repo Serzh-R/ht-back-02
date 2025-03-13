@@ -1,6 +1,6 @@
-import { usersCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { PaginatorUserType, UserDBType, UserType } from './user-types'
+import { PaginatorUserType, UserDB, User } from './user-types'
+import { UserModel } from './user-schema'
 
 class UsersQueryRepository {
   async getUsers(
@@ -25,14 +25,14 @@ class UsersQueryRepository {
       }
     }
 
-    const usersCount = await usersCollection.countDocuments(filter)
+    const usersCount = await UserModel.countDocuments(filter)
 
-    const users = await usersCollection
-      .find(filter, { projection: { passwordHash: 0, passwordSalt: 0 } })
+    const users = await UserModel.find(filter)
+      .select('-passwordHash -passwordSalt') // Исключаем пароли
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .toArray()
+      .lean() // Конвертируем в обычные объекты JS (ускоряет работу)
 
     // Преобразуем UserDBType в UserType
     const userItems = users.map((user) => this._mapViewModel(user))
@@ -46,15 +46,15 @@ class UsersQueryRepository {
     )
   }
 
-  async getUserById(id: string): Promise<UserType | null> {
-    const user = await usersCollection.findOne<UserDBType>({
+  async getUserById(id: string): Promise<User | null> {
+    const user = await UserModel.findOne<UserDB>({
       _id: new ObjectId(id),
     })
     return user ? this._mapViewModel(user) : null
   }
 
-  _mapViewModel(user: UserDBType): UserType {
-    return new UserType(user._id.toString(), user.login, user.email, user.createdAt.toISOString())
+  _mapViewModel(user: UserDB): User {
+    return new User(user._id.toString(), user.login, user.email, user.createdAt.toISOString())
   }
 }
 

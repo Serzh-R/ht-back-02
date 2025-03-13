@@ -3,15 +3,6 @@ import cors from 'cors'
 import { HTTP_STATUSES, SETTINGS } from './settings'
 import { blogRouter } from './blogs/BlogsRouter'
 import { postRouter } from './posts/PostsRouter'
-import {
-  blacklistCollection,
-  blogsCollection,
-  commentsCollection,
-  deviceSessionsCollection,
-  postsCollection,
-  requestsCollection,
-  usersCollection,
-} from './db/mongoDb'
 import { usersRouter } from './users/UsersRouter'
 import { authRouter } from './auth/AuthRouter'
 import { commentsRouter } from './comments/CommentsRouter'

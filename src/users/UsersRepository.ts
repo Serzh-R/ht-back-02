@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb'
 import { usersCollection } from '../db/mongoDb'
-import { UserRegDBType, UserRegInsertDBType } from './user-types'
+import { UserRegDB, UserRegInsertDBType } from './user-types'
 
 class UsersRepository {
   async createUser(user: UserRegInsertDBType): Promise<ObjectId> {
-    const result = await usersCollection.insertOne(user as UserRegDBType)
+    const result = await usersCollection.insertOne(user as UserRegDB)
     return result.insertedId
   }
 
@@ -12,13 +12,13 @@ class UsersRepository {
     return usersCollection.findOne({ _id: new ObjectId(userId) })
   }
 
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserRegDBType | null> {
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserRegDB | null> {
     return await usersCollection.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     })
   }
 
-  async findUserByConfirmationCode(emailConfirmationCode: string): Promise<UserRegDBType | null> {
+  async findUserByConfirmationCode(emailConfirmationCode: string): Promise<UserRegDB | null> {
     const user = await usersCollection.findOne({
       'emailConfirmation.confirmationCode': emailConfirmationCode,
     })

@@ -1,4 +1,22 @@
 import { SETTINGS } from '../settings'
+import mongoose from 'mongoose'
+
+export async function runDb(url: string): Promise<boolean> {
+  try {
+    await mongoose.connect(SETTINGS.MONGO_URL + '/' + SETTINGS.DB_NAME)
+    console.log('Connected successfully to Mongo server')
+    return true
+  } catch (err) {
+    console.log(err, 'error')
+    console.error('Error connecting to MongoDB:', err)
+    await mongoose.disconnect()
+    return false
+  }
+}
+
+// ************************************************************************* //
+
+/*import { SETTINGS } from '../settings'
 import { MongoClient, Collection, Db, WithId } from 'mongodb'
 import { BlogDBType, PostDBModel } from '../blogs/blog-post-types'
 import { CommentDBType } from '../comments/comment-types'
@@ -34,11 +52,8 @@ export async function runDb(url: string): Promise<boolean> {
   requestsCollection = mongoDb.collection<AppealToApi>('requests')
 
   try {
-    //console.log('before connect')
     await client.connect()
-    //console.log(' client connected')
     await mongoDb.command({ ping: 1 })
-    //console.log('Connected to MongoDB')
     return true
   } catch (err) {
     console.log(err, 'error')
@@ -51,7 +66,9 @@ export async function runDb(url: string): Promise<boolean> {
 //Эта функция предназначена для остановки продакшн- или тестовой базы данных в зависимости от вызванного контекста (runDb)
 export const stopDb = async () => {
   await client.close()
-}
+}*/
+
+// ********************************************************************** //
 
 /*export const setDB = async (dataset?: Partial<DBType>) => {
   await blogsCollection.deleteMany({})

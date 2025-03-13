@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-export class UserType {
+export class User {
   constructor(
     public id: string,
     public login: string,
@@ -11,7 +11,7 @@ export class UserType {
 
 // ****************************************************************** //
 
-export class UserDBType {
+export class UserDB {
   constructor(
     public _id: ObjectId,
     public login: string,
@@ -30,7 +30,7 @@ export class UserDBInsertType {
   public passwordHash: string
   public createdAt: Date
 
-  constructor(user: UserDBType) {
+  constructor(user: UserDB) {
     this.login = user.login
     this.email = user.email
     this.passwordHash = user.passwordHash
@@ -41,14 +41,14 @@ export class UserDBInsertType {
 // ****************************************************************** //
 
 // UserRegDBType — модель регистрации пользователя в базе данных с подтверждением почты
-export class UserRegDBType {
+export class UserRegDB {
   constructor(
     public _id: ObjectId,
     public login: string,
     public email: string,
     public passwordHash: string,
     public createdAt: Date,
-    public emailConfirmation: EmailConfirmationType,
+    public emailConfirmation: EmailConfirmation,
     public passwordRecovery: PasswordRecovery | null,
   ) {}
 }
@@ -61,14 +61,14 @@ export class UserRegInsertDBType {
   public email: string
   public passwordHash: string
   public createdAt: Date
-  public emailConfirmation: EmailConfirmationType
+  public emailConfirmation: EmailConfirmation
 
   constructor(user: {
     login: string
     email: string
     passwordHash: string
     createdAt: Date
-    emailConfirmation: EmailConfirmationType
+    emailConfirmation: EmailConfirmation
   }) {
     this.login = user.login
     this.email = user.email
@@ -80,7 +80,7 @@ export class UserRegInsertDBType {
 
 // ****************************************************************** //
 
-export class EmailConfirmationType {
+export class EmailConfirmation {
   constructor(
     public confirmationCode: string,
     public expirationDate: Date,
@@ -103,7 +103,7 @@ export class PaginatorUserType {
     public page: number,
     public pageSize: number,
     public totalCount: number,
-    public items: UserType[], // Заменяем UserDBType на UserType
+    public items: User[], // Заменяем UserDBType на UserType
   ) {}
 }
 
