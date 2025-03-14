@@ -9,7 +9,7 @@ const blogSchema = new Schema<BlogDB>({
   name: { type: String, required: true },
   description: { type: String, required: true },
   websiteUrl: { type: String, required: true },
-  createdAt: { type: Date },
+  createdAt: { type: Date, default: Date.now },
   isMembership: { type: Boolean, default: false },
 })
 

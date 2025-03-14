@@ -10,6 +10,7 @@ import { deviceSessionsRouter } from './devices/DeviceSessionsRouter'
 import cookieParser from 'cookie-parser'
 import { UserModel } from './users/user-schema'
 import { BlogModel } from './blogs/blog-schema'
+import { PostModel } from './posts/post-schema'
 
 export const app = express()
 app.use(cookieParser())
@@ -28,7 +29,7 @@ app.use(SETTINGS.PATH.DEVICES, deviceSessionsRouter)
 app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
   try {
     await BlogModel.deleteMany({})
-    await postsCollection.deleteMany({})
+    await PostModel.deleteMany({})
     await UserModel.deleteMany({})
     await commentsCollection.deleteMany({})
     //await blacklistCollection.deleteMany({})
