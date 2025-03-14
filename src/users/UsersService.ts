@@ -31,11 +31,7 @@ class UsersService {
     const passwordHash = await bcryptService.generateHash(body.password)
 
     // Создаем объект emailConfirmation на основе класса EmailConfirmationType
-    const emailConfirmation = new EmailConfirmation(
-      randomUUID(), // confirmationCode
-      new Date(), // expirationDate
-      false, // isConfirmed
-    )
+    const emailConfirmation = new EmailConfirmation(randomUUID(), new Date(), false)
 
     // Создаем объект userDB на основе класса UserRegInsertDBType
     const userDB = new UserRegInsertDBType({

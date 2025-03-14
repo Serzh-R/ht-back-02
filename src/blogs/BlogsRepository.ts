@@ -1,11 +1,11 @@
-import { BlogInputType, BlogDBInsertType, BlogType } from './blog-post-types'
+import { BlogInputType, BlogDBInsertType, Blog } from './blog-post-types'
 import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, OptionalId } from 'mongodb'
 import { injectable } from 'inversify'
 
 @injectable()
 export class BlogsRepository {
-  async createBlog(body: BlogInputType): Promise<BlogType> {
+  async createBlog(body: BlogInputType): Promise<Blog> {
     const newBlog: BlogDBInsertType = {
       name: body.name ? body.name : '',
       description: body.description,
@@ -14,7 +14,7 @@ export class BlogsRepository {
       isMembership: false,
     }
 
-    const result = await blogsCollection.insertOne(newBlog as OptionalId<BlogType>)
+    const result = await blogsCollection.insertOne(newBlog as OptionalId<Blog>)
 
     return {
       id: result.insertedId.toString(),
@@ -23,7 +23,7 @@ export class BlogsRepository {
       websiteUrl: newBlog.websiteUrl,
       createdAt: newBlog.createdAt,
       isMembership: newBlog.isMembership,
-    } as BlogType
+    } as Blog
   }
 
   async updateBlog(id: string, body: BlogInputType): Promise<boolean> {

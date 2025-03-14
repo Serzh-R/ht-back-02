@@ -1,12 +1,12 @@
 import { BlogsRepository } from './BlogsRepository'
-import { BlogInputType, BlogType } from './blog-post-types'
+import { BlogInputType, Blog } from './blog-post-types'
 import { inject, injectable } from 'inversify'
 
 @injectable()
 export class BlogsService {
   constructor(@inject(BlogsRepository) private blogsRepository: BlogsRepository) {}
 
-  async createBlog(body: BlogInputType): Promise<BlogType> {
+  async createBlog(body: BlogInputType): Promise<Blog> {
     return await this.blogsRepository.createBlog(body)
   }
 

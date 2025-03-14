@@ -1,7 +1,9 @@
 // ********* DB Type ******************* //
+import { ObjectId } from 'mongodb'
+
 export class DBType {
   constructor(
-    public blogs: BlogType[],
+    public blogs: Blog[],
     public posts: PostViewModel[],
   ) {}
 }
@@ -20,18 +22,18 @@ export class APIErrorResultType {
 
 //********* Blog ***********************//
 
-export class BlogDBType {
+export class BlogDB {
   constructor(
     //public _id: ObjectId | undefined, // Optional for MongoDB insertions
     public name: string,
     public description: string,
     public websiteUrl: string,
-    public createdAt: string,
+    public createdAt: Date,
     public isMembership: boolean,
   ) {}
 }
 
-export class BlogType {
+export class Blog {
   constructor(
     public id: string,
     public name: string,
@@ -58,7 +60,7 @@ export class PaginatorBlogType {
     public page: number,
     public pageSize: number,
     public totalCount: number,
-    public items: BlogType[],
+    public items: Blog[],
   ) {}
 }
 

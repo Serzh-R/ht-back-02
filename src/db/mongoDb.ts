@@ -23,9 +23,9 @@ import { CommentDBType } from '../comments/comment-types'
 import { BlacklistDBType, UserRegDBType } from '../users/user-types'
 import { AppealToApi, DeviceSessionDB } from '../devices/device-types'
 
-export let blogsCollection: Collection<BlogDBType>
+export let blogsCollection: Collection<BlogDB>
 export let postsCollection: Collection<WithId<PostDBModel>>
-export let usersCollection: Collection<UserRegDBType>
+export let usersCollection: Collection<UserRegDB>
 export let commentsCollection: Collection<CommentDBType>
 export let blacklistCollection: Collection<BlacklistDBType>
 export let deviceSessionsCollection: Collection<WithId<DeviceSessionDB>>
@@ -43,9 +43,9 @@ export async function runDb(url: string): Promise<boolean> {
   console.log(SETTINGS.DB_NAME, 'db_name')
   mongoDb = client.db(SETTINGS.DB_NAME)
 
-  blogsCollection = mongoDb.collection<BlogDBType>('blogs')
+  blogsCollection = mongoDb.collection<BlogDB>('blogs')
   postsCollection = mongoDb.collection<WithId<PostDBModel>>('posts')
-  usersCollection = mongoDb.collection<UserRegDBType>('users')
+  usersCollection = mongoDb.collection<UserRegDB>('users')
   commentsCollection = mongoDb.collection<CommentDBType>('comments')
   blacklistCollection = mongoDb.collection<BlacklistDBType>('blacklist')
   deviceSessionsCollection = mongoDb.collection<WithId<DeviceSessionDB>>('sessions')

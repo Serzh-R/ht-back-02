@@ -21,7 +21,7 @@ const userSchema = new Schema<UserRegDB>({
   login: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, required: true },
   emailConfirmation: { type: EmailConfirmationSchema, required: true },
   passwordRecovery: { type: PasswordRecoverySchema, default: null },
 })

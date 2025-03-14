@@ -1,4 +1,4 @@
-import { BlogDBType, BlogType, PaginatorBlogType } from './blog-post-types'
+import { BlogDB, Blog, PaginatorBlogType } from './blog-post-types'
 import { blogsCollection } from '../db/mongoDb'
 import { ObjectId, WithId } from 'mongodb'
 import { injectable } from 'inversify'
@@ -46,19 +46,19 @@ export class BlogsQueryRepository {
     return blogsCollection.countDocuments(filter)
   }
 
-  async getBlogById(blogId: string): Promise<BlogType | null> {
+  async getBlogById(blogId: string): Promise<Blog | null> {
     if (!ObjectId.isValid(blogId)) return null
     const blog = await blogsCollection.findOne({ _id: new ObjectId(blogId) })
     return blog ? this._getInView(blog) : null
   }
 
-  _getInView(blog: WithId<BlogDBType>): BlogType {
+  _getInView(blog: WithId<BlogDB>): Blog {
     return {
       id: blog._id.toString(),
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
+      createdAt: blog.createdAt.toString(),
       isMembership: blog.isMembership,
     }
   }
@@ -66,5 +66,3 @@ export class BlogsQueryRepository {
     return ObjectId.isValid(id)
   }
 }
-
-//export const blogsQueryRepository = new BlogsQueryRepository()
