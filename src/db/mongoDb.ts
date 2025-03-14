@@ -24,7 +24,7 @@ import { BlacklistDBType, UserRegDBType } from '../users/user-types'
 import { AppealToApi, DeviceSessionDB } from '../devices/device-types'
 
 export let blogsCollection: Collection<BlogDB>
-export let postsCollection: Collection<WithId<PostDBModel>>
+export let postsCollection: Collection<WithId<PostDB>>
 export let usersCollection: Collection<UserRegDB>
 export let commentsCollection: Collection<CommentDBType>
 export let blacklistCollection: Collection<BlacklistDBType>
@@ -44,7 +44,7 @@ export async function runDb(url: string): Promise<boolean> {
   mongoDb = client.db(SETTINGS.DB_NAME)
 
   blogsCollection = mongoDb.collection<BlogDB>('blogs')
-  postsCollection = mongoDb.collection<WithId<PostDBModel>>('posts')
+  postsCollection = mongoDb.collection<WithId<PostDB>>('posts')
   usersCollection = mongoDb.collection<UserRegDB>('users')
   commentsCollection = mongoDb.collection<CommentDBType>('comments')
   blacklistCollection = mongoDb.collection<BlacklistDBType>('blacklist')

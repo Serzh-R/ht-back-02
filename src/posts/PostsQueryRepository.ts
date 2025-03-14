@@ -1,4 +1,4 @@
-import { PostViewModel, PaginatorPostViewModel, PostDBModel } from '../blogs/blog-post-types'
+import { PostViewModel, PaginatorPostViewModel, PostDB } from '../blogs/blog-post-types'
 import { postsCollection } from '../db/mongoDb'
 import { ObjectId, WithId } from 'mongodb'
 
@@ -53,7 +53,7 @@ class PostsQueryRepository {
       page: pageNumber,
       pageSize,
       totalCount: postsCount,
-      items: posts.map((post: WithId<PostDBModel>) => this._mapViewModel(post)),
+      items: posts.map((post: WithId<PostDB>) => this._mapViewModel(post)),
     }
   }
 
@@ -62,7 +62,7 @@ class PostsQueryRepository {
     return await postsCollection.countDocuments({ blogId: objectId.toString() })
   }
 
-  _mapViewModel(post: WithId<PostDBModel>): PostViewModel {
+  _mapViewModel(post: WithId<PostDB>): PostViewModel {
     return {
       id: post._id.toString(),
       title: post.title,

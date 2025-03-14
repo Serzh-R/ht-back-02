@@ -10,7 +10,7 @@ const blogSchema = new Schema<BlogDB>({
   description: { type: String, required: true },
   websiteUrl: { type: String, required: true },
   createdAt: { type: Date },
-  isMembership: { type: Boolean, default: true },
+  isMembership: { type: Boolean, default: false },
 })
 
 export const BlogModel = model<BlogDB, BlogModel>('blogs', blogSchema)

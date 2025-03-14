@@ -28,11 +28,11 @@ class UsersQueryRepository {
     const usersCount = await UserModel.countDocuments(filter)
 
     const users = await UserModel.find(filter)
-      .select('-passwordHash -passwordSalt') // Исключаем пароли
+      .select('-passwordHash -passwordSalt')
       .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .lean() // Конвертируем в обычные объекты JS (ускоряет работу)
+      .lean()
 
     // Преобразуем UserDBType в UserType
     const userItems = users.map((user) => this._mapViewModel(user))

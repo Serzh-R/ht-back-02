@@ -1,10 +1,10 @@
-import { PostDBModel, PostInputModel } from '../blogs/blog-post-types'
+import { PostDB, PostInputModel } from '../blogs/blog-post-types'
 import { blogsCollection, postsCollection } from '../db/mongoDb'
 import { ObjectId, WithId } from 'mongodb'
 
 class PostsRepository {
-  async createPost(post: PostDBModel): Promise<WithId<PostDBModel>> {
-    const result = await postsCollection.insertOne(post as WithId<PostDBModel>)
+  async createPost(post: PostDB): Promise<WithId<PostDB>> {
+    const result = await postsCollection.insertOne(post as WithId<PostDB>)
 
     return {
       _id: result.insertedId,

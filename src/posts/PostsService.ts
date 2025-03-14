@@ -1,9 +1,4 @@
-import {
-  BlogPostInputModel,
-  PostDBModel,
-  PostInputModel,
-  PostViewModel,
-} from '../blogs/blog-post-types'
+import { BlogPostInputModel, PostDB, PostInputModel, PostViewModel } from '../blogs/blog-post-types'
 import { postsRepository } from './PostsRepository'
 import { BlogsQueryRepository } from '../blogs/BlogsQueryRepository'
 import { ObjectId, WithId } from 'mongodb'
@@ -19,7 +14,7 @@ class PostsService {
       throw new Error('Invalid blogId')
     }
 
-    const newPost: PostDBModel = {
+    const newPost: PostDB = {
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
@@ -30,7 +25,7 @@ class PostsService {
 
     const createdPost = await postsRepository.createPost(newPost)
 
-    return this._mapViewModel(createdPost as WithId<PostDBModel>)
+    return this._mapViewModel(createdPost as WithId<PostDB>)
   }
 
   async createPostForBlog(blogId: string, post: BlogPostInputModel): Promise<PostViewModel | null> {
@@ -39,7 +34,7 @@ class PostsService {
       return null
     }
 
-    const newPost: PostDBModel = {
+    const newPost: PostDB = {
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
@@ -50,10 +45,10 @@ class PostsService {
 
     const createdPost = await postsRepository.createPost(newPost)
 
-    return this._mapViewModel(createdPost as WithId<PostDBModel>)
+    return this._mapViewModel(createdPost as WithId<PostDB>)
   }
 
-  _mapViewModel(post: WithId<PostDBModel>): PostViewModel {
+  _mapViewModel(post: WithId<PostDB>): PostViewModel {
     return {
       id: post._id.toString(),
       title: post.title,

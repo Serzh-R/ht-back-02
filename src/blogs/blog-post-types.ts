@@ -74,7 +74,7 @@ export class BlogInputType {
 
 //******* Post **********************//
 
-export class PostDBModel {
+export class PostDB {
   constructor(
     //public _id: ObjectId,
     public title: string,
