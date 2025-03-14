@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 
 export async function runDb(url: string): Promise<boolean> {
   try {
-    await mongoose.connect(SETTINGS.MONGO_URL + '/' + SETTINGS.DB_NAME)
+    await mongoose.connect(`${url}/${SETTINGS.DB_NAME}`)
     console.log('Connected successfully to Mongo server')
     return true
   } catch (err) {
