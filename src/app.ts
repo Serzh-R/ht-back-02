@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser'
 import { UserModel } from './users/user-schema'
 import { BlogModel } from './blogs/blog-schema'
 import { PostModel } from './posts/post-schema'
+import { CommentModel } from './comments/comment-schema'
 
 export const app = express()
 app.use(cookieParser())
@@ -31,7 +32,7 @@ app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
     await BlogModel.deleteMany({})
     await PostModel.deleteMany({})
     await UserModel.deleteMany({})
-    await commentsCollection.deleteMany({})
+    await CommentModel.deleteMany({})
     //await blacklistCollection.deleteMany({})
     await deviceSessionsCollection.deleteMany({})
     await requestsCollection.deleteMany({})

@@ -1,6 +1,6 @@
 import { commentsRepository } from './CommentsRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
-import { CommentDBInsertType, CommentType } from './comment-types'
+import { CommentDBInsertType, Comment } from './comment-types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'
@@ -79,7 +79,7 @@ class CommentsService {
     postId: string
     content: string
     userId: string
-  }): Promise<Result<CommentType>> {
+  }): Promise<Result<Comment>> {
     const post = await postsQueryRepository.getPostById(postData.postId)
 
     if (!post) {

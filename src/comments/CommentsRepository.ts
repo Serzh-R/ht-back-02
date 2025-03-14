@@ -1,6 +1,32 @@
+import { ObjectId } from 'mongodb'
+import { CommentDB } from './comment-types'
+import { CommentModel } from './comment-schema'
+
+class CommentsRepository {
+  async updateCommentById(id: string, content: string): Promise<boolean> {
+    const result = await CommentModel.updateOne({ _id: id }, { $set: { content } })
+    return result.matchedCount > 0
+  }
+
+  async createComment(commentData: Omit<CommentDB, '_id'>): Promise<ObjectId> {
+    const newComment = await CommentModel.create(commentData)
+    return newComment._id
+  }
+
+  async deleteById(id: string): Promise<boolean> {
+    const result = await CommentModel.deleteOne({ _id: id })
+    return result.deletedCount > 0
+  }
+}
+
+export const commentsRepository = new CommentsRepository()
+
+// ********************************************************************** //
+
+/*
 import { commentsCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
-import { CommentDBType } from './comment-types'
+import { CommentDB } from './comment-types'
 
 class CommentsRepository {
   async updateCommentById(id: string, content: string): Promise<boolean> {
@@ -22,7 +48,7 @@ class CommentsRepository {
       commentatorInfo: commentData.commentatorInfo,
       createdAt: commentData.createdAt,
       postId: commentData.postId,
-    } as CommentDBType)
+    } as CommentDB)
 
     return result.insertedId
   }
@@ -34,3 +60,4 @@ class CommentsRepository {
 }
 
 export const commentsRepository = new CommentsRepository()
+*/

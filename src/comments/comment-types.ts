@@ -6,11 +6,11 @@ export class CommentInputType {
   constructor(public content: string) {}
 }
 
-export class CommentDBType {
+export class CommentDB {
   constructor(
     public _id: ObjectId,
     public content: string,
-    public commentatorInfo: CommentatorInfoType,
+    public commentatorInfo: CommentatorInfo,
     public createdAt: Date,
     public postId: ObjectId,
   ) {}
@@ -19,22 +19,22 @@ export class CommentDBType {
 export class CommentDBInsertType {
   constructor(
     public content: string,
-    public commentatorInfo: CommentatorInfoType,
+    public commentatorInfo: CommentatorInfo,
     public createdAt: Date,
     public postId: ObjectId,
   ) {}
 }
 
-export class CommentType {
+export class Comment {
   constructor(
     public id: string,
     public content: string,
-    public commentatorInfo: CommentatorInfoType,
+    public commentatorInfo: CommentatorInfo,
     public createdAt: string,
   ) {}
 }
 
-export class CommentatorInfoType {
+export class CommentatorInfo {
   constructor(
     public userId: string,
     public userLogin: string,
@@ -47,7 +47,7 @@ export class PaginatorCommentType {
     public page: number,
     public pageSize: number,
     public totalCount: number,
-    public items: CommentType[],
+    public items: Comment[],
   ) {}
 }
 

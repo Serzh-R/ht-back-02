@@ -26,7 +26,7 @@ import { AppealToApi, DeviceSessionDB } from '../devices/device-types'
 export let blogsCollection: Collection<BlogDB>
 export let postsCollection: Collection<WithId<PostDB>>
 export let usersCollection: Collection<UserRegDB>
-export let commentsCollection: Collection<CommentDBType>
+export let commentsCollection: Collection<CommentDB>
 export let blacklistCollection: Collection<BlacklistDBType>
 export let deviceSessionsCollection: Collection<WithId<DeviceSessionDB>>
 export let requestsCollection: Collection<AppealToApi>
@@ -46,7 +46,7 @@ export async function runDb(url: string): Promise<boolean> {
   blogsCollection = mongoDb.collection<BlogDB>('blogs')
   postsCollection = mongoDb.collection<WithId<PostDB>>('posts')
   usersCollection = mongoDb.collection<UserRegDB>('users')
-  commentsCollection = mongoDb.collection<CommentDBType>('comments')
+  commentsCollection = mongoDb.collection<CommentDB>('comments')
   blacklistCollection = mongoDb.collection<BlacklistDBType>('blacklist')
   deviceSessionsCollection = mongoDb.collection<WithId<DeviceSessionDB>>('sessions')
   requestsCollection = mongoDb.collection<AppealToApi>('requests')
