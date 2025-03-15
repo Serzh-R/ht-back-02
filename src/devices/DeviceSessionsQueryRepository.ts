@@ -1,4 +1,4 @@
-import { DeviceSession, DeviceSessionDB } from './device-types'
+import { DeviceSession, DeviceSessionDB } from './device-session-types'
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { WithId } from 'mongodb'
 

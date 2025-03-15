@@ -1,7 +1,7 @@
 import { HydratedDocument, model, Model, Schema } from 'mongoose'
 import { BlogDB } from './blog-post-types'
 
-type BlogModel = Model<BlogDB>
+type BlogModelType = Model<BlogDB>
 
 export type BlogDocument = HydratedDocument<BlogDB>
 
@@ -13,4 +13,4 @@ const blogSchema = new Schema<BlogDB>({
   isMembership: { type: Boolean, default: false },
 })
 
-export const BlogModel = model<BlogDB, BlogModel>('blogs', blogSchema)
+export const BlogModel = model<BlogDB, BlogModelType>('blogs', blogSchema)

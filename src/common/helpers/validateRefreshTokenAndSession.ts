@@ -3,7 +3,7 @@ import { deviceSessionsRepository } from '../../devices/DeviceSessionsRepository
 import { jwtService, RefreshTokenPayload } from '../adapters/jwt.service'
 import { Result } from '../result/result.type'
 import { WithId } from 'mongodb'
-import { DeviceSessionDB } from '../../devices/device-types'
+import { DeviceSessionDB } from '../../devices/device-session-types'
 
 export const validateRefreshTokenAndSession = async (
   refreshToken: string,

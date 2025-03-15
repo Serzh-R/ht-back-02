@@ -12,6 +12,7 @@ import { BlacklistModel, UserModel } from './users/user-schema'
 import { BlogModel } from './blogs/blog-schema'
 import { PostModel } from './posts/post-schema'
 import { CommentModel } from './comments/comment-schema'
+import { DeviceSessionModel } from './devices/device-session-schema'
 
 export const app = express()
 app.use(cookieParser())
@@ -34,7 +35,7 @@ app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
     await UserModel.deleteMany({})
     await CommentModel.deleteMany({})
     await BlacklistModel.deleteMany({})
-    //await deviceSessionsCollection.deleteMany({})
+    await DeviceSessionModel.deleteMany({})
     //await requestsCollection.deleteMany({})
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()

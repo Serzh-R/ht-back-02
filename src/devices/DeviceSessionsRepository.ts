@@ -1,6 +1,59 @@
+import { WithId } from 'mongodb'
+import { DeviceSessionDB } from './device-session-types'
+import { DeviceSessionModel } from './device-session-schema'
+
+class DeviceSessionsRepository {
+  async createDeviceSession(sessionData: WithId<DeviceSessionDB>): Promise<boolean> {
+    await DeviceSessionModel.create(sessionData)
+    return true
+  }
+
+  async findCurrentDevice(userId: string, deviceId: string): Promise<DeviceSessionDB | null> {
+    return await DeviceSessionModel.findOne({ userId, deviceId }).lean()
+  }
+
+  async deleteDevicesExceptCurrent(userId: string, currentDeviceId: string): Promise<boolean> {
+    const result = await DeviceSessionModel.deleteMany({
+      userId,
+      _id: { $ne: currentDeviceId },
+    })
+    return result.deletedCount > 0
+  }
+
+  async deleteDeviceSessions(deviceId: string, userId: string): Promise<boolean> {
+    const result = await DeviceSessionModel.deleteMany({ deviceId, userId })
+    return result.deletedCount > 0
+  }
+
+  async findSessionByDeviceIdAndUserId(
+    deviceId: string,
+    userId: string,
+  ): Promise<DeviceSessionDB | null> {
+    return await DeviceSessionModel.findOne({ deviceId, userId }).lean()
+  }
+
+  async updateSessionDates(
+    deviceId: string,
+    userId: string,
+    lastActiveDate: number,
+    expirationDate: number,
+  ): Promise<boolean> {
+    const result = await DeviceSessionModel.updateOne(
+      { deviceId, userId },
+      { $set: { lastActiveDate, expirationDate } },
+    )
+    return result.modifiedCount > 0
+  }
+}
+
+export const deviceSessionsRepository = new DeviceSessionsRepository()
+
+// *********************************************************************** //
+
+/*
 import { deviceSessionsCollection } from '../db/mongoDb'
 import { ObjectId, WithId } from 'mongodb'
-import { DeviceSessionDB } from './device-types'
+import { DeviceSessionDB } from './device-session-types'
 
 class DeviceSessionsRepository {
   async createDeviceSession(sessionData: WithId<DeviceSessionDB>) {
@@ -64,3 +117,4 @@ class DeviceSessionsRepository {
 }
 
 export const deviceSessionsRepository = new DeviceSessionsRepository()
+*/

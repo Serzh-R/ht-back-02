@@ -1,7 +1,8 @@
 import { HydratedDocument, model, Model, Schema } from 'mongoose'
 import { PostDB } from '../blogs/blog-post-types'
 
-type PostModel = Model<PostDB>
+type PostModelType = Model<PostDB>
+
 export type PostDocument = HydratedDocument<PostDB>
 
 const postSchema = new Schema<PostDB>({
@@ -13,4 +14,4 @@ const postSchema = new Schema<PostDB>({
   createdAt: { type: Date, required: true, default: Date.now },
 })
 
-export const PostModel = model<PostDB, PostModel>('posts', postSchema)
+export const PostModel = model<PostDB, PostModelType>('posts', postSchema)

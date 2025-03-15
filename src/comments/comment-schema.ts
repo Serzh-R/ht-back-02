@@ -1,7 +1,7 @@
 import { Schema, model, Model, HydratedDocument } from 'mongoose'
 import { CommentatorInfo, CommentDB } from './comment-types'
 
-type CommentModel = Model<CommentDB>
+type CommentModelType = Model<CommentDB>
 export type CommentDocument = HydratedDocument<CommentDB>
 
 const CommentatorInfoSchema = new Schema<CommentatorInfo>({
@@ -17,4 +17,4 @@ const commentSchema = new Schema<CommentDB>({
   postId: { type: Schema.Types.ObjectId, required: true, ref: 'posts' },
 })
 
-export const CommentModel = model<CommentDB, CommentModel>('comments', commentSchema)
+export const CommentModel = model<CommentDB, CommentModelType>('comments', commentSchema)
