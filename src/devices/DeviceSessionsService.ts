@@ -3,6 +3,7 @@ import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { deviceSessionsRepository } from './DeviceSessionsRepository'
 import { DeviceSessionModel } from './device-session-schema'
+import { WithId } from 'mongodb'
 
 class DeviceSessionsService {
   async deleteDevicesByUserIdExceptCurrent(
@@ -15,7 +16,7 @@ class DeviceSessionsService {
     return await deviceSessionsRepository.deleteDevicesExceptCurrent(userId, currentDeviceId)
   }
 
-  async deviceBySessionId(deviceId: string): Promise<Result<DeviceSessionDB>> {
+  async deviceBySessionId(deviceId: string): Promise<Result<WithId<DeviceSessionDB>>> {
     const device = await DeviceSessionModel.findOne({ deviceId }).lean()
 
     if (!device) {

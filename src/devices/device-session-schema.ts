@@ -1,5 +1,5 @@
 import { HydratedDocument, model, Model, Schema } from 'mongoose'
-import { DeviceSessionDB } from './device-session-types'
+import { AppealToApi, DeviceSessionDB } from './device-session-types'
 
 type DeviceSessionModelType = Model<DeviceSessionDB>
 export type DeviceSessionDocument = HydratedDocument<DeviceSessionDB>
@@ -17,3 +17,16 @@ export const DeviceSessionModel = model<DeviceSessionDB, DeviceSessionModelType>
   'sessions',
   deviceSessionSchema,
 )
+
+// ************************************************************ //
+
+type AppealModelType = Model<AppealToApi>
+export type AppealDocument = HydratedDocument<AppealToApi>
+
+const appealSchema = new Schema<AppealToApi>({
+  ip: { type: String, required: true },
+  url: { type: String, required: true },
+  date: { type: Date, required: true, default: Date.now },
+})
+
+export const AppealModel = model<AppealToApi, AppealModelType>('requests', appealSchema)

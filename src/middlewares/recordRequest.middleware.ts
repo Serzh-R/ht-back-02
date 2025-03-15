@@ -1,7 +1,18 @@
 import { Request, Response, NextFunction } from 'express'
-import { requestsCollection } from '../db/mongoDb'
+import { AppealModel } from '../devices/device-session-schema'
 
 export const recordRequest = async (req: Request, res: Response, next: NextFunction) => {
+  await AppealModel.create({
+    ip: req.ip ?? '',
+    url: req.originalUrl,
+  }).catch((err) => console.error('Error saving request data:', err))
+
+  next()
+}
+
+// ************************************************************* //
+
+/*export const recordRequest = async (req: Request, res: Response, next: NextFunction) => {
   const requestData = {
     ip: req.ip ?? '',
     url: req.originalUrl,
@@ -14,4 +25,4 @@ export const recordRequest = async (req: Request, res: Response, next: NextFunct
     console.error('Error saving request data:', err)
     next()
   }
-}
+}*/

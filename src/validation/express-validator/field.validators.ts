@@ -1,6 +1,6 @@
 import { body, param } from 'express-validator'
-import { blogsCollection } from '../../db/mongoDb'
 import { ObjectId } from 'mongodb'
+import { BlogModel } from '../../blogs/blog-schema'
 
 export const idParamValidator = param('id')
   .isString()
@@ -22,15 +22,10 @@ export const blogIdValidator = body('blogId')
   .trim()
   .notEmpty()
   .custom(async (blogId) => {
-    if (!ObjectId.isValid(blogId)) {
-      throw new Error('Invalid blogId format')
-    }
-
-    const blog = await blogsCollection.findOne({ _id: new ObjectId(blogId) })
+    const blog = await BlogModel.exists({ _id: blogId })
     if (!blog) {
       throw new Error('No blog found with the provided blogId')
     }
-
     return true
   })
 
