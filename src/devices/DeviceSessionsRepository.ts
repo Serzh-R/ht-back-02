@@ -28,8 +28,11 @@ class DeviceSessionsRepository {
   async findSessionByDeviceIdAndUserId(
     deviceId: string,
     userId: string,
-  ): Promise<DeviceSessionDB | null> {
-    return await DeviceSessionModel.findOne({ deviceId, userId }).lean()
+  ): Promise<WithId<DeviceSessionDB> | null> {
+    return (await DeviceSessionModel.findOne({
+      deviceId,
+      userId,
+    }).lean()) as WithId<DeviceSessionDB> | null
   }
 
   async updateSessionDates(

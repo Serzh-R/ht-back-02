@@ -392,10 +392,10 @@ class AuthService {
 
     const { decoded } = validationResult.data!
 
-    const sessionDeleted = await deviceSessionsRepository.deleteDeviceSessions({
-      deviceId: decoded.deviceId,
-      userId: decoded.userId,
-    })
+    const sessionDeleted = await deviceSessionsRepository.deleteDeviceSessions(
+      decoded.deviceId,
+      decoded.userId,
+    )
 
     if (!sessionDeleted) {
       return {
