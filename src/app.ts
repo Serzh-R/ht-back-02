@@ -8,7 +8,7 @@ import { authRouter } from './auth/AuthRouter'
 import { commentsRouter } from './comments/CommentsRouter'
 import { deviceSessionsRouter } from './devices/DeviceSessionsRouter'
 import cookieParser from 'cookie-parser'
-import { UserModel } from './users/user-schema'
+import { BlacklistModel, UserModel } from './users/user-schema'
 import { BlogModel } from './blogs/blog-schema'
 import { PostModel } from './posts/post-schema'
 import { CommentModel } from './comments/comment-schema'
@@ -33,9 +33,9 @@ app.delete(SETTINGS.PATH.DELETE_ALL, async (req: Request, res: Response) => {
     await PostModel.deleteMany({})
     await UserModel.deleteMany({})
     await CommentModel.deleteMany({})
-    //await blacklistCollection.deleteMany({})
-    await deviceSessionsCollection.deleteMany({})
-    await requestsCollection.deleteMany({})
+    await BlacklistModel.deleteMany({})
+    //await deviceSessionsCollection.deleteMany({})
+    //await requestsCollection.deleteMany({})
 
     res.status(HTTP_STATUSES.NO_CONTENT_204).send()
   } catch (error) {

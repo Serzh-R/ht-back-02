@@ -1,5 +1,5 @@
 import { HydratedDocument, model, Model, Schema } from 'mongoose'
-import { EmailConfirmation, PasswordRecovery, UserRegDB } from './user-types'
+import { BlacklistDB, EmailConfirmation, PasswordRecovery, UserRegDB } from './user-types'
 
 type UserModel = Model<UserRegDB>
 
@@ -27,3 +27,17 @@ const userSchema = new Schema<UserRegDB>({
 })
 
 export const UserModel = model<UserRegDB, UserModel>('users', userSchema)
+
+// **************************************************************************** //
+
+type BlackListModel = Model<BlacklistDB>
+
+export type BlackListDocument = HydratedDocument<BlacklistDB>
+
+const blacklistSchema = new Schema<BlacklistDB>({
+  _id: { type: Schema.Types.ObjectId, auto: true },
+  refreshToken: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+})
+
+export const BlacklistModel = model<BlacklistDB, BlackListModel>('blacklist', blacklistSchema)

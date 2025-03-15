@@ -119,7 +119,7 @@ export class UserInputType {
 
 // ****************************************************************** //
 
-export class BlacklistDBType {
+export class BlacklistDB {
   constructor(
     public _id: ObjectId,
     public refreshToken: string,

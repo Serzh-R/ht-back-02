@@ -1,4 +1,27 @@
-import { blacklistCollection } from '../db/mongoDb'
+import { BlacklistModel } from '../users/user-schema'
+
+class BlacklistRepository {
+  async addTokenToBlacklist(token: string): Promise<boolean> {
+    try {
+      await BlacklistModel.create({ refreshToken: token })
+      return true
+    } catch (error) {
+      console.error('Error adding token to blacklist:', error)
+      return false
+    }
+  }
+
+  async isTokenBlacklisted(refreshToken: string): Promise<boolean> {
+    const result = await BlacklistModel.findOne({ refreshToken }).lean()
+    return !!result
+  }
+}
+
+export const blacklistRepository = new BlacklistRepository()
+
+// ******************************************************************** //
+
+/*import { blacklistCollection } from '../db/mongoDb'
 import { ObjectId } from 'mongodb'
 
 class BlacklistRepository {
@@ -17,4 +40,4 @@ class BlacklistRepository {
   }
 }
 
-export const blacklistRepository = new BlacklistRepository()
+export const blacklistRepository = new BlacklistRepository()*/
