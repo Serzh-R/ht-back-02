@@ -1,6 +1,6 @@
 import { commentsRepository } from './CommentsRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
-import { CommentDBInsertType, Comment } from './comment-types'
+import { CommentDBInsertType, Comment, LikeStatus } from './comment-types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'
@@ -110,6 +110,7 @@ class CommentsService {
       },
       createdAt: new Date(),
       postId: new ObjectId(postData.postId),
+      likesInfo: { likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None },
     }
 
     const commentId = await commentsRepository.createComment({
@@ -117,6 +118,7 @@ class CommentsService {
       commentatorInfo: newComment.commentatorInfo,
       createdAt: newComment.createdAt,
       postId: newComment.postId,
+      likesInfo: newComment.likesInfo,
     })
 
     return {
@@ -126,6 +128,7 @@ class CommentsService {
         content: newComment.content,
         commentatorInfo: newComment.commentatorInfo,
         createdAt: newComment.createdAt.toISOString(),
+        likesInfo: newComment.likesInfo,
       },
       extensions: [],
     }

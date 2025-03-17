@@ -198,6 +198,7 @@ class AuthService {
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     const result = await this.checkUserCredentials(loginOrEmail, password)
 
+    console.log(result)
     if (result.status !== ResultStatus.Success) {
       return {
         status: ResultStatus.Unauthorized,

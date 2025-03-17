@@ -11,8 +11,6 @@ import { authMiddleware } from '../auth/middlewares/auth.middleware'
 import { container } from '../composition-root'
 import { BlogsController } from './BlogsController'
 
-//const blogsController = ioc.getInstance<BlogsController>(BlogsController)
-
 const blogsController = container.get<BlogsController>(BlogsController)
 
 export const blogRouter = Router()

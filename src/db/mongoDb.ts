@@ -2,8 +2,14 @@ import { SETTINGS } from '../settings'
 import mongoose from 'mongoose'
 
 export async function runDb(url: string): Promise<boolean> {
+  console.log('MongoDB connection URL:', url)
+
   try {
-    await mongoose.connect(`${url}/${SETTINGS.DB_NAME}`)
+    await mongoose.connect(url, {
+      dbName: SETTINGS.DB_NAME, // ✅ Фикс подключения
+      writeConcern: { w: 'majority' },
+    })
+
     console.log('Connected successfully to Mongo server')
     return true
   } catch (err) {

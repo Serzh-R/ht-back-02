@@ -75,6 +75,8 @@ class AuthController {
 
     const result = await authService.login(loginOrEmail, password, userAgent, ip, deviceId)
 
+    console.log(result.data?.accessToken)
+
     if (result.status !== ResultStatus.Success) {
       res.status(HTTP_STATUSES.UNAUTHORIZED_401).json({
         errorsMessages: result.extensions,

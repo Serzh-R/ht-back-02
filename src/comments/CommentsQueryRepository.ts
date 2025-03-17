@@ -1,4 +1,4 @@
-import { CommentDB, Comment, PaginatorCommentType } from './comment-types'
+import { CommentDB, Comment, PaginatorCommentType, LikeStatus } from './comment-types'
 import { ResultStatus } from '../common/result/resultCode'
 import { Result } from '../common/result/result.type'
 import { PostModel } from '../posts/post-schema'
@@ -57,6 +57,11 @@ class CommentsQueryRepository {
       content: comment.content,
       commentatorInfo: comment.commentatorInfo,
       createdAt: comment.createdAt.toISOString(),
+      likesInfo: comment.likesInfo || {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: LikeStatus.None,
+      },
     }
   }
 }
