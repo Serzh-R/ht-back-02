@@ -13,7 +13,7 @@ export class CommentDB {
     public commentatorInfo: CommentatorInfo,
     public createdAt: Date,
     public postId: ObjectId,
-    public likesInfo: Likes,
+    public likesInfo: LikesInfo[],
   ) {}
 }
 
@@ -23,7 +23,7 @@ export class CommentDBInsertType {
     public commentatorInfo: CommentatorInfo,
     public createdAt: Date,
     public postId: ObjectId,
-    public likesInfo: Likes,
+    public likesInfo: LikesInfo[],
   ) {}
 }
 
@@ -33,7 +33,7 @@ export class Comment {
     public content: string,
     public commentatorInfo: CommentatorInfo,
     public createdAt: string,
-    public likesInfo: Likes,
+    public likesInfo: LikesInfo[],
   ) {}
 }
 
@@ -44,7 +44,7 @@ export class CommentatorInfo {
   ) {}
 }
 
-export class Likes {
+export class LikesInfo {
   constructor(
     public likesCount: number,
     public dislikesCount: number,
