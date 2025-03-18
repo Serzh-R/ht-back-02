@@ -32,8 +32,6 @@ export class BlogsController {
 
     const newBlog = await this.blogsService.createBlog(body)
 
-    // console.log(this.blogsService)
-
     res.status(HTTP_STATUSES.CREATED_201).json(newBlog)
   }
 

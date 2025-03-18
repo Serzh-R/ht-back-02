@@ -17,7 +17,7 @@ const LikesSchema = new Schema<Likes>({
 
 const commentSchema = new Schema<CommentDB>({
   _id: { type: Schema.Types.ObjectId, auto: true },
-  content: { type: String, required: true },
+  content: { type: String, required: true, minlength: 20, maxlength: 300 },
   commentatorInfo: { type: CommentatorInfoSchema, required: true },
   createdAt: { type: Date, required: true, default: Date.now },
   postId: { type: Schema.Types.ObjectId, required: true, ref: 'posts' },

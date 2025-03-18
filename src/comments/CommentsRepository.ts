@@ -8,8 +8,8 @@ class CommentsRepository {
     return result.matchedCount > 0
   }
 
-  async createComment(commentData: Omit<CommentDB, '_id'>): Promise<ObjectId> {
-    const newComment = await CommentModel.create(commentData)
+  async createComment(comment: Omit<CommentDB, '_id'>): Promise<ObjectId> {
+    const newComment = await CommentModel.create(comment)
     return newComment._id
   }
 

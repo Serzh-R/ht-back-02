@@ -26,6 +26,10 @@ class CommentsController {
     res.status(HTTP_STATUSES.OK_200).json(commentById)
   }
 
+  async updateCommentLikeStatus(req: Request, res: Response) {
+    const id = req.params.id
+  }
+
   async updateCommentById(req: Request, res: Response) {
     const { id } = req.params
     const { content } = req.body
