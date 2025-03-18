@@ -10,8 +10,9 @@ const CommentatorInfoSchema = new Schema<CommentatorInfo>({
 })
 
 const LikesSchema = new Schema<LikesInfo>({
-  likesCount: { type: Number, required: true },
-  dislikesCount: { type: Number, required: true },
+  userId: { type: String, required: true },
+  likesCount: { type: Number, required: true, default: 0 },
+  dislikesCount: { type: Number, required: true, default: 0 },
   myStatus: {
     type: String,
     enum: Object.values(LikeStatus),

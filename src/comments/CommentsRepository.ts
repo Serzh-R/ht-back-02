@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { CommentDB, LikeStatus } from './comment-types'
+import { CommentDB, LikesInfo, LikeStatus } from './comment-types'
 import { CommentModel } from './comment-schema'
 
 class CommentsRepository {
@@ -8,26 +8,64 @@ class CommentsRepository {
     userId: string,
     likeStatus: LikeStatus,
   ): Promise<boolean> {
-    const result = await CommentModel.updateOne(
-      { _id: commentId, 'likesInfo.userId': userId }, // Проверяем, есть ли лайк от этого пользователя
-      { $set: { 'likesInfo.myStatus': likeStatus } }, // Обновляем статус лайка
-    )
+    const comment = await CommentModel.findOne({ _id: commentId })
 
-    // Если не найден лайк от пользователя, добавляем новый лайк
-    if (result.matchedCount === 0) {
-      await CommentModel.updateOne(
-        { _id: commentId },
-        {
-          $push: {
-            likesInfo: { userId, myStatus: likeStatus },
-          },
-        },
-      )
-      return true
+    if (!comment) {
+      return false
     }
 
-    return result.modifiedCount > 0
+    // 🔍 Ищем, ставил ли уже этот пользователь лайк
+    let existingLike = comment.likesInfo.find((like) => like.userId === userId)
+
+    if (existingLike) {
+      // ✅ Если лайк уже есть, обновляем его статус
+      existingLike.myStatus = likeStatus
+    } else {
+      // ❌ Если лайка нет – добавляем новый объект
+      comment.likesInfo.push(new LikesInfo(userId, 0, 0, likeStatus))
+    }
+
+    // 🔄 Пересчитываем количество лайков и дизлайков
+    const likesCount = comment.likesInfo.filter((like) => like.myStatus === LikeStatus.Like).length
+    const dislikesCount = comment.likesInfo.filter(
+      (like) => like.myStatus === LikeStatus.Dislike,
+    ).length
+
+    // Обновляем счётчики лайков
+    comment.likesInfo.forEach((like) => {
+      like.likesCount = likesCount
+      like.dislikesCount = dislikesCount
+    })
+
+    await comment.save()
+    return true
   }
+
+  // async updateCommentLikeStatus(
+  //   commentId: string,
+  //   userId: string,
+  //   likeStatus: LikeStatus,
+  // ): Promise<boolean> {
+  //   const result = await CommentModel.updateOne(
+  //     { _id: commentId, 'likesInfo.userId': userId }, // Проверяем, есть ли лайк от этого пользователя
+  //     { $set: { 'likesInfo.myStatus': likeStatus } }, // Обновляем статус лайка
+  //   )
+  //
+  //   // Если не найден лайк от пользователя, добавляем новый лайк
+  //   if (result.matchedCount === 0) {
+  //     await CommentModel.updateOne(
+  //       { _id: commentId },
+  //       {
+  //         $push: {
+  //           likesInfo: { userId, myStatus: likeStatus },
+  //         },
+  //       },
+  //     )
+  //     return true
+  //   }
+  //
+  //   return result.modifiedCount > 0
+  // }
 
   async updateCommentById(id: string, content: string): Promise<boolean> {
     const result = await CommentModel.updateOne({ _id: id }, { $set: { content } })

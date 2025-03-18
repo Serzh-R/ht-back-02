@@ -46,6 +46,7 @@ export class CommentatorInfo {
 
 export class LikesInfo {
   constructor(
+    public userId: string,
     public likesCount: number,
     public dislikesCount: number,
     public myStatus: LikeStatus,
