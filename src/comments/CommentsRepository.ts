@@ -1,8 +1,34 @@
 import { ObjectId } from 'mongodb'
-import { CommentDB } from './comment-types'
+import { CommentDB, LikeStatus } from './comment-types'
 import { CommentModel } from './comment-schema'
 
 class CommentsRepository {
+  async updateCommentLikeStatus(
+    commentId: string,
+    userId: string,
+    likeStatus: LikeStatus,
+  ): Promise<boolean> {
+    const result = await CommentModel.updateOne(
+      { _id: commentId, 'likesInfo.userId': userId }, // Проверяем, есть ли лайк от этого пользователя
+      { $set: { 'likesInfo.myStatus': likeStatus } }, // Обновляем статус лайка
+    )
+
+    // Если не найден лайк от пользователя, добавляем новый лайк
+    if (result.matchedCount === 0) {
+      await CommentModel.updateOne(
+        { _id: commentId },
+        {
+          $push: {
+            likesInfo: { userId, myStatus: likeStatus },
+          },
+        },
+      )
+      return true
+    }
+
+    return result.modifiedCount > 0
+  }
+
   async updateCommentById(id: string, content: string): Promise<boolean> {
     const result = await CommentModel.updateOne({ _id: id }, { $set: { content } })
     return result.matchedCount > 0

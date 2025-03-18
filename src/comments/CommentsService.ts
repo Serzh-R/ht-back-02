@@ -8,6 +8,30 @@ import { commentsQueryRepository } from './CommentsQueryRepository'
 import { usersQueryRepository } from '../users/UsersQueryRepository'
 
 class CommentsService {
+  async updateCommentLikeStatus(
+    commentId: string,
+    likeStatus: LikeStatus,
+    userId: string,
+  ): Promise<Result<boolean>> {
+    const comment = await commentsQueryRepository.getCommentById(commentId)
+
+    if (!comment) {
+      return {
+        status: ResultStatus.NotFound,
+        errorMessage: 'Comment not found',
+        extensions: [{ field: 'commentId', message: 'Invalid commentId' }],
+        data: false,
+      }
+    }
+
+    const success = await commentsRepository.updateCommentLikeStatus(commentId, userId, likeStatus)
+    return {
+      status: ResultStatus.Success,
+      data: success,
+      extensions: [],
+    }
+  }
+
   async updateCommentById(
     commentId: string,
     userId: string | null | undefined,
