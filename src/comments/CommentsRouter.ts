@@ -10,7 +10,6 @@ import { commentsService } from './CommentsService'
 import { jwtAccessAuthMiddleware } from '../auth/middlewares/jwt.access.auth.middleware'
 import { ResultStatus } from '../common/result/resultCode'
 import { checkCommentOwnership } from '../auth/middlewares/checkCommentOwnership'
-import { body } from 'express-validator'
 import { LikeStatus } from './comment-types'
 
 export const commentsRouter = Router()
