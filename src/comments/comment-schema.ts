@@ -12,7 +12,12 @@ const CommentatorInfoSchema = new Schema<CommentatorInfo>({
 const LikesSchema = new Schema<Likes>({
   likesCount: { type: Number, required: true },
   dislikesCount: { type: Number, required: true },
-  myStatus: { type: String, enum: Object.values(LikeStatus), required: true },
+  myStatus: {
+    type: String,
+    enum: Object.values(LikeStatus),
+    required: true,
+    default: LikeStatus.None,
+  },
 })
 
 const commentSchema = new Schema<CommentDB>({

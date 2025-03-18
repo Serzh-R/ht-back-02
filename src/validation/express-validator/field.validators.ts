@@ -21,13 +21,13 @@ export const blogIdValidator = body('blogId')
   .withMessage('blogId should be a string')
   .trim()
   .notEmpty()
-  .custom(async (blogId) => {
-    const blog = await BlogModel.exists({ _id: blogId })
-    if (!blog) {
-      throw new Error('No blog found with the provided blogId')
-    }
-    return true
-  })
+// .custom(async (blogId) => {
+//   const blog = await BlogModel.exists({ _id: blogId })
+//   if (!blog) {
+//     throw new Error('No blog found with the provided blogId')
+//   }
+//   return true
+// })
 
 /*************************************************************************************/
 
