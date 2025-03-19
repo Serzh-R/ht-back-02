@@ -107,7 +107,7 @@ export const commentsController = new CommentsController()
 commentsRouter.get('/:id', idParamValidator, commentsController.getCommentById)
 
 commentsRouter.put(
-  '/{commentId}/like-status',
+  '/:commentId/like-status',
   jwtAccessAuthMiddleware,
   checkCommentOwnership,
   idParamValidator,
@@ -117,7 +117,7 @@ commentsRouter.put(
 )
 
 commentsRouter.put(
-  '/:id',
+  '/:commentId',
   jwtAccessAuthMiddleware,
   checkCommentOwnership,
   idParamValidator,
@@ -127,7 +127,7 @@ commentsRouter.put(
 )
 
 commentsRouter.delete(
-  '/:id',
+  '/:commentId',
   jwtAccessAuthMiddleware,
   checkCommentOwnership,
   idParamValidator,
