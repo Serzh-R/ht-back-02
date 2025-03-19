@@ -48,6 +48,7 @@ export class LikesInfo {
   constructor(
     public likesCount: number,
     public dislikesCount: number,
+    public myStatus: string,
     public likes: Like[],
   ) {}
 }

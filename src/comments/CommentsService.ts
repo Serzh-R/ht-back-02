@@ -1,6 +1,6 @@
 import { commentsRepository } from './CommentsRepository'
 import { postsQueryRepository } from '../posts/PostsQueryRepository'
-import { CommentDBInsertType, Comment, LikeStatus } from './comment-types'
+import { CommentDBInsertType, Comment, LikeStatus, Like } from './comment-types'
 import { Result } from '../common/result/result.type'
 import { ResultStatus } from '../common/result/resultCode'
 import { ObjectId } from 'mongodb'
@@ -137,17 +137,14 @@ class CommentsService {
       likesInfo: {
         likesCount: 0,
         dislikesCount: 0,
+        myStatus: 'None',
         likes: [],
       },
     }
 
-    const commentId = await commentsRepository.createComment({
-      content: newComment.content,
-      commentatorInfo: newComment.commentatorInfo,
-      createdAt: newComment.createdAt,
-      postId: newComment.postId,
-      likesInfo: newComment.likesInfo,
-    })
+    const commentId = await commentsRepository.createComment(newComment)
+
+    const myStatus = this.getUserLikeStatus(newComment.likesInfo.likes, postData.userId)
 
     return {
       status: ResultStatus.Success,
@@ -156,10 +153,20 @@ class CommentsService {
         content: newComment.content,
         commentatorInfo: newComment.commentatorInfo,
         createdAt: newComment.createdAt.toISOString(),
-        likesInfo: newComment.likesInfo,
+        likesInfo: {
+          likesCount: newComment.likesInfo.likesCount,
+          dislikesCount: newComment.likesInfo.dislikesCount,
+          likes: [],
+        },
+        myStatus,
       },
       extensions: [],
     }
+  }
+
+  private getUserLikeStatus(likes: Like[], userId: string): LikeStatus {
+    const userLike = likes.find((like) => like.userId === userId)
+    return userLike ? userLike.myStatus : LikeStatus.None
   }
 }
 

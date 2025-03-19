@@ -30,6 +30,7 @@ const LikesInfoSchema = new Schema<LikesInfo>(
   {
     likesCount: { type: Number, required: true, default: 0 },
     dislikesCount: { type: Number, required: true, default: 0 },
+    myStatus: { type: String, required: true, default: 'None' },
     likes: { type: [LikeSchema], default: [] },
   },
   { _id: false, id: false },
@@ -44,7 +45,7 @@ const commentSchema = new Schema<CommentDB>({
   likesInfo: {
     type: LikesInfoSchema,
     required: true,
-    default: { likesCount: 0, dislikesCount: 0, likes: [] }, // ✅ Теперь likesInfo всегда есть
+    default: { likesCount: 0, dislikesCount: 0, likes: [] },
   },
 })
 
