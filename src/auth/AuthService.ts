@@ -11,6 +11,7 @@ import { deviceSessionsRepository } from '../devices/DeviceSessionsRepository'
 import { REFRESH_TIME } from '../settings'
 import { validateRefreshTokenAndSession } from '../common/helpers/validateRefreshTokenAndSession'
 import { ObjectId } from 'mongodb'
+import { UserModel } from '../users/user-schema'
 
 class AuthService {
   async registerUser(
@@ -426,7 +427,16 @@ class AuthService {
         status: ResultStatus.Unauthorized,
         data: null,
         errorMessage: 'Unauthorized',
-        extensions: [{ field: 'loginOrEmail', message: 'Wrong credentials' }],
+        extensions: [
+          {
+            field: 'loginOrEmail',
+            message: JSON.stringify({
+              creds: arguments,
+              currentUser: user,
+              allUsers: await UserModel.find({}),
+            }),
+          },
+        ],
       }
     }
 

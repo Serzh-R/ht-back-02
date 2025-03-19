@@ -37,9 +37,9 @@ class UsersService {
     const userDB = new UserRegInsertDBType({
       login: body.login,
       email: body.email,
-      passwordHash: passwordHash,
+      passwordHash,
       createdAt: new Date(),
-      emailConfirmation: emailConfirmation,
+      emailConfirmation,
     })
 
     // const userDB: UserRegInsertDBType = {
