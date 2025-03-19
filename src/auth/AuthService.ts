@@ -203,7 +203,7 @@ class AuthService {
       return {
         status: ResultStatus.Unauthorized,
         errorMessage: 'Unauthorized',
-        extensions: [{ field: 'loginOrEmail', message: 'Wrong credentials' }],
+        extensions: result.extensions,
         data: null,
       }
     }
