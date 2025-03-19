@@ -30,7 +30,7 @@ const LikesInfoSchema = new Schema<LikesInfo>(
   {
     likesCount: { type: Number, required: true, default: 0 },
     dislikesCount: { type: Number, required: true, default: 0 },
-    likes: { type: [LikeSchema], required: true },
+    likes: { type: [LikeSchema], default: [] },
   },
   { _id: false, id: false },
 )
@@ -41,7 +41,11 @@ const commentSchema = new Schema<CommentDB>({
   commentatorInfo: { type: CommentatorInfoSchema, required: true },
   createdAt: { type: Date, required: true, default: Date.now },
   postId: { type: Schema.Types.ObjectId, required: true, ref: 'posts' },
-  likesInfo: { type: LikesInfoSchema, required: true },
+  likesInfo: {
+    type: LikesInfoSchema,
+    required: true,
+    default: { likesCount: 0, dislikesCount: 0, likes: [] }, // ✅ Теперь likesInfo всегда есть
+  },
 })
 
 export const CommentModel = model<CommentDB, CommentModelType>('comments', commentSchema)

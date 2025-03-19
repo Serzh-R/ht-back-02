@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { CommentDB, LikesInfo, LikeStatus } from './comment-types'
+import { CommentDB, Like, LikesInfo, LikeStatus } from './comment-types'
 import { CommentModel } from './comment-schema'
 
 class CommentsRepository {
@@ -14,7 +14,7 @@ class CommentsRepository {
       return false
     }
 
-    let existingLike = comment.likesInfo.find((like) => like.userId === userId)
+    let existingLike = comment.likesInfo.likes.find((like) => like.userId === userId)
 
     if (existingLike && existingLike.myStatus === likeStatus) {
       return true
@@ -22,19 +22,20 @@ class CommentsRepository {
 
     if (existingLike) {
       existingLike.myStatus = likeStatus
+      existingLike.createdAt = new Date()
     } else {
-      comment.likesInfo.push(new LikesInfo(userId, 0, 0, likeStatus))
+      comment.likesInfo.likes.push(new Like(userId, new Date(), likeStatus))
     }
 
-    const likesCount = comment.likesInfo.filter((like) => like.myStatus === LikeStatus.Like).length
-    const dislikesCount = comment.likesInfo.filter(
+    const likesCount = comment.likesInfo.likes.filter(
+      (like) => like.myStatus === LikeStatus.Like,
+    ).length
+    const dislikesCount = comment.likesInfo.likes.filter(
       (like) => like.myStatus === LikeStatus.Dislike,
     ).length
 
-    comment.likesInfo.forEach((like) => {
-      like.likesCount = likesCount
-      like.dislikesCount = dislikesCount
-    })
+    comment.likesInfo.likesCount = likesCount
+    comment.likesInfo.dislikesCount = dislikesCount
 
     await comment.save()
     return true

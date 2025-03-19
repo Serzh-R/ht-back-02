@@ -134,9 +134,11 @@ class CommentsService {
       },
       createdAt: new Date(),
       postId: new ObjectId(postData.postId),
-      likesInfo: [
-        { userId: postData.userId, likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None },
-      ],
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        likes: [],
+      },
     }
 
     const commentId = await commentsRepository.createComment({
