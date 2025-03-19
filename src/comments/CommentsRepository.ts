@@ -14,24 +14,23 @@ class CommentsRepository {
       return false
     }
 
-    // 🔍 Ищем, ставил ли уже этот пользователь лайк
     let existingLike = comment.likesInfo.find((like) => like.userId === userId)
 
+    if (existingLike && existingLike.myStatus === likeStatus) {
+      return true
+    }
+
     if (existingLike) {
-      // ✅ Если лайк уже есть, обновляем его статус
       existingLike.myStatus = likeStatus
     } else {
-      // ❌ Если лайка нет – добавляем новый объект
       comment.likesInfo.push(new LikesInfo(userId, 0, 0, likeStatus))
     }
 
-    // 🔄 Пересчитываем количество лайков и дизлайков
     const likesCount = comment.likesInfo.filter((like) => like.myStatus === LikeStatus.Like).length
     const dislikesCount = comment.likesInfo.filter(
       (like) => like.myStatus === LikeStatus.Dislike,
     ).length
 
-    // Обновляем счётчики лайков
     comment.likesInfo.forEach((like) => {
       like.likesCount = likesCount
       like.dislikesCount = dislikesCount

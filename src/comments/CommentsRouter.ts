@@ -28,7 +28,7 @@ class CommentsController {
   }
 
   async updateCommentLikeStatus(req: Request, res: Response) {
-    const { id } = req.params
+    const { commentId } = req.params
     const { likeStatus } = req.body
     const userId = req.userId
 
@@ -49,7 +49,7 @@ class CommentsController {
     }
 
     const result = await commentsService.updateCommentLikeStatus(
-      id,
+      commentId,
       likeStatus as LikeStatus,
       userId,
     )
