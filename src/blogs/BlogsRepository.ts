@@ -10,7 +10,7 @@ export class BlogsRepository {
       description: body.description,
       websiteUrl: body.websiteUrl,
       createdAt: new Date(),
-      isMembership: false,
+      isMembership: true,
     })
 
     return {

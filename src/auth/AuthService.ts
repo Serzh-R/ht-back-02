@@ -198,7 +198,6 @@ class AuthService {
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     const result = await this.checkUserCredentials(loginOrEmail, password)
 
-    console.log(result)
     if (result.status !== ResultStatus.Success) {
       return {
         status: ResultStatus.Unauthorized,
@@ -419,6 +418,9 @@ class AuthService {
     password: string,
   ): Promise<Result<UserDB | null>> {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
+
+    console.log('User found in DB:', user)
+
     if (!user) {
       return {
         status: ResultStatus.Unauthorized,
@@ -438,6 +440,9 @@ class AuthService {
     }
 
     const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
+
+    console.log('Password check result:', isPassCorrect)
+
     if (!isPassCorrect) {
       return {
         status: ResultStatus.Unauthorized,

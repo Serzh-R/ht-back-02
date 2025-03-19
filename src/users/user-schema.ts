@@ -8,7 +8,7 @@ export type UserDocument = HydratedDocument<UserRegDB>
 const EmailConfirmationSchema = new Schema<EmailConfirmation>({
   confirmationCode: { type: String, required: true },
   expirationDate: { type: Date, required: true },
-  isConfirmed: { type: Boolean, required: true, default: false },
+  isConfirmed: { type: Boolean, required: true, default: true },
 })
 
 const PasswordRecoverySchema = new Schema<PasswordRecovery>({

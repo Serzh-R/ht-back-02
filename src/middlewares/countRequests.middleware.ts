@@ -19,9 +19,6 @@ export const countRequestsMiddleware = async (req: Request, res: Response, next:
 
     await AppealModel.deleteMany({ date: { $lt: tenSecondsAgo } })
 
-    //const allRequests = await AppealModel.find().lean()
-    //console.log('All Requests:', allRequests)
-
     if (count >= 5) {
       res.status(HTTP_STATUSES.TOO_MANY_REQUESTS_429).json({
         error: 'Too Many Requests',
