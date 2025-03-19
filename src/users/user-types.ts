@@ -82,8 +82,8 @@ export class UserRegInsertDBType {
 
 export class EmailConfirmation {
   constructor(
-    public confirmationCode: string,
-    public expirationDate: Date,
+    public confirmationCode: string | null,
+    public expirationDate: Date | null,
     public isConfirmed: boolean,
   ) {}
 }
