@@ -5,16 +5,22 @@ type UserModelType = Model<UserRegDB>
 
 export type UserDocument = HydratedDocument<UserRegDB>
 
-const EmailConfirmationSchema = new Schema<EmailConfirmation>({
-  confirmationCode: { type: String, required: true },
-  expirationDate: { type: Date, required: true },
-  isConfirmed: { type: Boolean, required: true, default: true },
-})
+const EmailConfirmationSchema = new Schema<EmailConfirmation>(
+  {
+    confirmationCode: { type: String, nullable: true },
+    expirationDate: { type: Date, nullable: true },
+    isConfirmed: { type: Boolean, required: true, default: true, nullable: false },
+  },
+  { _id: false, id: false },
+)
 
-const PasswordRecoverySchema = new Schema<PasswordRecovery>({
-  passwordRecoveryCode: { type: String, required: true },
-  expirationDate: { type: Date, required: true },
-})
+const PasswordRecoverySchema = new Schema<PasswordRecovery>(
+  {
+    passwordRecoveryCode: { type: String, required: true },
+    expirationDate: { type: Date, required: true },
+  },
+  { _id: false, id: false },
+)
 
 const userSchema = new Schema<UserRegDB>({
   _id: { type: Schema.Types.ObjectId, auto: true },

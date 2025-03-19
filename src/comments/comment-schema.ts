@@ -1,25 +1,39 @@
 import { Schema, model, Model, HydratedDocument } from 'mongoose'
-import { CommentatorInfo, CommentDB, LikesInfo, LikeStatus } from './comment-types'
+import { CommentatorInfo, CommentDB, Like, LikesInfo, LikeStatus } from './comment-types'
 
 type CommentModelType = Model<CommentDB>
 export type CommentDocument = HydratedDocument<CommentDB>
 
-const CommentatorInfoSchema = new Schema<CommentatorInfo>({
-  userId: { type: String, required: true },
-  userLogin: { type: String, required: true },
-})
-
-const LikesSchema = new Schema<LikesInfo>({
-  userId: { type: String, required: true },
-  likesCount: { type: Number, required: true, default: 0 },
-  dislikesCount: { type: Number, required: true, default: 0 },
-  myStatus: {
-    type: String,
-    enum: Object.values(LikeStatus),
-    required: true,
-    default: LikeStatus.None,
+const CommentatorInfoSchema = new Schema<CommentatorInfo>(
+  {
+    userId: { type: String, required: true },
+    userLogin: { type: String, required: true },
   },
-})
+  { _id: false, id: false },
+)
+
+const LikeSchema = new Schema<Like>(
+  {
+    userId: { type: String, required: true },
+    createdAt: { type: Date, required: true, default: Date.now },
+    myStatus: {
+      type: String,
+      enum: Object.values(LikeStatus),
+      required: true,
+      default: LikeStatus.None,
+    },
+  },
+  { _id: false, id: false },
+)
+
+const LikesInfoSchema = new Schema<LikesInfo>(
+  {
+    likesCount: { type: Number, required: true, default: 0 },
+    dislikesCount: { type: Number, required: true, default: 0 },
+    likes: { type: [LikeSchema], required: true },
+  },
+  { _id: false, id: false },
+)
 
 const commentSchema = new Schema<CommentDB>({
   _id: { type: Schema.Types.ObjectId, auto: true },
@@ -27,7 +41,7 @@ const commentSchema = new Schema<CommentDB>({
   commentatorInfo: { type: CommentatorInfoSchema, required: true },
   createdAt: { type: Date, required: true, default: Date.now },
   postId: { type: Schema.Types.ObjectId, required: true, ref: 'posts' },
-  likesInfo: { type: [LikesSchema], required: true, default: [] },
+  likesInfo: { type: LikesInfoSchema, required: true },
 })
 
 export const CommentModel = model<CommentDB, CommentModelType>('comments', commentSchema)

@@ -73,7 +73,10 @@ class AuthService {
         }
       }
 
-      if (user.emailConfirmation.expirationDate < new Date()) {
+      if (
+        user.emailConfirmation.expirationDate &&
+        user.emailConfirmation.expirationDate < new Date()
+      ) {
         const newConfirmationCode = randomUUID()
         const newExpirationDate = add(new Date(), { hours: 1 })
 
@@ -300,7 +303,10 @@ class AuthService {
       }
     }
 
-    if (new Date() > user.emailConfirmation.expirationDate) {
+    if (
+      user.emailConfirmation.expirationDate &&
+      new Date() > user.emailConfirmation.expirationDate
+    ) {
       return {
         status: ResultStatus.BadRequest,
         data: false,
