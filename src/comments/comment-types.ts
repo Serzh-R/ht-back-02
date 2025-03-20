@@ -49,7 +49,6 @@ export class LikesInfo {
     public likesCount: number,
     public dislikesCount: number,
     public myStatus: string,
-    public likes: Like[],
   ) {}
 }
 
